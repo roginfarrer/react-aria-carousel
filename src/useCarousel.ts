@@ -1,26 +1,3 @@
-/**
- * Copyright (c) 2023 Richard Scarrott
- *
- * https://github.com/richardscarrott/react-snap-carousel
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 import {
   useEffect,
   useMemo,
@@ -28,32 +5,24 @@ import {
   useCallback,
   KeyboardEventHandler,
   useRef,
-} from 'react';
-import Translation from '@wayfair/translation';
+  useId,
+} from "react";
 
-import {smoothScroll} from '@homebase/core/dist/private/smoothScroll';
-import {useMedia} from '@homebase/core';
-import {useId} from '@homebase/core/dist/private/useId';
-import {announce} from '@homebase/core/dist/LiveAnnouncer';
+import { announce } from "@react-aria/live-announcer";
+import { useReducedMotion } from "@mantine/hooks";
 
-import {createScrollStopListener} from '@private/createScrollStopListener';
-import {useIsomorphicLayoutEffect} from '@private/useIsomorphicLayoutEffect';
-import {useResizeObserver} from '@private/useResizeObserver';
-import {useCallbackRef} from '@private/useCallbackRef';
+import { createScrollStopListener } from "./utils/createScrollEndListener";
+import { useSafeLayoutEffect } from "./utils/useSafeLayoutEffect";
+import { useResizeObserver } from "./utils/useResizeObserver";
+import { useCallbackRef } from "./utils/useCallbackRef";
 
 import {
   assert,
   getEffectiveScrollSpacing,
   getOffsetRect,
-} from './internal/dimensions';
-import {
-  canSmoothScroll,
-  flatten,
-  getPolyfillScrollDuration,
-  useCarouselElementRefs,
-  useCarouselNavDescendantsInit,
-  useDescendantsInit,
-} from './internal/utils';
+} from "./internal/dimensions";
+import { flatten } from "./internal/utils";
+import { useCarouselElementRefs } from "./internal/utils";
 
 interface ScrollOpts {
   /**
@@ -63,7 +32,7 @@ interface ScrollOpts {
   animate?: boolean;
 }
 
-type CarouselPaginate = (opts?: ScrollOpts & {loop?: boolean}) => number;
+type CarouselPaginate = (opts?: ScrollOpts & { loop?: boolean }) => number;
 
 /**
  * @public
@@ -99,46 +68,36 @@ export interface UseCarouselResult {
    */
   readonly scrollIntoView: (pageIndex: number, opts?: ScrollOpts) => void;
   /** A coarse representation of the scroll position */
-  readonly scrollPosition: 'start' | 'end' | 'middle';
+  readonly scrollPosition: "start" | "end" | "middle";
   /** Horizontal or vertical carousel */
-  readonly orientation: 'vertical' | 'horizontal';
+  readonly orientation: "vertical" | "horizontal";
   /** Function that returns props for a Carousel's navigation item */
-  readonly getNavItemProps: (props: {
-    index: number;
-  }) => {
-    type: 'button';
-    role: 'tab';
-    'aria-controls': string;
-    'aria-labelledby': string;
-    'aria-posinset': number;
-    'aria-setsize': number;
-    'aria-selected': boolean;
+  readonly getNavItemProps: (props: { index: number }) => {
+    type: "button";
+    role: "tab";
+    "aria-controls": string;
+    "aria-labelledby": string;
+    "aria-posinset": number;
+    "aria-setsize": number;
+    "aria-selected": boolean;
     tabIndex: 0 | -1;
     onClick: () => void;
   };
   /** Function that returns props for a Carousel's navigation */
   readonly getNavProps: () => {
-    role: 'tablist';
+    role: "tablist";
   };
   /** Function that returns props for a Carousel Item */
-  readonly getItemProps: (props: {
-    index: number;
-  }) => {
+  readonly getItemProps: (props: { index: number }) => {
     id: string;
-    role: 'group';
-    'aria-label': string;
-    'aria-roledescription': string;
+    role: "group";
+    "aria-label": string;
+    "aria-roledescription": string;
   };
   /** Ref assignment handlers */
   readonly refs: ReturnType<typeof useCarouselElementRefs>[1];
   /** Function to be called on the onKeyDown event on the root carousel element */
   readonly handleRootElKeydown: KeyboardEventHandler<HTMLElement>;
-  /** Descendant manager for the carousel items */
-  readonly itemDescendantsManager: ReturnType<typeof useDescendantsInit>;
-  /** Descendant manager for the navigation items */
-  readonly navItemDescendantsManager: ReturnType<
-    typeof useCarouselNavDescendantsInit
-  >;
 }
 
 export interface UseCarouselOptions {
@@ -146,7 +105,7 @@ export interface UseCarouselOptions {
    * The direction of the carousel
    * @default 'horizontal'
    */
-  orientation?: 'vertical' | 'horizontal';
+  orientation?: "vertical" | "horizontal";
   /**
    * Describes the initial pagination of the carousel, useful for SSR k
    * @default []
@@ -161,41 +120,64 @@ export interface UseCarouselOptions {
    * If 'item', the carousel will scroll by each individual item.
    * @default 'page'
    */
-  scrollBy?: 'page' | 'item';
+  scrollBy?: "page" | "item";
   /** Handler called when the scroll position changes */
-  onScrollPositionChange?: (pos: 'start' | 'middle' | 'end') => void;
+  onScrollPositionChange?: (pos: "start" | "middle" | "end") => void;
   /** @default false */
   enableLoopPagination?: boolean;
+  text?: {
+    singleItemAnnouncement?: (opts: {
+      currentItem: number;
+      itemCount: number;
+    }) => string;
+    multiItemAnnouncement?: (opts: {
+      currentItem: number;
+      itemCount: number;
+      itemsPerPage: number;
+    }) => string;
+    itemAriaLabel?: (opts: {
+      currentItem: number;
+      itemCount: number;
+    }) => string;
+    itemAriaRoleDescription?: string;
+  };
 }
 
 export const useCarousel = (
-  options: UseCarouselOptions = {}
+  options: UseCarouselOptions = {},
 ): UseCarouselResult => {
   const {
-    orientation = 'horizontal',
+    orientation = "horizontal",
     initialPages = [],
     onActivePageIndexChange = () => {},
-    scrollBy = 'page',
+    scrollBy = "page",
     onScrollPositionChange,
     enableLoopPagination = false,
+    text = {
+      singleItemAnnouncement() {
+        return "";
+      },
+      multiItemAnnouncement() {
+        return "";
+      },
+      itemAriaLabel() {
+        return "";
+      },
+      itemAriaRoleDescription: "",
+    },
   } = options;
 
-  const itemDescendantsManager = useDescendantsInit();
-  const navItemDescendantsManager = useCarouselNavDescendantsInit();
-
   const uniqueId = useId();
-  const prefersReducedMotion = useMedia({
-    mediaQuery: '(prefers-reduced-motion: reduce)',
-  });
-  const scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
-  const dimension = orientation === 'horizontal' ? 'width' : 'height';
+  const prefersReducedMotion = useReducedMotion();
+  const scrollBehavior = prefersReducedMotion ? "auto" : "smooth";
+  const dimension = orientation === "horizontal" ? "width" : "height";
   const scrollDimension =
-    orientation === 'horizontal' ? 'scrollWidth' : 'scrollHeight';
+    orientation === "horizontal" ? "scrollWidth" : "scrollHeight";
   const clientDimension =
-    orientation === 'horizontal' ? 'clientWidth' : 'clientHeight';
-  const nearSidePos = orientation === 'horizontal' ? 'left' : 'top';
-  const farSidePos = orientation === 'horizontal' ? 'right' : 'bottom';
-  const scrollPos = orientation === 'horizontal' ? 'scrollLeft' : 'scrollTop';
+    orientation === "horizontal" ? "clientWidth" : "clientHeight";
+  const nearSidePos = orientation === "horizontal" ? "left" : "top";
+  const farSidePos = orientation === "horizontal" ? "right" : "bottom";
+  const scrollPos = orientation === "horizontal" ? "scrollLeft" : "scrollTop";
 
   // Safari doesn't currently support scroll with smooth scrolling
   // Another fun bug in Safari tech preview is that when the scroll-snap-type
@@ -204,8 +186,8 @@ export const useCarousel = (
   const [isPolyfillScrolling, setIsPolyfillScrolling] = useState(false);
 
   const [scrollPosition, setScrollPosition] = useState<
-    'start' | 'middle' | 'end'
-  >('start');
+    "start" | "middle" | "end"
+  >("start");
 
   const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null);
   const [carouselRefs, setCarouselRefs] = useCarouselElementRefs();
@@ -221,11 +203,11 @@ export const useCarousel = (
     activePageIndex: 0,
   });
 
-  const {pages, activePageIndex} = state;
+  const { pages, activePageIndex } = state;
 
   // Because we're announcing the change on scroll, we need to dedupe the message
   // so we're not blasting the queue of announcements on every pixel shift
-  const lastAnnounced = useRef<{index: number; length: number}>({
+  const lastAnnounced = useRef<{ index: number; length: number }>({
     index: activePageIndex,
     length: pages.length,
   });
@@ -244,26 +226,20 @@ export const useCarousel = (
         const lastItem = inView[inView.length - 1];
         if (firstItem === lastItem) {
           announce(
-            Translation({
-              msgid: 'carousel.singleItemAnnouncement',
-              params: {
-                currentItem: args.activePageIndex + 1,
-                totalLength: args.pages.length,
-              },
+            text.singleItemAnnouncement({
+              currentItem: args.activePageIndex + 1,
+              itemCount: args.pages.length,
             }),
-            'polite'
+            "polite",
           );
         } else {
           announce(
-            Translation({
-              msgid: 'carousel.multiItemAnnouncement',
-              params: {
-                firstIndex: firstItem + 1,
-                itemsPerPage: lastItem + 1,
-                totalLength: flatten(args.pages).length,
-              },
+            text.multiItemAnnouncement({
+              currentItem: firstItem + 1,
+              itemsPerPage: lastItem + 1,
+              itemCount: flatten(args.pages).length,
             }),
-            'polite'
+            "polite",
           );
         }
         lastAnnounced.current = {
@@ -274,7 +250,7 @@ export const useCarousel = (
       bareSetCarouselState(args);
       onPageChange?.(args.activePageIndex);
     },
-    [onPageChange]
+    [onPageChange],
   );
 
   const refreshActivePage = useCallback(
@@ -291,7 +267,7 @@ export const useCarousel = (
       // [ 15, 16, 17 ]
       //
       // This pathway would make the activePageIndex 17, when it should be 15
-      if (scrollBy === 'page') {
+      if (scrollBy === "page") {
         // https://excalidraw.com/#json=1ztbZ26T3ri14SiJBZlt4,Rqa2mjiaYJesnfPYEiBdPQ
         const hasScrolledToEnd =
           Math.floor(scrollEl[scrollDimension] - scrollEl[scrollPos]) <=
@@ -308,16 +284,16 @@ export const useCarousel = (
         }
       }
 
-      const items = itemDescendantsManager.values();
+      const items = Array.from(scrollEl.children);
       const scrollPort = scrollEl.getBoundingClientRect();
       const offsets = newPages.map((page) => {
         const leadIndex = page[0];
-        const leadEl = items[leadIndex].node;
-        assert(leadEl instanceof HTMLElement, 'Expected HTMLElement');
+        const leadEl = items[leadIndex];
+        assert(leadEl instanceof HTMLElement, "Expected HTMLElement");
         const scrollSpacing = getEffectiveScrollSpacing(
           scrollEl,
           leadEl,
-          nearSidePos
+          nearSidePos,
         );
         const rect = leadEl.getBoundingClientRect();
         const offset =
@@ -326,7 +302,10 @@ export const useCarousel = (
       });
       const minOffset = Math.min(...offsets);
       const nextActivePageIndex = offsets.indexOf(minOffset);
-      setCarouselState({pages: newPages, activePageIndex: nextActivePageIndex});
+      setCarouselState({
+        pages: newPages,
+        activePageIndex: nextActivePageIndex,
+      });
 
       // before we possibly disable a button
       // shift the focus to the other button
@@ -355,18 +334,16 @@ export const useCarousel = (
       scrollPos,
       clientDimension,
       nearSidePos,
-      itemDescendantsManager,
-    ]
+    ],
   );
 
   const refresh = useCallback(() => {
     if (!scrollEl) return;
 
-    const items = itemDescendantsManager.values();
+    const items = Array.from(scrollEl.children);
     const scrollPort = scrollEl.getBoundingClientRect();
     let currPageStartPos: number;
-    const pages = items.reduce<number[][]>((acc, item, i) => {
-      const node = item.node;
+    const pages = items.reduce<number[][]>((acc, node, i) => {
       const currPage = acc[acc.length - 1];
       const rect = getOffsetRect(node, node.parentElement);
       if (
@@ -376,8 +353,8 @@ export const useCarousel = (
         acc.push([i]);
         const scrollSpacing = getEffectiveScrollSpacing(
           scrollEl,
-          node,
-          nearSidePos
+          node as HTMLElement,
+          nearSidePos,
         );
         currPageStartPos = rect[nearSidePos] - scrollSpacing;
       } else {
@@ -386,20 +363,11 @@ export const useCarousel = (
       return acc;
     }, []);
     refreshActivePage(pages);
-  }, [
-    scrollEl,
-    itemDescendantsManager,
-    refreshActivePage,
-    farSidePos,
-    dimension,
-    nearSidePos,
-  ]);
+  }, [scrollEl, refreshActivePage, farSidePos, dimension, nearSidePos]);
 
-  useIsomorphicLayoutEffect(() => {
-    refresh();
-  }, [refresh]);
+  useSafeLayoutEffect(refresh, [refresh]);
 
-  useResizeObserver({handleEntry: refresh, element: scrollEl});
+  useResizeObserver(scrollEl, refresh);
 
   useEffect(() => {
     if (!scrollEl) return;
@@ -410,22 +378,22 @@ export const useCarousel = (
       if (!e.target) return;
 
       if (e.target[scrollPos] === 0) {
-        setScrollPosition('start');
-        onScrollPositionChange?.('start');
+        setScrollPosition("start");
+        onScrollPositionChange?.("start");
       } else if (
         e.target[scrollPos] + e.target[clientDimension] ===
         e.target[scrollDimension]
       ) {
-        setScrollPosition('end');
-        onScrollPositionChange?.('end');
+        setScrollPosition("end");
+        onScrollPositionChange?.("end");
       } else {
-        setScrollPosition('middle');
-        onScrollPositionChange?.('middle');
+        setScrollPosition("middle");
+        onScrollPositionChange?.("middle");
       }
     }
-    scrollEl.addEventListener('scroll', handler, {passive: true});
+    scrollEl.addEventListener("scroll", handler, { passive: true });
     return () => {
-      scrollEl.removeEventListener('scroll', handler);
+      scrollEl.removeEventListener("scroll", handler);
     };
   }, [
     clientDimension,
@@ -438,7 +406,7 @@ export const useCarousel = (
   ]);
 
   useEffect(() => {
-    if (canSmoothScroll || !scrollEl) return;
+    if (!scrollEl) return;
     const destroyListener = createScrollStopListener(scrollEl, () => {
       setIsPolyfillScrolling(false);
     });
@@ -454,57 +422,36 @@ export const useCarousel = (
     (nearSideEdge: number, opts: ScrollOpts) => {
       if (!scrollEl) return;
 
-      const {animate = true} = opts;
+      const { animate = true } = opts;
       if (!animate) {
         scrollEl[scrollPos] = nearSideEdge;
         return;
       }
 
-      if (canSmoothScroll) {
-        scrollEl.scrollTo({
-          behavior: scrollBehavior,
-          [nearSidePos]: nearSideEdge,
-        });
-      } else {
-        setIsPolyfillScrolling(true);
-
-        if (prefersReducedMotion) {
-          // Just set the scroll position and bail early
-          scrollEl[scrollPos] = nearSideEdge;
-          return;
-        }
-
-        const distance =
-          scrollEl[scrollPos] > nearSideEdge
-            ? scrollEl[scrollPos] - nearSideEdge
-            : nearSideEdge - scrollEl[scrollPos];
-
-        smoothScroll({
-          element: scrollEl,
-          [nearSidePos === 'left' ? 'x' : 'y']: nearSideEdge,
-          duration: getPolyfillScrollDuration(distance),
-        });
-      }
+      scrollEl.scrollTo({
+        behavior: scrollBehavior,
+        [nearSidePos]: nearSideEdge,
+      });
     },
-    [nearSidePos, prefersReducedMotion, scrollBehavior, scrollEl, scrollPos]
+    [nearSidePos, prefersReducedMotion, scrollBehavior, scrollEl, scrollPos],
   );
 
   const scrollTo = useCallback(
-    (index: number, opts: {animate?: boolean} = {}) => {
+    (index: number, opts: { animate?: boolean } = {}) => {
       if (!scrollEl) return;
 
       const page = pages[index];
       if (!page) return;
 
-      const items = itemDescendantsManager.values();
+      const items = Array.from(scrollEl.children);
       const leadIndex: number | undefined = page[0];
-      const leadEl = items[leadIndex].node;
+      const leadEl = items[leadIndex];
       if (!(leadEl instanceof HTMLElement)) return;
 
       const scrollSpacing = getEffectiveScrollSpacing(
         scrollEl,
         leadEl,
-        nearSidePos
+        nearSidePos,
       );
 
       const nearSideEdge =
@@ -513,7 +460,7 @@ export const useCarousel = (
 
       scroll(nearSideEdge, opts);
     },
-    [itemDescendantsManager, nearSidePos, pages, scroll, scrollEl]
+    [nearSidePos, pages, scroll, scrollEl],
   );
 
   const scrollIntoView = useCallback(
@@ -523,15 +470,15 @@ export const useCarousel = (
       const page = pages[index];
       if (!page) return;
 
-      const items = itemDescendantsManager.values();
+      const items = Array.from(scrollEl.children);
       const leadIndex: number | undefined = page[0];
-      const leadEl = items[leadIndex].node;
+      const leadEl = items[leadIndex];
       if (!(leadEl instanceof HTMLElement)) return;
 
       const startScrollSpacing = getEffectiveScrollSpacing(
         scrollEl,
         leadEl,
-        nearSidePos
+        nearSidePos,
       );
       const rect = getOffsetRect(leadEl, leadEl.parentElement);
       const itemStartEdge = rect[nearSidePos] - startScrollSpacing;
@@ -555,13 +502,12 @@ export const useCarousel = (
     [
       clientDimension,
       farSidePos,
-      itemDescendantsManager,
       nearSidePos,
       pages,
       scroll,
       scrollEl,
       scrollPos,
-    ]
+    ],
   );
 
   const scrollToPreviousPage: CarouselPaginate = (opts) => {
@@ -570,7 +516,7 @@ export const useCarousel = (
       scrollTo(pages.length - 1);
       return pages.length - 1;
     }
-    scrollTo(next, {animate: opts?.animate});
+    scrollTo(next, { animate: opts?.animate });
     return next;
   };
 
@@ -580,7 +526,7 @@ export const useCarousel = (
       scrollTo(0);
       return 0;
     }
-    scrollTo(next, {animate: opts?.animate});
+    scrollTo(next, { animate: opts?.animate });
     return next;
   };
 
@@ -589,7 +535,9 @@ export const useCarousel = (
       e.preventDefault();
       const nextIndex = scrollToNextPage();
       if (carouselRefs.nav.current?.contains(e.target as Node)) {
-        navItemDescendantsManager.item(nextIndex)?.node.focus();
+        const items = Array.from(scrollEl.children);
+        const nextItem = items[nextIndex] as HTMLElement | undefined;
+        nextItem?.focus();
       } else if (!enableLoopPagination && nextIndex >= pages.length - 1) {
         carouselRefs.prevButton.current?.focus();
       } else {
@@ -600,7 +548,9 @@ export const useCarousel = (
       e.preventDefault();
       const nextIndex = scrollToPreviousPage();
       if (carouselRefs.nav.current?.contains(e.target as Node)) {
-        navItemDescendantsManager.item(nextIndex)?.node.focus();
+        const items = Array.from(scrollEl.children);
+        const nextItem = items[nextIndex] as HTMLElement | undefined;
+        nextItem?.focus();
       } else if (!enableLoopPagination && nextIndex <= 0) {
         carouselRefs.nextButton.current?.focus();
       } else {
@@ -608,26 +558,26 @@ export const useCarousel = (
       }
     }
     switch (e.key) {
-      case 'ArrowUp': {
-        if (orientation === 'vertical') {
+      case "ArrowUp": {
+        if (orientation === "vertical") {
           backward();
         }
         break;
       }
-      case 'ArrowRight': {
-        if (orientation === 'horizontal') {
+      case "ArrowRight": {
+        if (orientation === "horizontal") {
           forward();
         }
         break;
       }
-      case 'ArrowDown': {
-        if (orientation === 'vertical') {
+      case "ArrowDown": {
+        if (orientation === "vertical") {
           forward();
         }
         break;
       }
-      case 'ArrowLeft': {
-        if (orientation === 'horizontal') {
+      case "ArrowLeft": {
+        if (orientation === "horizontal") {
           backward();
         }
         break;
@@ -636,47 +586,42 @@ export const useCarousel = (
   };
 
   const snapPointIndexes = useMemo(() => {
-    if (scrollBy === 'item') {
+    if (scrollBy === "item") {
       return new Set(flatten(pages));
     }
     return new Set(pages.map((page) => page[0]));
   }, [pages, scrollBy]);
 
-  const getNavProps: UseCarouselResult['getNavProps'] = () => {
+  const getNavProps: UseCarouselResult["getNavProps"] = () => {
     return {
-      role: 'tablist',
+      role: "tablist",
     };
   };
 
-  const getItemProps: UseCarouselResult['getItemProps'] = ({index}) => {
+  const getItemProps: UseCarouselResult["getItemProps"] = ({ index }) => {
     return {
-      inert: pages[activePageIndex]?.includes(index) ? undefined : 'true',
+      inert: pages[activePageIndex]?.includes(index) ? undefined : "true",
       id: `carousel-${index + 1}-${uniqueId}`,
-      role: 'group' as const,
-      'aria-label': Translation({
-        msgid: 'carousel.itemXofX',
-        params: {
-          currentItem: (index ?? 0) + 1,
-          totalItems: flatten(pages).length ?? 1,
-        },
+      role: "group" as const,
+      "aria-label": text.itemAriaLabel({
+        currentItem: (index ?? 0) + 1,
+        itemCount: flatten(pages).length ?? 1,
       }),
-      'aria-roledescription': Translation({
-        msgid: 'carousel.itemRoleDescription',
-      }),
+      "aria-roledescription": text.itemAriaRoleDescription,
     };
   };
 
-  const getNavItemProps: UseCarouselResult['getNavItemProps'] = ({index}) => {
+  const getNavItemProps: UseCarouselResult["getNavItemProps"] = ({ index }) => {
     const isSelected = activePageIndex === index;
     const itemId = `carousel-${index + 1}-${uniqueId}`;
     return {
-      type: 'button',
-      role: 'tab',
-      'aria-controls': itemId,
-      'aria-labelledby': itemId,
-      'aria-posinset': index + 1,
-      'aria-setsize': flatten(pages).length,
-      'aria-selected': isSelected,
+      type: "button",
+      role: "tab",
+      "aria-controls": itemId,
+      "aria-labelledby": itemId,
+      "aria-posinset": index + 1,
+      "aria-setsize": flatten(pages).length,
+      "aria-selected": isSelected,
       tabIndex: isSelected ? 0 : -1,
       onClick: () => scrollIntoView(index),
     };
@@ -701,7 +646,5 @@ export const useCarousel = (
     getNavProps,
     getNavItemProps,
     getItemProps,
-    itemDescendantsManager,
-    navItemDescendantsManager,
   };
 };

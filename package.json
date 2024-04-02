@@ -1,0 +1,21 @@
+{
+  "name": "@rogin/react-snap-carousel",
+  "version": "0.0.1",
+  "exports": "./src/index.ts",
+  "devDependencies": {
+    "@testing-library/react": "^14.2.2",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.23",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.4.0",
+    "vite": "^5.2.7",
+    "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "@mantine/hooks": "^7.7.1",
+    "@react-aria/live-announcer": "^3.3.2",
+    "usehooks-ts": "^3.0.2"
+  }
+}

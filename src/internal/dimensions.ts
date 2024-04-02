@@ -1,28 +1,15 @@
-/**
- * Copyright (c) 2023 Richard Scarrott
- *
- * https://github.com/richardscarrott/react-snap-carousel
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+export function assert(value: any, message: string): asserts value {
+  if (value) {
+    return;
+  }
+  throw new RSCError(message);
+}
 
-import {assert as baseAssert} from '@homebase/core/dist/private/assert';
+class RSCError extends Error {
+  constructor(message: string) {
+    super(`[react-snap-carousel]: ${message}`);
+  }
+}
 
 // Like `el.getBoundingClientRect()` but ignores scroll.
 // It's similar to `offsetLeft` / `offsetTop`, but offers some of the virtues of `getBoundingClientRect`
@@ -73,26 +60,26 @@ const _getOffsetRect = (el: Element) => {
 // https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-padding
 export const getScrollPaddingUsedValue = (
   el: HTMLElement,
-  pos: 'left' | 'top'
+  pos: "left" | "top",
 ) => {
   const style = window.getComputedStyle(el);
   const scrollPadding = style.getPropertyValue(`scroll-padding-${pos}`);
   if (
-    scrollPadding === 'auto' ||
+    scrollPadding === "auto" ||
     // Value in jest
-    scrollPadding === ''
+    scrollPadding === ""
   ) {
     return 0;
   }
   // https://developer.mozilla.org/en-US/docs/Web/CSS/length
   // https://www.w3.org/TR/css3-values/#length-value
   const invalidMsg = `Unsupported scroll padding value, expected <length> or <percentage> value, received ${scrollPadding}`;
-  if (scrollPadding.endsWith('px')) {
+  if (scrollPadding.endsWith("px")) {
     const value = parseInt(scrollPadding, 10);
     assert(!Number.isNaN(value), invalidMsg);
     return value;
   }
-  if (scrollPadding.endsWith('%')) {
+  if (scrollPadding.endsWith("%")) {
     const value = parseInt(scrollPadding, 10);
     assert(!Number.isNaN(value), invalidMsg);
     return (el.clientWidth / 100) * value;
@@ -106,18 +93,18 @@ export const getScrollPaddingUsedValue = (
 // https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-margin
 export const getScrollMarginUsedValue = (
   el: HTMLElement,
-  pos: 'left' | 'top'
+  pos: "left" | "top",
 ) => {
   const style = window.getComputedStyle(el);
   const scrollMargin = style.getPropertyValue(`scroll-margin-${pos}`);
-  if (scrollMargin === '') {
+  if (scrollMargin === "") {
     // For jest
     return 0;
   }
   // https://developer.mozilla.org/en-US/docs/Web/CSS/length
   // https://www.w3.org/TR/css3-values/#length-value
   const invalidMsg = `Unsupported scroll margin value, expected <length> value, received ${scrollMargin}`;
-  assert(scrollMargin.endsWith('px'), invalidMsg); // Even scroll-margin: 0 should return "0px"
+  assert(scrollMargin.endsWith("px"), invalidMsg); // Even scroll-margin: 0 should return "0px"
   const value = parseInt(scrollMargin, 10);
   assert(!Number.isNaN(value), invalidMsg);
   return value;
@@ -128,17 +115,10 @@ export const getScrollMarginUsedValue = (
 export const getEffectiveScrollSpacing = (
   scrollEl: HTMLElement,
   itemEl: HTMLElement,
-  pos: 'left' | 'top'
+  pos: "left" | "top",
 ) => {
   const scrollPadding = getScrollPaddingUsedValue(scrollEl, pos);
   const scrollMargin = getScrollMarginUsedValue(itemEl, pos);
   const rect = getOffsetRect(itemEl, itemEl.parentElement);
   return Math.min(scrollPadding + scrollMargin, rect[pos]);
 };
-
-export function assert(value: any, message: string): asserts value {
-  if (value) {
-    return;
-  }
-  baseAssert(value, message, 'Carousel');
-}

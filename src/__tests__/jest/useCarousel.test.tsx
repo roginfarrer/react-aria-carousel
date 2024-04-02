@@ -1,9 +1,9 @@
-import {DescendantsManager} from '@root/private/chakra-descendants';
-import {renderHook} from '@root/test-utils';
-import {useCarousel} from '../../useCarousel';
+import { renderHook } from "@testing-library/react-hooks";
+import { test, expect } from "vitest";
+import { useCarousel } from "../../useCarousel";
 
-test('returns expected properties', () => {
-  const {result} = renderHook(() => useCarousel());
+test("returns expected properties", () => {
+  const { result } = renderHook(() => useCarousel());
   const {
     scrollTo,
     scrollToNextPage,
@@ -21,27 +21,25 @@ test('returns expected properties', () => {
     getNavItemProps,
     getNavProps,
     handleRootElKeydown,
-    itemDescendantsManager,
-    navItemDescendantsManager,
     pages,
     refs,
   } = result.current;
 
-  expect(typeof scrollTo).toBe('function');
-  expect(typeof scrollToNextPage).toBe('function');
-  expect(typeof scrollToPreviousPage).toBe('function');
-  expect(typeof scrollIntoView).toBe('function');
-  expect(typeof refresh).toBe('function');
-  expect(typeof assignScrollerEl).toBe('function');
-  expect(typeof handleRootElKeydown).toBe('function');
-  expect(typeof getItemProps({index: 0})).toBe('object');
-  expect(typeof getNavItemProps({index: 0})).toBe('object');
-  expect(typeof getItemProps({index: 0})).toBe('object');
-  expect(typeof getNavProps()).toBe('object');
+  expect(typeof scrollTo).toBe("function");
+  expect(typeof scrollToNextPage).toBe("function");
+  expect(typeof scrollToPreviousPage).toBe("function");
+  expect(typeof scrollIntoView).toBe("function");
+  expect(typeof refresh).toBe("function");
+  expect(typeof assignScrollerEl).toBe("function");
+  expect(typeof handleRootElKeydown).toBe("function");
+  expect(typeof getItemProps({ index: 0 })).toBe("object");
+  expect(typeof getNavItemProps({ index: 0 })).toBe("object");
+  expect(typeof getItemProps({ index: 0 })).toBe("object");
+  expect(typeof getNavProps()).toBe("object");
 
   expect(isPolyfillScrolling).toBe(false);
-  expect(orientation).toBe('horizontal');
-  expect(scrollPosition).toBe('start');
+  expect(orientation).toBe("horizontal");
+  expect(scrollPosition).toBe("start");
   expect(activePageIndex).toBe(0);
   expect(snapPointIndexes).toEqual(new Set());
   expect(pages).toEqual([]);
@@ -54,6 +52,4 @@ test('returns expected properties', () => {
       "setPrevButtonRef": [Function],
     }
   `);
-  expect(itemDescendantsManager instanceof DescendantsManager).toBe(true);
-  expect(navItemDescendantsManager instanceof DescendantsManager).toBe(true);
 });
