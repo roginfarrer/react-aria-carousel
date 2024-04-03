@@ -154,16 +154,16 @@ export const useCarousel = (
     onScrollPositionChange,
     enableLoopPagination = false,
     text = {
-      singleItemAnnouncement() {
-        return "";
+      singleItemAnnouncement({ currentItem, itemCount }) {
+        return `Item ${currentItem} of ${itemCount}`;
       },
-      multiItemAnnouncement() {
-        return "";
+      multiItemAnnouncement({ currentItem, itemCount, itemsPerPage }) {
+        return `Items ${currentItem} through ${currentItem + itemsPerPage} of ${itemCount}`;
       },
-      itemAriaLabel() {
-        return "";
+      itemAriaLabel({ itemCount, currentItem }) {
+        return `${currentItem} of ${itemCount}`;
       },
-      itemAriaRoleDescription: "",
+      itemAriaRoleDescription: "item",
     },
   } = options;
 
