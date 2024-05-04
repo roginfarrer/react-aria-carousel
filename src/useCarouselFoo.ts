@@ -1,5 +1,4 @@
 import {
-  useEffect,
   useState,
   useCallback,
   KeyboardEventHandler,
@@ -19,7 +18,6 @@ import { useResizeObserver } from "./utils/useResizeObserver.js";
 import { useCallbackRef } from "./utils/useCallbackRef.js";
 
 import {
-  assert,
   getEffectiveScrollSpacing,
   getOffsetRect,
 } from "./internal/dimensions.js";
@@ -27,6 +25,7 @@ import { flatten } from "./internal/utils.js";
 import { useCarouselElementRefs } from "./internal/utils.js";
 import { Node, CollectionStateBase } from "@react-types/shared";
 import { useCollection } from "@react-stately/collections";
+import { getItems, getNavList, getNextButton, getPrevButton } from "./utils.js";
 
 interface ScrollOpts {
   /**
@@ -60,8 +59,6 @@ export interface CarouselProps<T extends object>
    * @default 'page'
    */
   scrollBy?: "page" | "item";
-  /** Handler called when the scroll position changes */
-  onScrollPositionChange?: (pos: "start" | "middle" | "end") => void;
   /** @default false */
   enableLoopPagination?: boolean;
   text?: {
@@ -117,8 +114,6 @@ export interface CarouselResult {
    * Will not scroll if the page is already in view.
    */
   readonly scrollIntoView: (pageIndex: number, opts?: ScrollOpts) => void;
-  /** A coarse representation of the scroll position */
-  readonly scrollPosition: "start" | "end" | "middle";
   /** Horizontal or vertical carousel */
   readonly orientation: "vertical" | "horizontal";
   /** Function that returns props for a Carousel's navigation item */
@@ -156,7 +151,7 @@ const defaultProps: Partial<CarouselProps<object>> = {
       return `Item ${currentItem} of ${itemCount}`;
     },
     multiItemAnnouncement({ currentItem, itemCount, itemsPerPage }) {
-      return `Items ${currentItem} through ${currentItem + itemsPerPage} of ${itemCount}`;
+      return `Items ${currentItem} through ${itemsPerPage} of ${itemCount}`;
     },
     itemAriaLabel({ itemCount, currentItem }) {
       return `${currentItem} of ${itemCount}`;
@@ -179,7 +174,6 @@ export const useCarousel = <T extends object>(
     spaceBetweenItems,
     orientation,
     scrollBy,
-    onScrollPositionChange,
     onActivePageIndexChange,
     enableLoopPagination,
     children,
@@ -195,7 +189,6 @@ export const useCarousel = <T extends object>(
     },
   };
 
-  const uniqueId = useId();
   const prefersReducedMotion = useReducedMotion();
 
   const scrollBehavior = prefersReducedMotion ? "auto" : "smooth";
@@ -209,7 +202,7 @@ export const useCarousel = <T extends object>(
   const scrollPos = orientation === "horizontal" ? "scrollLeft" : "scrollTop";
 
   let factory = useCallback(
-    (nodes) => new ListCollection(nodes as Iterable<Node<T>>),
+    (nodes: Iterable<Node<T>>) => new ListCollection(nodes),
     [],
   );
   const collection = useCollection(
@@ -228,12 +221,6 @@ export const useCarousel = <T extends object>(
     activePageIndex: 0,
   });
 
-  const [scrollPosition, setScrollPosition] = useState<
-    "start" | "middle" | "end"
-  >("start");
-
-  // const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null);
-
   const { pages, activePageIndex } = state;
 
   // Because we're announcing the change on scroll, we need to dedupe the message
@@ -247,6 +234,7 @@ export const useCarousel = <T extends object>(
 
   const setCarouselState = useCallback(
     (args: { pages: number[][]; activePageIndex: number }) => {
+      console.log("update state");
       if (
         lastAnnounced.current.index !== args.activePageIndex ||
         lastAnnounced.current.length !== args.pages.length
@@ -316,12 +304,11 @@ export const useCarousel = <T extends object>(
         }
       }
 
-      const items = Array.from(scrollEl.children);
+      const items = getItems(scrollEl);
       const scrollPort = scrollEl.getBoundingClientRect();
       const offsets = newPages.map((page) => {
         const leadIndex = page[0];
         const leadEl = items[leadIndex];
-        assert(leadEl instanceof HTMLElement, "Expected HTMLElement");
         const scrollSpacing = getEffectiveScrollSpacing(
           scrollEl,
           leadEl,
@@ -341,12 +328,8 @@ export const useCarousel = <T extends object>(
 
       // before we possibly disable a button
       // shift the focus to the other button
-      let prevBtn = scrollEl.querySelector("[data-prev-button]") as
-        | HTMLButtonElement
-        | undefined;
-      let nextBtn = scrollEl.querySelector("[data-next-button]") as
-        | HTMLButtonElement
-        | undefined;
+      let prevBtn = getPrevButton(scrollEl);
+      let nextBtn = getNextButton(scrollEl);
       if (
         !enableLoopPagination &&
         nextActivePageIndex === 0 &&
@@ -407,43 +390,6 @@ export const useCarousel = <T extends object>(
 
   useResizeObserver(ref.current, refresh);
 
-  useEffect(() => {
-    const scrollEl = ref.current;
-    if (!scrollEl) return;
-
-    function handler(e: Event) {
-      refreshActivePage(pages);
-
-      if (!e.target) return;
-
-      if (e.target[scrollPos] === 0) {
-        setScrollPosition("start");
-        onScrollPositionChange?.("start");
-      } else if (
-        e.target[scrollPos] + e.target[clientDimension] ===
-        e.target[scrollDimension]
-      ) {
-        setScrollPosition("end");
-        onScrollPositionChange?.("end");
-      } else {
-        setScrollPosition("middle");
-        onScrollPositionChange?.("middle");
-      }
-    }
-    scrollEl.addEventListener("scroll", handler, { passive: true });
-    return () => {
-      scrollEl.removeEventListener("scroll", handler);
-    };
-  }, [
-    clientDimension,
-    onScrollPositionChange,
-    pages,
-    ref,
-    refreshActivePage,
-    scrollDimension,
-    scrollPos,
-  ]);
-
   /**
    * Wrapper around the Element.scrollTo method to fallback to a
    * polyfilled smooth-scroll if the browser doesn't support smooth scrollTo
@@ -476,10 +422,9 @@ export const useCarousel = <T extends object>(
       const page = pages[index];
       if (!page) return;
 
-      const items = Array.from(scrollEl.children);
-      const leadIndex: number | undefined = page[0];
+      const items = getItems(scrollEl);
+      const leadIndex = page[0];
       const leadEl = items[leadIndex];
-      if (!(leadEl instanceof HTMLElement)) return;
 
       const scrollSpacing = getEffectiveScrollSpacing(
         scrollEl,
@@ -496,47 +441,7 @@ export const useCarousel = <T extends object>(
     [nearSidePos, pages, ref, scroll],
   );
 
-  const scrollIntoView = useCallback(
-    (index: number, opts: ScrollOpts = {}) => {
-      const scrollEl = ref.current;
-      if (!scrollEl) return;
-
-      const page = pages[index];
-      if (!page) return;
-
-      const items = Array.from(scrollEl.children);
-      const leadIndex: number | undefined = page[0];
-      const leadEl = items[leadIndex];
-      if (!(leadEl instanceof HTMLElement)) return;
-
-      const startScrollSpacing = getEffectiveScrollSpacing(
-        scrollEl,
-        leadEl,
-        nearSidePos,
-      );
-      const rect = getOffsetRect(leadEl, leadEl.parentElement);
-      const itemStartEdge = rect[nearSidePos] - startScrollSpacing;
-      // TODO: not appropriately accounting for end scroll spacing here
-      const itemEndEdge = rect[farSidePos];
-
-      const currentScrollPosStart = scrollEl[scrollPos];
-      const currentScrollPosEnd =
-        currentScrollPosStart + scrollEl[clientDimension];
-
-      if (
-        // If item is in view, don't scroll
-        itemStartEdge >= currentScrollPosStart &&
-        itemEndEdge <= currentScrollPosEnd
-      ) {
-        return;
-      }
-
-      scroll(itemStartEdge, opts);
-    },
-    [clientDimension, farSidePos, nearSidePos, pages, ref, scroll, scrollPos],
-  );
-
-  const scrollToPreviousPage: CarouselPaginate = (opts) => {
+  const scrollBackward: CarouselPaginate = (opts) => {
     const next = activePageIndex - 1;
     if ((opts?.loop ?? enableLoopPagination) && next < 0) {
       scrollTo(pages.length - 1);
@@ -546,7 +451,7 @@ export const useCarousel = <T extends object>(
     return next;
   };
 
-  const scrollToNextPage: CarouselPaginate = (opts) => {
+  const scrollForward: CarouselPaginate = (opts) => {
     const next = activePageIndex + 1;
     if ((opts?.loop ?? enableLoopPagination) && next > pages.length - 1) {
       scrollTo(0);
@@ -560,47 +465,31 @@ export const useCarousel = <T extends object>(
     function forward() {
       e.preventDefault();
       const scrollEl = ref.current;
-      const nav = scrollEl.querySelector('[role="tablist"]');
-      const nextIndex = scrollToNextPage();
+      const nav = getNavList(scrollEl);
+      const nextIndex = scrollForward();
       if (nav?.contains(e.target as never)) {
-        const items = Array.from(
-          scrollEl.querySelectorAll("[data-carousel-item]"),
-        );
-        const nextItem = items[nextIndex] as HTMLElement | undefined;
+        const items = getItems(scrollEl);
+        const nextItem = items[nextIndex];
         nextItem?.focus();
       } else if (!props.enableLoopPagination && nextIndex >= pages.length - 1) {
-        let btn = scrollEl.querySelector("[data-prev-button]") as
-          | HTMLButtonElement
-          | undefined;
-        btn?.focus();
+        getNextButton(scrollEl)?.focus();
       } else {
-        let btn = scrollEl.querySelector("[data-next-button]") as
-          | HTMLButtonElement
-          | undefined;
-        btn?.focus();
+        getPrevButton(scrollEl)?.focus();
       }
     }
     function backward() {
       e.preventDefault();
       const scrollEl = ref.current;
-      const nav = scrollEl.querySelector('[role="tablist"]');
-      const nextIndex = scrollToPreviousPage();
+      const nav = getNavList(scrollEl);
+      const nextIndex = scrollBackward();
       if (nav?.contains(e.target as never)) {
-        const items = Array.from(
-          scrollEl.querySelectorAll("[data-carousel-item]"),
-        );
+        const items = getItems(scrollEl);
         const nextItem = items[nextIndex] as HTMLElement | undefined;
         nextItem?.focus();
       } else if (!enableLoopPagination && nextIndex <= 0) {
-        let btn = scrollEl.querySelector("[data-prev-button]") as
-          | HTMLButtonElement
-          | undefined;
-        btn?.focus();
+        getPrevButton(scrollEl)?.focus();
       } else {
-        let btn = scrollEl.querySelector("[data-next-button]") as
-          | HTMLButtonElement
-          | undefined;
-        btn?.focus();
+        getNextButton(scrollEl)?.focus();
       }
     }
 
@@ -640,22 +529,20 @@ export const useCarousel = <T extends object>(
   }, [pages, scrollBy]);
 
   return {
-    scrollIntoView,
-    scrollToPreviousPage,
-    scrollToNextPage,
+    scrollBackward,
+    scrollForward,
     scrollTo,
     refresh,
     activePageIndex,
     pages,
-    scrollPosition,
-    id: uniqueId,
-    carouselProps: {
+    id: useId(),
+    rootProps: {
       onKeyDown: handleRootKeyDown,
     },
-    navProps: {
-      role: "tablist",
-    },
     carouselScrollerProps: {
+      onScroll() {
+        refreshActivePage(pages);
+      },
       "data-orientation": orientation,
       style: {
         [orientation === "horizontal" ? "gridAutoColumns" : "gridAutoRows"]:
@@ -664,12 +551,12 @@ export const useCarousel = <T extends object>(
     },
     prevButtonProps: {
       "data-prev-button": true,
-      onClick: () => scrollToPreviousPage(),
+      onClick: () => scrollBackward(),
       disabled: enableLoopPagination ? false : activePageIndex <= 0,
     },
     nextButtonProps: {
       "data-next-button": true,
-      onClick: () => scrollToNextPage(),
+      onClick: () => scrollForward(),
       disabled: enableLoopPagination
         ? false
         : activePageIndex >= pages.length - 1,

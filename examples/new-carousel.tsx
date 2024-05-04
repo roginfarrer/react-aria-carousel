@@ -4,15 +4,11 @@ import {
   UseCarouselItemProps,
   useCarouselItem,
 } from "../src/useCarouselItem.js";
-// import {
-//   CarouselProps,
-//   CarouselState,
-//   useCarouselState,
-// } from "../src/useCarouselStateFoo.js";
 import "./styles.css";
-import { CollectionBase, CollectionStateBase, Node } from "@react-types/shared";
 import { Item } from "@react-stately/collections";
 import "./styles.css";
+import { Node } from "@react-types/shared";
+import { useCarouselNavItem } from "../src/useCarouselNavItem.js";
 
 const SlideContent = ({ content }: { content: number | string }) => {
   const color = useMemo(
@@ -41,7 +37,7 @@ const Carousel = <T extends object>(props: CarouselProps<T>) => {
   const carousel = useCarousel(props, ref);
 
   return (
-    <div {...carousel.carouselProps} style={{ maxHeight: 500 }}>
+    <div {...carousel.rootProps} style={{ maxHeight: 500 }}>
       <button {...carousel.prevButtonProps}>Previous</button>
       <div
         {...carousel.carouselScrollerProps}
@@ -57,12 +53,19 @@ const Carousel = <T extends object>(props: CarouselProps<T>) => {
           />
         ))}
       </div>
+      <nav>
+        {carousel.pages.map((_, i) => (
+          <CarouselNavItem index={i} state={carousel} />
+        ))}
+      </nav>
       <button {...carousel.nextButtonProps}>Next</button>
     </div>
   );
 };
 
-function CarouselItem<T extends object>(props: UseCarouselItemProps<T>) {
+function CarouselItem<T extends object>(
+  props: UseCarouselItemProps & { item: Node<T> },
+) {
   const { item } = props;
   const stuff = useCarouselItem(props);
 
@@ -70,6 +73,19 @@ function CarouselItem<T extends object>(props: UseCarouselItemProps<T>) {
     <div {...stuff.carouselItemProps} className="item">
       {item.rendered}
     </div>
+  );
+}
+
+function CarouselNavItem({ index, state }) {
+  const { navItemProps, isSelected } = useCarouselNavItem({ index }, state);
+  return (
+    <button
+      type="button"
+      {...navItemProps}
+      style={{ transform: isSelected ? "scale(1.1)" : "" }}
+    >
+      {index}
+    </button>
   );
 }
 

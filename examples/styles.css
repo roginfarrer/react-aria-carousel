@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .scrollContainer {
   display: grid;
   max-height: inherit;
@@ -38,4 +44,18 @@
 
 .item {
   overflow: hidden;
+}
+
+.flexContainer {
+  display: flex;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: x mandatory;
+}
+
+.flexItem {
+  width: 300px;
+  height: 300px;
+  max-width: 100%;
+  flex-shrink: 0;
 }

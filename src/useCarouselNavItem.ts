@@ -1,6 +1,8 @@
 import { flatten } from "./internal/utils.js";
-import { UseCarouselResult } from "./useCarouselState.js";
+import { useCarousel } from "./useCarouselFoo.js";
+import { genItemId } from "./utils.js";
 
+type UseCarouselResult = ReturnType<typeof useCarousel>;
 interface UseCarouselNavItemProps {
   index: number;
   isSelected?: boolean;
@@ -8,14 +10,13 @@ interface UseCarouselNavItemProps {
 
 export function useCarouselNavItem(
   props: UseCarouselNavItemProps,
-  state: UseCarouselResult & { id: string },
+  state: UseCarouselResult,
 ) {
-  const itemId = `carousel-${props.index + 1}-${state.id}`;
+  const itemId = genItemId(state.id, props.index);
   const isSelected = props.isSelected ?? state.activePageIndex === props.index;
 
   return {
     navItemProps: {
-      type: "button",
       role: "tab",
       "aria-controls": itemId,
       "aria-labelledby": itemId,
@@ -23,7 +24,7 @@ export function useCarouselNavItem(
       "aria-setsize": flatten(state.pages).length,
       "aria-selected": isSelected,
       tabIndex: isSelected ? 0 : -1,
-      onClick: () => state.scrollIntoView(props.index),
+      onClick: () => state.scrollTo(props.index),
     },
     isSelected,
   };

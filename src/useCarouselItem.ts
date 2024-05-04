@@ -1,22 +1,20 @@
 import { flatten } from "./internal/utils.js";
-import { CarouselState } from "./useCarouselStateFoo.js";
 import { useCarousel } from "./useCarouselFoo.js";
-import { Node } from "@react-types/shared";
+import { genItemId } from "./utils.js";
 
 type CarouselProps = ReturnType<typeof useCarousel>;
 
-export interface UseCarouselItemProps<T extends object> extends CarouselProps {
-  item: Node<T>;
+export interface UseCarouselItemProps extends CarouselProps {
   index: number;
+  id: string;
   itemAriaLabel?: (opts: { currentItem: number; itemCount: number }) => string;
   itemAriaRoleDescription?: string;
 }
 
-export function useCarouselItem<T extends object>(
-  props: UseCarouselItemProps<T>,
-) {
+export function useCarouselItem(props: UseCarouselItemProps) {
   const {
     index,
+    id,
     itemAriaLabel = ({ currentItem, itemCount }) =>
       `Item ${currentItem} of ${itemCount}`,
     itemAriaRoleDescription = "description",
@@ -27,6 +25,7 @@ export function useCarouselItem<T extends object>(
 
   return {
     carouselItemProps: {
+      id: genItemId(id, index),
       "data-carousel-item": index,
       inert: pages[activePageIndex]?.includes(index) ? undefined : "true",
       role: "group" as const,
