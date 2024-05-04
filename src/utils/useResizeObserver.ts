@@ -44,9 +44,11 @@ export function useResizeObserver(
   );
 
   useEffect(() => {
-    observer.observe(target, callback);
-    return () => {
-      observer.unobserve(target);
-    };
-  }, [target, callback]);
+    if (target) {
+      observer.observe(target, callback);
+      return () => {
+        observer.unobserve(target);
+      };
+    }
+  }, [target, callback, observer]);
 }

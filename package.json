@@ -15,6 +15,7 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "parcel": "^2.12.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.4.0",
@@ -23,7 +24,11 @@
   },
   "dependencies": {
     "@mantine/hooks": "^7.7.1",
+    "@react-aria/focus": "^3.17.0",
     "@react-aria/live-announcer": "^3.3.2",
+    "@react-stately/collections": "^3.10.6",
+    "@react-stately/list": "^3.10.4",
+    "@react-types/shared": "^3.23.0",
     "usehooks-ts": "^3.0.2"
   }
 }
