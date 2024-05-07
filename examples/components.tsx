@@ -1,15 +1,16 @@
-import { css } from "../styled-system/css";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+
 import {
+  CarouselAria,
+  CarouselItemProps,
+  CarouselProps,
   useCarousel,
   useCarouselItem,
   useCarouselNavItem,
-  CarouselProps,
-  CarouselItemProps,
   UseCarouselNavItemProps,
-  CarouselAria,
-} from "../src/useCarouselBar";
+} from "../src";
+import { css } from "../styled-system/css";
 import { flex } from "../styled-system/patterns";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 export const Carousel = <T extends object>(props: CarouselProps<T>) => {
   const [assignRef, carousel] = useCarousel(props);

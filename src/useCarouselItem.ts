@@ -1,42 +1,41 @@
-import { flatten } from "./internal/utils.js";
-import { useCarousel } from "./useCarouselFoo.js";
-import { genItemId } from "./utils.js";
+import { Node } from "@react-types/shared";
 
-type CarouselProps = ReturnType<typeof useCarousel>;
+import { Attributes } from "./types";
+import { CarouselAria } from "./useCarousel";
 
-export interface UseCarouselItemProps extends CarouselProps {
-  index: number;
-  id: string;
-  itemAriaLabel?: (opts: { currentItem: number; itemCount: number }) => string;
-  itemAriaRoleDescription?: string;
+export interface CarouselItemProps<T extends object> {
+  item: Node<T>;
 }
 
-export function useCarouselItem(props: UseCarouselItemProps) {
-  const {
-    index,
-    id,
-    itemAriaLabel = ({ currentItem, itemCount }) =>
-      `Item ${currentItem} of ${itemCount}`,
-    itemAriaRoleDescription = "description",
-    pages,
-    activePageIndex,
-    snapPointIndexes,
-  } = props;
+export interface CarouselItem {
+  itemProps: Attributes<"div">;
+}
+
+export function useCarouselItem<T extends object>(
+  props: CarouselItemProps<T>,
+  state: CarouselAria<T>,
+): CarouselItem {
+  const { item } = props;
+  const { pages, activePageIndex, scrollBy, itemsPerPage } = state;
+  const actualItemsPerPage = Math.floor(itemsPerPage);
+
+  const shouldSnap =
+    scrollBy === "item" ||
+    (item.index! + actualItemsPerPage) % actualItemsPerPage === 0;
 
   return {
-    carouselItemProps: {
-      id: genItemId(id, index),
-      "data-carousel-item": index,
-      inert: pages[activePageIndex]?.includes(index) ? undefined : "true",
-      role: "group" as const,
-      "aria-label": itemAriaLabel({
-        currentItem: (index ?? 0) + 1,
-        itemCount: flatten(pages).length ?? 1,
-      }),
-      "aria-roledescription": itemAriaRoleDescription,
-      style: {
-        scrollSnapAlign: snapPointIndexes.has(index) ? "start" : undefined,
-      },
+    itemProps: {
+      "data-carousel-item": item.index,
+      inert: pages[activePageIndex]?.includes(item.index!) ? undefined : "true",
+      "aria-hidden": pages[activePageIndex]?.includes(item.index!)
+        ? undefined
+        : true,
+      role: "group",
+      // @TODO: should be configurable
+      "aria-label": `Item ${item.index! + 1} of ${state.collection.size}`,
+      // style: {
+      //   scrollSnapAlign: shouldSnap ? "start" : undefined,
+      // },
     },
   };
 }

@@ -1,30 +1,33 @@
-import { flatten } from "./internal/utils.js";
-import { useCarousel } from "./useCarouselFoo.js";
-import { genItemId } from "./utils.js";
+import { Attributes } from "./types";
+import { CarouselAria } from "./useCarousel";
 
-type UseCarouselResult = ReturnType<typeof useCarousel>;
-interface UseCarouselNavItemProps {
+export interface UseCarouselNavItemProps {
   index: number;
   isSelected?: boolean;
 }
 
-export function useCarouselNavItem(
-  props: UseCarouselNavItemProps,
-  state: UseCarouselResult,
-) {
-  const itemId = genItemId(state.id, props.index);
-  const isSelected = props.isSelected ?? state.activePageIndex === props.index;
+export interface CarouselNavItem {
+  navItemProps: Attributes<"button">;
+  isSelected: boolean;
+}
 
+export function useCarouselNavItem<T extends object>(
+  props: UseCarouselNavItemProps,
+  state: CarouselAria<T>,
+): CarouselNavItem {
+  // const itemId = genItemId(state.id, props.index);
+  const isSelected = props.isSelected ?? state.activePageIndex === props.index;
+  let current = props.index + 1,
+    setSize = state.pages.length;
   return {
     navItemProps: {
       role: "tab",
-      "aria-controls": itemId,
-      "aria-labelledby": itemId,
-      "aria-posinset": props.index + 1,
-      "aria-setsize": flatten(state.pages).length,
+      "aria-label": `Go to item ${current} of ${setSize}`,
+      "aria-posinset": current,
+      "aria-setsize": setSize,
       "aria-selected": isSelected,
       tabIndex: isSelected ? 0 : -1,
-      onClick: () => state.scrollTo(props.index),
+      onClick: () => state.scrollToPage(props.index),
     },
     isSelected,
   };
