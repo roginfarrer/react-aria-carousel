@@ -1,7 +1,10 @@
+import { useCallback, useLayoutEffect, useRef } from "react";
 import {
   getEffectiveScrollSpacing,
   getOffsetRect,
 } from "./internal/dimensions.js";
+import { useSafeLayoutEffect } from "./utils/useSafeLayoutEffect.js";
+import { useCallbackRef } from "./utils/useCallbackRef.js";
 
 export function getNextButton(host: HTMLElement) {
   return host.querySelector("[data-next-button]") as HTMLElement | undefined;
@@ -16,6 +19,16 @@ export function getItems(host: HTMLElement) {
 }
 export function getNavList(host: HTMLElement) {
   return host.querySelector("[data-carousel-nav]") as HTMLElement | undefined;
+}
+export function getNavItems(host: HTMLElement) {
+  return host.querySelectorAll(
+    "[data-carousel-nav-item]",
+  ) as NodeListOf<HTMLElement>;
+}
+export function getNavItem(host: HTMLElement, index: number) {
+  return host.querySelector(
+    `[data-carousel-nav-item="${index}"]`,
+  ) as HTMLElement;
 }
 
 export function genItemId(id: string, idx: number) {
@@ -106,4 +119,25 @@ export function calculateActivePage({
   });
   const minOffset = Math.min(...offsets);
   const nextActivePageIndex = offsets.indexOf(minOffset);
+}
+
+export function useIntersectionObserver(
+  handleObservations: IntersectionObserverCallback,
+  opts: IntersectionObserverInit,
+) {
+  const cb = useCallbackRef(handleObservations);
+  const { root, threshold } = opts;
+
+  const observer = useRef<IntersectionObserver>(
+    new IntersectionObserver(cb, { root, threshold }),
+  );
+
+  useSafeLayoutEffect(() => {
+    observer.current = new IntersectionObserver(cb, { root, threshold });
+    return () => {
+      observer.current.disconnect();
+    };
+  }, [root, threshold]);
+
+  return observer.current;
 }

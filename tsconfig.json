@@ -2,7 +2,16 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "NodeNext",
-    "jsx": "react-jsx"
+    "moduleResolution": "Bundler",
+    "isolatedModules": true,
+    "lib": ["dom", "ESNext"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "resolveJsonModule": true,
+    "customConditions": ["source"],
+    "allowJs": true,
+    "esModuleInterop": true
   }
 }

@@ -6,6 +6,7 @@ import {
   useId,
   useMemo,
   RefObject,
+  useEffect,
 } from "react";
 import { ListCollection } from "@react-stately/list";
 
@@ -232,9 +233,64 @@ export const useCarousel = <T extends object>(
 
   const onPageChange = useCallbackRef(onActivePageIndexChange);
 
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const sync = useCallback(() => {
+    const io = new IntersectionObserver(
+      (entries) => {
+        io.disconnect();
+        const firstIntersecting = entries.find((entry) => entry.isIntersecting);
+
+        if (firstIntersecting) {
+          // if (
+          //   this.loop &&
+          //   firstIntersecting.target.hasAttribute("data-clone")
+          // ) {
+          //   const clonePosition = Number(
+          //     firstIntersecting.target.getAttribute("data-clone"),
+          //   );
+          //   // Scrolls to the original slide without animating, so the user won't notice that the position has changed
+          //   this.goToSlide(clonePosition, "instant");
+          // } else {
+          const slides = getItems(ref.current);
+          // Update the current index based on the first visible slide
+          const slideIndex = slides.indexOf(
+            firstIntersecting.target as HTMLElement,
+          );
+          // Set the index to the first "snappable" slide
+          const activeSlide =
+            Math.ceil(slideIndex / visibleItems) * visibleItems;
+          setActiveSlide(activeSlide);
+        }
+      },
+      {
+        root: ref.current,
+        threshold: 0.6,
+      },
+    );
+
+    getItems(ref.current).forEach((item) => {
+      io.observe(item);
+    });
+
+    return () => {
+      io.disconnect();
+    };
+  }, [ref, visibleItems]);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+
+    el.addEventListener("scrollend", sync);
+
+    return () => {
+      el.removeEventListener("scrollend", sync);
+    };
+  }, [ref, sync]);
+
   const setCarouselState = useCallback(
     (args: { pages: number[][]; activePageIndex: number }) => {
-      console.log("update state");
       if (
         lastAnnounced.current.index !== args.activePageIndex ||
         lastAnnounced.current.length !== args.pages.length
