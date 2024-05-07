@@ -1,10 +1,14 @@
 import { Item } from "@react-stately/collections";
+
 import { Carousel } from "./components.js";
+
 import "./styles.css";
-import { css } from "../styled-system/css";
-import { token } from "../styled-system/tokens";
-import { flex } from "../styled-system/patterns";
+
 import { useState } from "react";
+
+import { css } from "../styled-system/css";
+import { flex } from "../styled-system/patterns";
+import { token } from "../styled-system/tokens";
 
 const colors = [
   "emerald",
@@ -65,7 +69,7 @@ export function App() {
         items={stateItems}
         spaceBetweenSlides="16px"
         itemsPerPage={3}
-        loop
+        loop="infinite"
       >
         {(item) => (
           <Item key={item.i}>
@@ -79,7 +83,12 @@ export function App() {
           </Item>
         )}
       </Carousel>
-      <Carousel items={items} spaceBetweenSlides="16px" itemsPerPage={3}>
+      <Carousel
+        items={items}
+        spaceBetweenSlides="16px"
+        itemsPerPage={3}
+        loop="native"
+      >
         {(item) => (
           <Item key={item.i}>
             <Slide
