@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { useCollection } from "@react-stately/collections";
-import { ListCollection } from "@react-stately/list";
 import { Collection, CollectionStateBase, Node } from "@react-types/shared";
 
 import { clamp } from "./utils";
+import { useCollection } from "./utils/useCollection";
 
 export interface CarouselStateProps<T extends object>
   extends CollectionStateBase<T> {
@@ -40,15 +39,11 @@ export function useCarouselState<T extends object>(
   const [pages, setPages] = useState<number[][]>([]);
   const scroller = ref;
 
-  let factory = useCallback(
-    (nodes: Iterable<Node<T>>) => new ListCollection(nodes),
-    [],
-  );
-  const collection = useCollection(
-    { collection: propCollection, children, items: collectionItems },
-    factory,
-    { suppressTextValueWarning: true },
-  );
+  const collection = useCollection({
+    collection: propCollection,
+    children,
+    items: collectionItems,
+  });
 
   const getSlides = useCallback(
     (
