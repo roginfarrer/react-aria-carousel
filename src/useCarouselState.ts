@@ -18,7 +18,6 @@ export interface CarouselState<T extends object> {
   collection: Collection<Node<T>>;
   activePageIndex: number;
   scrollBy: CarouselStateProps<T>["scrollBy"];
-  // items: HTMLElement[];
   pages: number[][];
   next: () => { page: number[]; pageIndex: number };
   prev: () => { page: number[]; pageIndex: number };
@@ -111,6 +110,7 @@ export function useCarouselState<T extends object>(
   const syncClones = useCallback(() => {
     const newPages = pages;
     if (!scroller || newPages.length === 0) return;
+
     getSlides({ includeClones: true }).forEach((item) => {
       if (item.hasAttribute("data-clone")) {
         item.remove();
@@ -144,17 +144,7 @@ export function useCarouselState<T extends object>(
     }
 
     updateSnaps();
-
-    // scrollToPage(activePageIndex, "instant");
-  }, [
-    // activePageIndex,
-    getSlides,
-    loop,
-    pages,
-    // scrollToPage,
-    scroller,
-    updateSnaps,
-  ]);
+  }, [getSlides, loop, pages, scroller, updateSnaps]);
 
   const calculatePages = useCallback(() => {
     const items = getSlides();
@@ -191,7 +181,8 @@ export function useCarouselState<T extends object>(
     // scrollToPage(activePageIndex, "instant");
   }, [syncClones]);
 
-  const foo = useCallback(
+  // @TODO: Rewrite this better
+  const scrollToPageIndex = useCallback(
     (index: number) => {
       const items = getSlides();
       const itemsWithClones = getSlides({ includeClones: true });
@@ -199,57 +190,53 @@ export function useCarouselState<T extends object>(
 
       if (!items.length) return;
 
+      let nextItem: HTMLElement, nextPageIndex: number, nextPage: number[];
+
       if (loop === "infinite") {
         // The index allowing to be inclusive of cloned pages
         let nextIndex = clamp(-1, index, pagesWithClones.length);
+
         if (nextIndex < 0) {
           // First item in the prepended cloned page
-          let item = itemsWithClones[0];
-          scrollToItem(item);
-          return;
-        }
-
-        if (nextIndex >= pages.length) {
+          nextItem = itemsWithClones[0];
+          nextPageIndex = pages.length - 1;
+          nextPage = pages[pages.length - 1];
+        } else if (nextIndex >= pages.length) {
           // First item in the appended cloned page
-          let item = itemsWithClones.at(-1 * itemsPerPage) as HTMLElement;
-          scrollToItem(item);
-          return;
+          nextItem = itemsWithClones.at(-1 * itemsPerPage) as HTMLElement;
+          nextPageIndex = 0;
+          nextPage = pages[0];
+        } else {
+          nextPageIndex = nextIndex;
+          nextPage = pages[nextIndex];
+          nextItem = items[nextPage.sort((a, b) => a - b)[0]];
         }
-
-        // Sorting because of some weird bug I can't figure out :(
-        let item = items[pages[nextIndex].sort((a, b) => a - b)[0]];
-        scrollToItem(item);
-        return;
-      }
-
-      if (loop === "native") {
-        let nextIndex =
+      } else if (loop === "native") {
+        nextPageIndex =
           index > pages.length - 1 ? 0 : index < 0 ? pages.length - 1 : index;
-        const page = pages[nextIndex];
-        let itemIndex = page[0];
-        let item = items[itemIndex];
-
-        scrollToItem(item);
-        return;
+        nextPage = pages[nextPageIndex];
+        let itemIndex = nextPage[0];
+        nextItem = items[itemIndex];
+      } else {
+        nextPageIndex = clamp(0, index, pages.length - 1);
+        nextPage = pages[nextPageIndex];
+        let itemIndex = nextPage[0];
+        nextItem = items[itemIndex];
       }
 
-      let nextIndex = clamp(0, index, pages.length - 1);
-      const page = pages[nextIndex];
-      let itemIndex = page[0];
-      let item = items[itemIndex];
-
-      scrollToItem(item);
+      scrollToItem(nextItem);
+      return { page: nextPage, pageIndex: nextPageIndex };
     },
     [getSlides, itemsPerPage, loop, pages, scrollToItem],
   );
 
   const next = useCallback(() => {
-    foo(activePageIndex + 1);
-  }, [activePageIndex, foo]);
+    return scrollToPageIndex(activePageIndex + 1);
+  }, [activePageIndex, scrollToPageIndex]);
 
   const prev = useCallback(() => {
-    foo(activePageIndex - 1);
-  }, [activePageIndex, foo]);
+    return scrollToPageIndex(activePageIndex - 1);
+  }, [activePageIndex, scrollToPageIndex]);
 
   useEffect(() => {
     if (!scroller) return;

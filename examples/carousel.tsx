@@ -1,64 +1,118 @@
-import { useMemo } from "react";
-import { useCarousel } from "../src/useCarousel.js";
-import "./styles.css";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
-const SlideContent = ({ content }: { content: number | string }) => {
-  const color = useMemo(
-    () => `hsla(${Math.floor(Math.random() * 360)}, 100%, 70%, 1)`,
-    [],
-  );
+import {
+  CarouselAria,
+  CarouselItemProps,
+  CarouselProps,
+  useCarousel,
+  useCarouselItem,
+  useCarouselNavItem,
+  UseCarouselNavItemProps,
+} from "../src";
+import { css } from "../styled-system/css";
+import { flex } from "../styled-system/patterns";
+
+export const Carousel = <T extends object>(props: CarouselProps<T>) => {
+  const [assignRef, carousel] = useCarousel(props);
+
   return (
     <div
-      style={{
-        width: "100%",
-        height: "500px",
-        backgroundColor: color,
-        display: "flex",
-        justifyContent: "center",
+      {...carousel.rootProps}
+      // className="max-h-[500px] grid grid-cols-[min-content_1fr_min-content] grid-rows-[1fr_min-content] items-center"
+      // style={{ gridTemplateAreas: "'. scroll .' '. nav .'" }}
+      className={css({
+        maxHeight: 500,
+        display: "grid",
+        gridTemplateAreas: "'. scroll .' '. nav .'",
+        gridAutoColumns: "min-content 1fr min-content",
+        gridAutoRows: "1fr min-content",
         alignItems: "center",
-        fontSize: 50,
-      }}
+      })}
     >
-      {content}
+      <div
+        {...carousel.scrollerProps}
+        className="scrollContainer"
+        ref={assignRef}
+        style={{ ...carousel.scrollerProps?.style, gridArea: "scroll" }}
+      >
+        {[...carousel.collection].map((item) => (
+          <CarouselItem state={carousel} item={item} key={item.key} />
+        ))}
+      </div>
+      <button
+        {...carousel.prevButtonProps}
+        aria-label="Previous"
+        className={css({
+          px: "4",
+          display: "flex",
+        })}
+      >
+        <FaChevronLeft />
+      </button>
+      <button
+        {...carousel.nextButtonProps}
+        aria-label="Next"
+        className={css({
+          px: "4",
+          display: "flex",
+          transition: "transform ease .2s",
+          _hover: {
+            transform: "translateX(5%) scale(1.05)",
+          },
+        })}
+      >
+        <FaChevronRight />
+      </button>
+      <div
+        {...carousel.navProps}
+        className={flex({
+          display: "flex",
+          justify: "center",
+          alignItems: "start",
+          gap: "4",
+          mt: "6",
+          gridArea: "nav",
+        })}
+      >
+        {carousel.pages.map((_, i) => (
+          <CarouselNavItem key={i} index={i} state={carousel} />
+        ))}
+      </div>
     </div>
   );
 };
 
-export interface ItemProps {
-  /**
-   * The items of the carousel, by index, that the carousel should snap to.
-   * Changes based on the number of slides in view.
-   */
-  readonly snapPointIndexes: Set<number>;
-  /**
-   * If 'item', the carousel will snap to each individual item when scrolling.
-   * If 'page', the carousel will snap to each page when scrolling.
-   */
-  snapAnchor?: "item" | "page";
-}
-
-// function Item({ snapPointIndexes, snapAnchor, ...props }: ItemProps) {
-//   return <div {...} />;
-// }
-
-const slides = [...Array(10)].map((_, i) => ({ id: `${i}` }));
-
-export function Carousel({
-  orientation,
-}: {
-  orientation?: "horizontal" | "vertical";
-}) {
-  const carousel = useCarousel({ orientation });
+export function CarouselItem<T extends object>(
+  props: CarouselItemProps<T> & { state: CarouselAria<T> },
+) {
+  const { item, state } = props;
+  const stuff = useCarouselItem(props, state);
 
   return (
-    <div onKeyDown={carousel.handleRootElKeydown} style={{ maxHeight: 500 }}>
-      <div className="scrollContainer" {...carousel.getScrollerProps()}>
-        {slides.map(({ id }, index) => (
-          <div key={id} {...carousel.getItemProps({ index })} className="item">
-            <SlideContent content={id} />
-          </div>
-        ))}
-      </div>
+    <div {...stuff.itemProps} className="item">
+      {item.rendered}
     </div>
+  );
+}
+
+export function CarouselNavItem<T extends object>(
+  props: UseCarouselNavItemProps & { state: CarouselAria<T> },
+) {
+  const { index, state } = props;
+  const { navItemProps, isSelected } = useCarouselNavItem({ index }, state);
+  return (
+    <button
+      type="button"
+      {...navItemProps}
+      className={css({
+        rounded: "full",
+        size: "4",
+        backgroundColor: isSelected ? "gray.700" : "gray.300",
+        transition: "background-color .2s ease",
+        "&:hover": {
+          bg: "gray.500",
+        },
+      })}
+    />
   );
 }
