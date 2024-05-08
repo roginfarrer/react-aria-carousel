@@ -1,3 +1,4 @@
+export function noop() {}
 export function getNextButton(host: HTMLElement) {
   return host.querySelector("[data-next-button]") as HTMLElement | undefined;
 }

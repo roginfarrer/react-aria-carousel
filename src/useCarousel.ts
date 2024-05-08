@@ -14,8 +14,15 @@ import {
   CarouselStateProps,
   useCarouselState,
 } from "./useCarouselState";
-import { getNavItem, getNavList, getNextButton, getPrevButton } from "./utils";
+import {
+  getNavItem,
+  getNavList,
+  getNextButton,
+  getPrevButton,
+  noop,
+} from "./utils";
 import { useAriaBusyScroll } from "./utils/useAriaBusyScroll";
+import { useMouseDrag } from "./utils/useMouseDrag";
 
 type Attributes<T extends ElementType> = ComponentPropsWithoutRef<T> &
   Partial<Record<`data-${string}`, string | number | boolean>> & {
@@ -26,6 +33,7 @@ export interface CarouselProps<T extends object> extends CarouselStateProps<T> {
   spaceBetweenSlides?: string;
   id?: string;
   scrollPadding?: string;
+  mouseDragging?: boolean;
 }
 
 export interface CarouselAria<T extends object> extends CarouselState<T> {
@@ -46,6 +54,7 @@ export function useCarousel<T extends object>(
     spaceBetweenSlides = "0px",
     id,
     scrollPadding,
+    mouseDragging = false,
   } = props;
   const [host, setHost] = useState<HTMLElement | null>(null);
   const state = useCarouselState(props, host);
@@ -115,6 +124,9 @@ export function useCarousel<T extends object>(
   );
 
   useAriaBusyScroll(host);
+  const {
+    scrollerProps: { onMouseDown },
+  } = useMouseDrag(host);
 
   return [
     setHost,
@@ -143,11 +155,11 @@ export function useCarousel<T extends object>(
         disabled: loop ? false : activePageIndex >= pages.length - 1,
       },
       scrollerProps: {
+        onMouseDown: mouseDragging ? onMouseDown : noop,
         tabIndex: 0,
         "aria-atomic": true,
         "aria-busy": false,
         id: scrollerId,
-        "data-orientation": orientation,
         style: {
           [orientation === "horizontal" ? "gridAutoColumns" : "gridAutoRows"]:
             `calc(100% / ${itemsPerPage} - ${spaceBetweenSlides} * ${itemsPerPage - 1} / ${itemsPerPage})`,

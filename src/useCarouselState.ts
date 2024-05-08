@@ -32,7 +32,6 @@ export function useCarouselState<T extends object>(
     itemsPerPage = 1,
     scrollBy = "page",
     loop = false,
-    orientation = "horizontal",
     children,
     collection: propCollection,
     items: collectionItems,
@@ -107,45 +106,6 @@ export function useCarouselState<T extends object>(
     });
   }, [getSlides, itemsPerPage, scrollBy]);
 
-  const syncClones = useCallback(() => {
-    const newPages = pages;
-    if (!scroller || newPages.length === 0) return;
-
-    getSlides({ includeClones: true }).forEach((item) => {
-      if (item.hasAttribute("data-clone")) {
-        item.remove();
-      }
-    });
-
-    if (loop === "infinite") {
-      const items = getSlides();
-      const firstPage = newPages[0];
-      const lastPage = newPages[newPages.length - 1];
-
-      if (firstPage === lastPage) {
-        return;
-      }
-
-      lastPage.reverse().forEach((slide) => {
-        const clone = items[slide].cloneNode(true) as HTMLElement;
-        clone.setAttribute("data-clone", "true");
-        clone.setAttribute("inert", "true");
-        clone.setAttribute("aria-hidden", "true");
-        scroller.prepend(clone);
-      });
-
-      firstPage.forEach((slide) => {
-        const clone = items[slide].cloneNode(true) as HTMLElement;
-        clone.setAttribute("data-clone", "true");
-        clone.setAttribute("inert", "true");
-        clone.setAttribute("aria-hidden", "true");
-        scroller.append(clone);
-      });
-    }
-
-    updateSnaps();
-  }, [getSlides, loop, pages, scroller, updateSnaps]);
-
   const calculatePages = useCallback(() => {
     const items = getSlides();
     // We want to calculate the sets of pages based on the number
@@ -153,7 +113,7 @@ export function useCarouselState<T extends object>(
     // the 10% we're peeking shouldn't count as an item on the page.
     const actualItemsPerPage = Math.floor(itemsPerPage);
     let newPages = items.reduce<number[][]>((acc, _, i) => {
-      const currPage = acc[acc.length - 1];
+      const currPage = acc.at(-1);
       if (currPage && currPage.length < actualItemsPerPage) {
         currPage.push(i);
       } else {
@@ -175,18 +135,12 @@ export function useCarouselState<T extends object>(
     });
   }, [getSlides, itemsPerPage]);
 
-  useEffect(() => {
-    // By running after pages updated, we avoid changing the scroll position
-    syncClones();
-    // scrollToPage(activePageIndex, "instant");
-  }, [syncClones]);
-
   // @TODO: Rewrite this better
   const scrollToPageIndex = useCallback(
     (index: number) => {
       const items = getSlides();
       const itemsWithClones = getSlides({ includeClones: true });
-      const pagesWithClones = [pages[pages.length - 1], ...pages, pages[0]];
+      const pagesWithClones = [pages.at(-1), ...pages, pages[0]];
 
       if (!items.length) return;
 
@@ -200,7 +154,7 @@ export function useCarouselState<T extends object>(
           // First item in the prepended cloned page
           nextItem = itemsWithClones[0];
           nextPageIndex = pages.length - 1;
-          nextPage = pages[pages.length - 1];
+          nextPage = pages[nextPageIndex];
         } else if (nextIndex >= pages.length) {
           // First item in the appended cloned page
           nextItem = itemsWithClones.at(-1 * itemsPerPage) as HTMLElement;
@@ -209,7 +163,7 @@ export function useCarouselState<T extends object>(
         } else {
           nextPageIndex = nextIndex;
           nextPage = pages[nextIndex];
-          nextItem = items[nextPage.sort((a, b) => a - b)[0]];
+          nextItem = items[nextPage[0]];
         }
       } else if (loop === "native") {
         nextPageIndex =
@@ -237,6 +191,56 @@ export function useCarouselState<T extends object>(
   const prev = useCallback(() => {
     return scrollToPageIndex(activePageIndex - 1);
   }, [activePageIndex, scrollToPageIndex]);
+
+  useEffect(() => {
+    if (!scroller || pages.length === 0) return;
+
+    getSlides({ includeClones: true }).forEach((item) => {
+      if (item.hasAttribute("data-clone")) {
+        item.remove();
+      }
+    });
+
+    if (loop === "infinite") {
+      const items = getSlides();
+      const firstPage = pages[0];
+      // We're gonna modify this in a second, so make sure not to mutate state
+      const lastPage = [...pages.at(-1)!];
+
+      if (firstPage === lastPage) return;
+
+      lastPage.reverse().forEach((slide) => {
+        const clone = items[slide].cloneNode(true) as HTMLElement;
+        clone.setAttribute("data-clone", "true");
+        clone.setAttribute("inert", "true");
+        clone.setAttribute("aria-hidden", "true");
+        scroller.prepend(clone);
+      });
+
+      firstPage.forEach((slide) => {
+        const clone = items[slide].cloneNode(true) as HTMLElement;
+        clone.setAttribute("data-clone", "true");
+        clone.setAttribute("inert", "true");
+        clone.setAttribute("aria-hidden", "true");
+        scroller.append(clone);
+      });
+    }
+
+    updateSnaps();
+    scrollToPage(activePageIndex, "instant");
+    // Purposefully avoiding running this effect if the page index changes
+    // Otherwise we're just running this all the time.
+    // We just want to grab the latest activePageIndex when this runs otherwise
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    // activePageIndex,
+    getSlides,
+    loop,
+    pages,
+    scrollToPage,
+    scroller,
+    updateSnaps,
+  ]);
 
   useEffect(() => {
     if (!scroller) return;
@@ -326,7 +330,6 @@ export function useCarouselState<T extends object>(
     collection,
     activePageIndex,
     scrollBy,
-    // items,
     pages,
     next,
     prev,

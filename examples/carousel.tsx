@@ -31,6 +31,7 @@ export const Carousel = <T extends object>(props: CarouselProps<T>) => {
     >
       <div
         {...carousel.scrollerProps}
+        data-orientation={props.orientation ?? "horizontal"}
         className="scrollContainer"
         ref={assignRef}
         style={{ ...carousel.scrollerProps?.style, gridArea: "scroll" }}

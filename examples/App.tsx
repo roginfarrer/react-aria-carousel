@@ -70,6 +70,7 @@ export function App() {
         spaceBetweenSlides="16px"
         itemsPerPage={3}
         loop="infinite"
+        mouseDragging
       >
         {(item) => (
           <Item key={item.i}>
@@ -83,50 +84,50 @@ export function App() {
           </Item>
         )}
       </Carousel>
-      <Carousel
-        items={items}
-        spaceBetweenSlides="16px"
-        itemsPerPage={3}
-        loop="native"
-      >
-        {(item) => (
-          <Item key={item.i}>
-            <Slide
-              style={{
-                backgroundColor: token(`colors.${colors[item.i]}.200` as never),
-              }}
-            >
-              {item.i + 1}
-            </Slide>
-          </Item>
-        )}
-      </Carousel>
-      <Carousel items={items} spaceBetweenSlides="16px" scrollPadding="10%">
-        {(item) => (
-          <Item key={item.i}>
-            <Slide
-              style={{
-                backgroundColor: token(`colors.${colors[item.i]}.200` as never),
-              }}
-            >
-              {item.i + 1}
-            </Slide>
-          </Item>
-        )}
-      </Carousel>
-      <Carousel items={items} spaceBetweenSlides="16px" itemsPerPage={1.1}>
-        {(item) => (
-          <Item key={item.i}>
-            <Slide
-              style={{
-                backgroundColor: token(`colors.${colors[item.i]}.200` as never),
-              }}
-            >
-              {item.i + 1}
-            </Slide>
-          </Item>
-        )}
-      </Carousel>
+      {/* <Carousel */}
+      {/*   items={items} */}
+      {/*   spaceBetweenSlides="16px" */}
+      {/*   itemsPerPage={3} */}
+      {/*   loop="native" */}
+      {/* > */}
+      {/*   {(item) => ( */}
+      {/*     <Item key={item.i}> */}
+      {/*       <Slide */}
+      {/*         style={{ */}
+      {/*           backgroundColor: token(`colors.${colors[item.i]}.200` as never), */}
+      {/*         }} */}
+      {/*       > */}
+      {/*         {item.i + 1} */}
+      {/*       </Slide> */}
+      {/*     </Item> */}
+      {/*   )} */}
+      {/* </Carousel> */}
+      {/* <Carousel items={items} spaceBetweenSlides="16px" scrollPadding="10%"> */}
+      {/*   {(item) => ( */}
+      {/*     <Item key={item.i}> */}
+      {/*       <Slide */}
+      {/*         style={{ */}
+      {/*           backgroundColor: token(`colors.${colors[item.i]}.200` as never), */}
+      {/*         }} */}
+      {/*       > */}
+      {/*         {item.i + 1} */}
+      {/*       </Slide> */}
+      {/*     </Item> */}
+      {/*   )} */}
+      {/* </Carousel> */}
+      {/* <Carousel items={items} spaceBetweenSlides="16px" itemsPerPage={1.1}> */}
+      {/*   {(item) => ( */}
+      {/*     <Item key={item.i}> */}
+      {/*       <Slide */}
+      {/*         style={{ */}
+      {/*           backgroundColor: token(`colors.${colors[item.i]}.200` as never), */}
+      {/*         }} */}
+      {/*       > */}
+      {/*         {item.i + 1} */}
+      {/*       </Slide> */}
+      {/*     </Item> */}
+      {/*   )} */}
+      {/* </Carousel> */}
     </div>
   );
 }
