@@ -1,3 +1,14 @@
+import { ComponentPropsWithoutRef, ElementType } from "react";
+
+export * from "./useAriaBusyScroll";
+export * from "./useCollection";
+export * from "./useMouseDrag";
+
+export type Attributes<T extends ElementType> = ComponentPropsWithoutRef<T> &
+  Partial<Record<`data-${string}`, string | number | boolean>> & {
+    inert?: string;
+  };
+
 export function noop() {}
 export function getNextButton(host: HTMLElement) {
   return host.querySelector("[data-next-button]") as HTMLElement | undefined;

@@ -1,13 +1,15 @@
 import { Node } from "@react-types/shared";
 
-import { Attributes } from "./types";
 import { CarouselAria } from "./useCarousel";
+import { Attributes } from "./utils";
 
 export interface CarouselItemOptions<T extends object> {
+  /** An item in the collection of carousel items */
   item: Node<T>;
 }
 
 export interface CarouselItemAria {
+  /** Props for the item element */
   itemProps: Attributes<"div">;
 }
 

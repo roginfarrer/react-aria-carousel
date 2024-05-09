@@ -6,21 +6,52 @@ import { useCollection } from "./utils/useCollection";
 
 export interface CarouselStateProps<T extends object>
   extends CollectionStateBase<T> {
+  /**
+   * Number of items visible on a page. Can be an integer to
+   * show each item with equal dimensions, or a floating point
+   * number to "peek" subsequent items.
+   * @default 1
+   */
   itemsPerPage?: number;
+  /**
+   * Controls the pagination behavior at the beginning and end.
+   * "infinite" - will seamlessly loop to the other end of the carousel.
+   * "native" - will scroll to the other end of the carousel.
+   * false - will not advance beyond the first and last items.
+   * @default false
+   */
   loop?: "infinite" | "native" | false;
+  /**
+   * The carousel scroll direction.
+   * @default 'horizontal'
+   */
   orientation?: "vertical" | "horizontal";
+  /**
+   * Controls whether scrolling snaps and pagination progresses by item or page.
+   * @default 'page'
+   */
   scrollBy?: "page" | "item";
+  /**
+   * Define the organization of pages on first render.
+   * Useful to render navigation during SSR.
+   * @default []
+   */
   initialPages?: number[][];
 }
 
-export interface CarouselState<T extends object> {
-  itemsPerPage: number;
-  collection: Collection<Node<T>>;
-  activePageIndex: number;
-  scrollBy: CarouselStateProps<T>["scrollBy"];
-  pages: number[][];
+export interface CarouselState<T extends object>
+  extends Required<Pick<CarouselStateProps<T>, "itemsPerPage" | "scrollBy">> {
+  /** The collection of items in the carousel. */
+  readonly collection: Collection<Node<T>>;
+  /** The index of the page in view. */
+  readonly activePageIndex: number;
+  /** The indexes of all items organized into arrays. */
+  readonly pages: number[][];
+  /** Scrolls the carousel to the next page. */
   next: () => { page: number[]; pageIndex: number };
+  /** Scrolls the carousel to the previous page. */
   prev: () => { page: number[]; pageIndex: number };
+  /** Scrolls the carousel to the provided page index. */
   scrollToPage: (index: number) => void;
 }
 

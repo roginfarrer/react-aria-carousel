@@ -20,9 +20,9 @@ import {
   getNextButton,
   getPrevButton,
   noop,
+  useAriaBusyScroll,
+  useMouseDrag,
 } from "./utils";
-import { useAriaBusyScroll } from "./utils/useAriaBusyScroll";
-import { useMouseDrag } from "./utils/useMouseDrag";
 
 type Attributes<T extends ElementType> = ComponentPropsWithoutRef<T> &
   Partial<Record<`data-${string}`, string | number | boolean>> & {
@@ -31,9 +31,20 @@ type Attributes<T extends ElementType> = ComponentPropsWithoutRef<T> &
 
 export interface CarouselOptions<T extends object>
   extends CarouselStateProps<T> {
+  /**
+   * The gap between items.
+   * @default '0px'
+   */
   spaceBetweenSlides?: string;
-  id?: string;
+  /**
+   * The amount of padding to apply to the scroll area, allowing adjacent items
+   * to become partially visible.
+   */
   scrollPadding?: string;
+  /**
+   * Controls whether the user can scroll by clicking and dragging with their mouse.
+   * @default false
+   */
   mouseDragging?: boolean;
 }
 
@@ -53,15 +64,13 @@ export function useCarousel<T extends object>(
     loop = false,
     orientation = "horizontal",
     spaceBetweenSlides = "0px",
-    id,
     scrollPadding,
     mouseDragging = false,
   } = props;
   const [host, setHost] = useState<HTMLElement | null>(null);
   const state = useCarouselState(props, host);
   const { pages, activePageIndex, next, prev } = state;
-  const uniqueId = useId();
-  let scrollerId = id ?? uniqueId;
+  const scrollerId = useId();
 
   const handleRootKeyDown: KeyboardEventHandler = useCallback(
     (e) => {
@@ -156,6 +165,8 @@ export function useCarousel<T extends object>(
         disabled: loop ? false : activePageIndex >= pages.length - 1,
       },
       scrollerProps: {
+        "data-orientation": orientation,
+        className: "rogin-Carousel--scroller",
         onMouseDown: mouseDragging ? onMouseDown : noop,
         tabIndex: 0,
         "aria-atomic": true,

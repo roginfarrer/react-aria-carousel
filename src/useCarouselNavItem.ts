@@ -1,14 +1,17 @@
-import { Attributes } from "./types";
 import { CarouselAria } from "./useCarousel";
+import { Attributes } from "./utils";
 
 export interface CarouselNavItemOptions {
+  /** An index of a page in the carousel. */
   index: number;
+  /** Whether the page is the active, visible page of the carousel. */
   isSelected?: boolean;
 }
 
-export interface CarouselNavItemAria {
+export interface CarouselNavItemAria
+  extends Required<Pick<CarouselNavItemOptions, "isSelected">> {
+  /** Props for the nav item element. */
   navItemProps: Attributes<"button">;
-  isSelected: boolean;
 }
 
 export function useCarouselNavItem<T extends object>(
