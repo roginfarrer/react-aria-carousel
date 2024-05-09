@@ -1,3 +1,5 @@
+"use client";
+
 import { Item } from "@react-stately/collections";
 
 import { Carousel } from "./carousel";
@@ -6,9 +8,9 @@ import "./styles.css";
 
 import { useState } from "react";
 
-import { css } from "../styled-system/css";
-import { flex } from "../styled-system/patterns";
-import { token } from "../styled-system/tokens";
+import { css } from "../../styled-system/css";
+import { flex } from "../../styled-system/patterns";
+import { token } from "../../styled-system/tokens";
 
 const colors = [
   "emerald",
@@ -69,6 +71,12 @@ export function App() {
         items={stateItems}
         spaceBetweenSlides="16px"
         itemsPerPage={3}
+        initialPages={[
+          [0, 1, 2],
+          [3, 4, 5],
+          [6, 7, 8],
+          [9, 10, 11],
+        ]}
         loop="infinite"
         mouseDragging
       >

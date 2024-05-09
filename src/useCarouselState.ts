@@ -10,6 +10,7 @@ export interface CarouselStateProps<T extends object>
   loop?: "infinite" | "native" | false;
   orientation?: "vertical" | "horizontal";
   scrollBy?: "page" | "item";
+  initialPages?: number[][];
 }
 
 export interface CarouselState<T extends object> {
@@ -34,9 +35,10 @@ export function useCarouselState<T extends object>(
     children,
     collection: propCollection,
     items: collectionItems,
+    initialPages = [],
   } = props;
   const [activePageIndex, setActivePageIndex] = useState(0);
-  const [pages, setPages] = useState<number[][]>([]);
+  const [pages, setPages] = useState<number[][]>(initialPages);
   const scroller = ref;
 
   const collection = useCollection({

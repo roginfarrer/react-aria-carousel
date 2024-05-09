@@ -16,7 +16,11 @@ export function useCarouselItem<T extends object>(
   state: CarouselAria<T>,
 ): CarouselItem {
   const { item } = props;
-  const { pages, activePageIndex } = state;
+  const { pages, activePageIndex, scrollBy, itemsPerPage } = state;
+  const actualItemsPerPage = Math.floor(itemsPerPage);
+  const shouldSnap =
+    scrollBy === "item" ||
+    (item.index! + actualItemsPerPage) % actualItemsPerPage === 0;
 
   return {
     itemProps: {
@@ -28,6 +32,9 @@ export function useCarouselItem<T extends object>(
       role: "group",
       // @TODO: should be configurable
       "aria-label": `Item ${item.index! + 1} of ${state.collection.size}`,
+      style: {
+        scrollSnapAlign: shouldSnap ? "start" : undefined,
+      },
     },
   };
 }

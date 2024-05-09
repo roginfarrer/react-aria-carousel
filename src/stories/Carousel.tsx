@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { Item } from "@react-stately/collections";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 import {
@@ -8,9 +10,10 @@ import {
   useCarouselItem,
   useCarouselNavItem,
   UseCarouselNavItemProps,
-} from "../src";
-import { css } from "../styled-system/css";
-import { flex } from "../styled-system/patterns";
+} from "..";
+import { css } from "../../styled-system/css";
+import { flex } from "../../styled-system/patterns";
+import { token } from "../../styled-system/tokens";
 
 export const Carousel = <T extends object>(props: CarouselProps<T>) => {
   const [assignRef, carousel] = useCarousel(props);
@@ -18,8 +21,6 @@ export const Carousel = <T extends object>(props: CarouselProps<T>) => {
   return (
     <div
       {...carousel.rootProps}
-      // className="max-h-[500px] grid grid-cols-[min-content_1fr_min-content] grid-rows-[1fr_min-content] items-center"
-      // style={{ gridTemplateAreas: "'. scroll .' '. nav .'" }}
       className={css({
         maxHeight: 500,
         display: "grid",
@@ -96,6 +97,44 @@ export function CarouselItem<T extends object>(
   );
 }
 
+const colors = [
+  "emerald",
+  "violet",
+  "sky",
+  "yellow",
+  "lime",
+  "stone",
+  "slate",
+  "fuchsia",
+  "purple",
+  "blue",
+  "pink",
+  "green",
+  "red",
+  "orange",
+  "rose",
+];
+
+function Slide({ children, ...props }) {
+  return (
+    <div
+      {...props}
+      className={css({
+        width: "100%",
+        maxHeight: "500px",
+        minHeight: "10em",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textStyle: "2xl",
+        borderRadius: "3xl",
+      })}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function CarouselNavItem<T extends object>(
   props: UseCarouselNavItemProps & { state: CarouselAria<T> },
 ) {
@@ -115,5 +154,30 @@ export function CarouselNavItem<T extends object>(
         },
       })}
     />
+  );
+}
+
+const getItems = (count: number) => [...Array(count)].map((_, i) => ({ i }));
+
+export function ComposedCarousel<T extends object>(
+  props: CarouselProps<T> & { itemCount: number } = { itemCount: 12 },
+) {
+  const items = useMemo(() => getItems(props.itemCount), [props.itemCount]);
+  return (
+    <div style={{ minWidth: "100%" }}>
+      <Carousel items={items} {...props}>
+        {(item) => (
+          <Item key={item.i}>
+            <Slide
+              style={{
+                backgroundColor: token(`colors.${colors[item.i]}.200` as never),
+              }}
+            >
+              {item.i + 1}
+            </Slide>
+          </Item>
+        )}
+      </Carousel>
+    </div>
   );
 }
