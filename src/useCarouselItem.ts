@@ -3,18 +3,18 @@ import { Node } from "@react-types/shared";
 import { Attributes } from "./types";
 import { CarouselAria } from "./useCarousel";
 
-export interface CarouselItemProps<T extends object> {
+export interface CarouselItemOptions<T extends object> {
   item: Node<T>;
 }
 
-export interface CarouselItem {
+export interface CarouselItemAria {
   itemProps: Attributes<"div">;
 }
 
 export function useCarouselItem<T extends object>(
-  props: CarouselItemProps<T>,
+  props: CarouselItemOptions<T>,
   state: CarouselAria<T>,
-): CarouselItem {
+): CarouselItemAria {
   const { item } = props;
   const { pages, activePageIndex, scrollBy, itemsPerPage } = state;
   const actualItemsPerPage = Math.floor(itemsPerPage);

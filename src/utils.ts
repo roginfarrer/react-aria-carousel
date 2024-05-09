@@ -24,10 +24,6 @@ export function getNavItem(host: HTMLElement, index: number) {
   ) as HTMLElement;
 }
 
-export function genItemId(id: string, idx: number) {
-  return `${id}-${idx}`;
-}
-
 export function clamp(min: number, value: number, max: number) {
   if (value < min) {
     return min;

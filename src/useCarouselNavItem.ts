@@ -1,20 +1,20 @@
 import { Attributes } from "./types";
 import { CarouselAria } from "./useCarousel";
 
-export interface UseCarouselNavItemProps {
+export interface CarouselNavItemOptions {
   index: number;
   isSelected?: boolean;
 }
 
-export interface CarouselNavItem {
+export interface CarouselNavItemAria {
   navItemProps: Attributes<"button">;
   isSelected: boolean;
 }
 
 export function useCarouselNavItem<T extends object>(
-  props: UseCarouselNavItemProps,
+  props: CarouselNavItemOptions,
   state: CarouselAria<T>,
-): CarouselNavItem {
+): CarouselNavItemAria {
   // const itemId = genItemId(state.id, props.index);
   const isSelected = props.isSelected ?? state.activePageIndex === props.index;
   let current = props.index + 1,

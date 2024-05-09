@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { App } from "./App";
+import { App } from "./page";
 
 export { App as default };
 

@@ -4,18 +4,18 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 import {
   CarouselAria,
-  CarouselItemProps,
-  CarouselProps,
+  CarouselItemOptions,
+  CarouselNavItemOptions,
+  CarouselOptions,
   useCarousel,
   useCarouselItem,
   useCarouselNavItem,
-  UseCarouselNavItemProps,
 } from "..";
 import { css } from "../../styled-system/css";
 import { flex } from "../../styled-system/patterns";
 import { token } from "../../styled-system/tokens";
 
-export const Carousel = <T extends object>(props: CarouselProps<T>) => {
+export const Carousel = <T extends object>(props: CarouselOptions<T>) => {
   const [assignRef, carousel] = useCarousel(props);
 
   return (
@@ -85,7 +85,7 @@ export const Carousel = <T extends object>(props: CarouselProps<T>) => {
 };
 
 export function CarouselItem<T extends object>(
-  props: CarouselItemProps<T> & { state: CarouselAria<T> },
+  props: CarouselItemOptions<T> & { state: CarouselAria<T> },
 ) {
   const { item, state } = props;
   const stuff = useCarouselItem(props, state);
@@ -136,7 +136,7 @@ function Slide({ children, ...props }) {
 }
 
 export function CarouselNavItem<T extends object>(
-  props: UseCarouselNavItemProps & { state: CarouselAria<T> },
+  props: CarouselNavItemOptions & { state: CarouselAria<T> },
 ) {
   const { index, state } = props;
   const { navItemProps, isSelected } = useCarouselNavItem({ index }, state);
@@ -160,7 +160,7 @@ export function CarouselNavItem<T extends object>(
 const getItems = (count: number) => [...Array(count)].map((_, i) => ({ i }));
 
 export function ComposedCarousel<T extends object>(
-  props: CarouselProps<T> & { itemCount: number } = { itemCount: 12 },
+  props: CarouselOptions<T> & { itemCount: number } = { itemCount: 12 },
 ) {
   const items = useMemo(() => getItems(props.itemCount), [props.itemCount]);
   return (

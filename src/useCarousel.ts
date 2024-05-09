@@ -29,7 +29,8 @@ type Attributes<T extends ElementType> = ComponentPropsWithoutRef<T> &
     inert?: string;
   };
 
-export interface CarouselProps<T extends object> extends CarouselStateProps<T> {
+export interface CarouselOptions<T extends object>
+  extends CarouselStateProps<T> {
   spaceBetweenSlides?: string;
   id?: string;
   scrollPadding?: string;
@@ -45,7 +46,7 @@ export interface CarouselAria<T extends object> extends CarouselState<T> {
 }
 
 export function useCarousel<T extends object>(
-  props: CarouselProps<T>,
+  props: CarouselOptions<T>,
 ): [Dispatch<SetStateAction<HTMLElement | null>>, CarouselAria<T>] {
   const {
     itemsPerPage = 1,

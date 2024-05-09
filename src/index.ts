@@ -1,14 +1,15 @@
 export {
   useCarousel,
   type CarouselAria,
-  type CarouselProps,
+  type CarouselOptions,
 } from "./useCarousel";
 export {
   useCarouselNavItem,
-  type UseCarouselNavItemProps,
+  type CarouselNavItemOptions,
 } from "./useCarouselNavItem";
 export {
   useCarouselItem,
-  type CarouselItem,
-  type CarouselItemProps,
+  type CarouselItemAria,
+  type CarouselItemOptions,
 } from "./useCarouselItem";
+export { Item } from "@react-stately/collections";

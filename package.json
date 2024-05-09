@@ -4,7 +4,6 @@
   "exports": "./src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "vite examples",
     "prepare": "panda codegen",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

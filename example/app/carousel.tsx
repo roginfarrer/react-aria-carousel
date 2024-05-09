@@ -2,17 +2,17 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 import {
   CarouselAria,
-  CarouselItemProps,
-  CarouselProps,
+  CarouselItemOptions,
+  CarouselNavItemOptions,
+  CarouselOptions,
   useCarousel,
   useCarouselItem,
   useCarouselNavItem,
-  UseCarouselNavItemProps,
 } from "../../src";
 import { css } from "../../styled-system/css";
 import { flex } from "../../styled-system/patterns";
 
-export const Carousel = <T extends object>(props: CarouselProps<T>) => {
+export const Carousel = <T extends object>(props: CarouselOptions<T>) => {
   const [assignRef, carousel] = useCarousel(props);
 
   return (
@@ -84,7 +84,7 @@ export const Carousel = <T extends object>(props: CarouselProps<T>) => {
 };
 
 export function CarouselItem<T extends object>(
-  props: CarouselItemProps<T> & { state: CarouselAria<T> },
+  props: CarouselItemOptions<T> & { state: CarouselAria<T> },
 ) {
   const { item, state } = props;
   const stuff = useCarouselItem(props, state);
@@ -97,7 +97,7 @@ export function CarouselItem<T extends object>(
 }
 
 export function CarouselNavItem<T extends object>(
-  props: UseCarouselNavItemProps & { state: CarouselAria<T> },
+  props: CarouselNavItemOptions & { state: CarouselAria<T> },
 ) {
   const { index, state } = props;
   const { navItemProps, isSelected } = useCarouselNavItem({ index }, state);
