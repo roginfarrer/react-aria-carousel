@@ -1,20 +1,29 @@
-import { ComponentPropsWithoutRef, useMemo } from "react";
-import { Canvas, Story } from "@storybook/blocks";
+import {
+  useMemo,
+  useState,
+} from "react";
+import {
+  Story,
+} from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { Item } from "..";
-import { Carousel, CarouselItem, CarouselNavItem, Slide } from "./Carousel";
+import { CarouselItem, CarouselNavItem, Slide, useCarousel } from "./Carousel";
+import { BasicExampleCarousel } from "./foo";
+
+const Carousel = useCarousel;
 
 const meta = {
-  title: "Examples",
-  component: Carousel,
+  title: "Stories",
+  component: useCarousel,
   subcomponents: {
     useCarouselItem: CarouselItem,
     useCarouselNavItem: CarouselNavItem,
   },
   parameters: {
     docs: {
-      toc: true,
+      toc: { headingSelector: "h1, h2, h3" },
+      controls: { exclude: ["aspectRatio"] },
     },
   },
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
@@ -34,7 +43,7 @@ const meta = {
         defaultValue: { summary: "horizontal" },
       },
     },
-    spaceBetweenSlides: {
+    spaceBetweenItems: {
       type: "string",
       control: "text",
       table: { defaultValue: { summary: "0px" } },
@@ -56,7 +65,6 @@ const meta = {
       },
       options: ["infinite", "native", "false"],
       mapping: { infinite: "infinite", native: "native", false: false },
-      // control: "select",
     },
     initialPages: {
       table: { defaultValue: { summary: "[]" } },
@@ -68,8 +76,32 @@ const meta = {
     },
     autoplayInterval: {
       control: "number",
-      table: { defaultValue: { summary: "3000" } },
+      table: { defaultValue: { summary: "5000" } },
     },
+    children: {
+      control: {disable: true},
+      description: 'The children of the scroller element. Should include elements created with `useCarouselItem`.'
+    },
+    items: {
+      control: {disable: true},
+      description: 'The item objects for each carousel item, for dynamic collections.'
+    }
+  },
+  args: {
+    items: [
+      { index: 0 },
+      { index: 1 },
+      { index: 2 },
+      { index: 3 },
+      { index: 4 },
+      { index: 5 },
+    ],
+    children: (item) => (
+      <Item key={item.index}>
+        <Slide index={item.index} />
+      </Item>
+    ),
+    spaceBetweenItems: "16px",
   },
 } satisfies Meta<typeof Carousel>;
 
@@ -77,10 +109,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
-export const Primary: Story = {
+export const Playground: Story = {
   render(props) {
     const aspectRatio = (props.itemsPerPage || 1) > 1 ? "4 / 3" : "16 / 9";
-    const spaceBetweenItems = props.spaceBetweenSlides ?? "24px";
+    const spaceBetweenItems = props.spaceBetweenItems ?? "24px";
     const itemCount =
       !props.itemsPerPage ||
       Number.isNaN(props.itemsPerPage) ||
@@ -93,7 +125,7 @@ export const Primary: Story = {
         autoplay
         itemsPerPage={itemCount}
         aspectRatio={aspectRatio}
-        spaceBetweenSlides={spaceBetweenItems}
+        spaceBetweenItems={spaceBetweenItems}
       >
         <Item key="0">
           <Slide index={0} />
@@ -122,7 +154,7 @@ export const MultipleItems: Story = {
   args: {
     itemsPerPage: 3,
     aspectRatio: "4 / 3",
-    spaceBetweenSlides: "16px",
+    spaceBetweenItems: "16px",
   },
   render: function Render(props) {
     return (
@@ -153,7 +185,7 @@ export const MultipleItems: Story = {
 export const RenderPropChildren: Story = {
   render(props) {
     const aspectRatio = (props.itemsPerPage || 1) > 1 ? "4 / 3" : "16 / 9";
-    const spaceBetweenItems = props.spaceBetweenSlides ?? "24px";
+    const spaceBetweenItems = props.spaceBetweenItems ?? "24px";
     const items = useMemo(
       () => [
         { index: 0 },
@@ -168,7 +200,7 @@ export const RenderPropChildren: Story = {
     return (
       <Carousel
         {...props}
-        spaceBetweenSlides={spaceBetweenItems}
+        spaceBetweenItems={spaceBetweenItems}
         aspectRatio={aspectRatio}
         items={items}
       >
@@ -182,24 +214,90 @@ export const RenderPropChildren: Story = {
   },
 };
 
-// export const MultipleItems: Story = {
-//   args: {
-//     itemsPerPage: 3,
-//     itemCount: 12,
-//     spaceBetweenSlides: "16px",
-//   },
-// };
+export const BasicExample: Story = {
+  render() {
+    return (
+      <BasicExampleCarousel>
+        <Item>1</Item>
+        <Item>2</Item>
+        <Item>3</Item>
+        <Item>4</Item>
+        <Item>5</Item>
+        <Item>6</Item>
+      </BasicExampleCarousel>
+    );
+  },
+};
 
-// export const Large: Story = {
-//   args: {
-//     size: 'large',
-//     label: 'Button',
-//   },
-// };
+export const AddingAndRemoving: Story = {
+  render(props) {
+    const [items, setItems] = useState([
+      { index: 0 },
+      { index: 1 },
+      { index: 2 },
+    ]);
+    const add = () => setItems((prev) => [...prev, { index: prev.length + 1 }]);
+    const remove = () => setItems((prev) => prev.slice(0, items.length - 1));
+    return (
+      <div>
+        <button onClick={add}>Add Item</button>
+        <button onClick={remove}>Remove Item</button>
+        <Carousel
+          {...props}
+          items={items}
+          spaceBetweenItems="16px"
+          aspectRatio="16 / 9"
+        >
+          {(item) => (
+            <Item key={item.index}>
+              <Slide index={item.index} />
+            </Item>
+          )}
+        </Carousel>
+      </div>
+    );
+  },
+};
 
-// export const Small: Story = {
-//   args: {
-//     size: 'small',
-//     label: 'Button',
-//   },
-// };
+export const Autoplay: Story = {
+  args: {
+    spaceBetweenItems: "16px",
+    aspectRatio: "16 / 9",
+    autoplay: true,
+    autoplayInterval: 5000,
+  },
+};
+
+export const InfiniteLoop: Story = {
+  args: {
+    spaceBetweenItems: "16px",
+    loop: "infinite",
+  },
+};
+
+export const NativeLoop: Story = {
+  args: {
+    spaceBetweenItems: "16px",
+    loop: "native",
+  },
+};
+
+export const MouseDragging: Story = {
+  args: {
+    mouseDragging: true,
+  },
+};
+
+export const Vertical: Story = {
+  args: {
+    orientation: "vertical",
+    scrollPadding: "10%",
+  },
+};
+
+
+export const Hint: Story = {
+  args: {
+    scrollPadding: '10%',
+  },
+};

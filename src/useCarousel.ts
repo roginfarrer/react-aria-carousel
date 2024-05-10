@@ -28,7 +28,7 @@ export interface CarouselOptions<T extends object>
    * The gap between items.
    * @default '0px'
    */
-  spaceBetweenSlides?: string;
+  spaceBetweenItems?: string;
   /**
    * The amount of padding to apply to the scroll area, allowing adjacent items
    * to become partially visible.
@@ -39,7 +39,15 @@ export interface CarouselOptions<T extends object>
    * @default false
    */
   mouseDragging?: boolean;
+  /**
+   * If true, the carousel will scroll automatically when the user is not interacting with it.
+   * @default false
+   */
   autoplay?: boolean;
+  /**
+   * Specifies the amount of time, in milliseconds, between each automatic scroll.
+   * @default 5000
+   */
   autoplayInterval?: number;
 }
 
@@ -63,7 +71,7 @@ export function useCarousel<T extends object>(
     itemsPerPage = 1,
     loop = false,
     orientation = "horizontal",
-    spaceBetweenSlides = "0px",
+    spaceBetweenItems: spaceBetweenSlides = "0px",
     scrollPadding,
     mouseDragging = false,
     autoplay = false,
@@ -183,14 +191,14 @@ export function useCarousel<T extends object>(
         "aria-controls": scrollerId,
         "data-prev-button": true,
         onClick: () => prev(),
-        "aria-disabled": loop ? false : activePageIndex <= 0,
+        disabled: loop ? false : activePageIndex <= 0,
       },
       nextButtonProps: {
         "aria-label": "Next page",
         "aria-controls": scrollerId,
         "data-next-button": true,
         onClick: () => next(),
-        "aria-disabled": loop ? false : activePageIndex >= pages.length - 1,
+        disabled: loop ? false : activePageIndex >= pages.length - 1,
       },
       scrollerProps: {
         "aria-label": "Items Scroller",
@@ -207,8 +215,11 @@ export function useCarousel<T extends object>(
           [orientation === "horizontal" ? "gridAutoColumns" : "gridAutoRows"]:
             `calc(100% / ${itemsPerPage} - ${spaceBetweenSlides} * ${itemsPerPage - 1} / ${itemsPerPage})`,
           gap: spaceBetweenSlides,
-          scrollPaddingInline: scrollPadding,
-          paddingInline: scrollPadding,
+          [orientation === "horizontal"
+            ? "scrollPaddingInline"
+            : "scrollPaddingBlock"]: scrollPadding,
+          [orientation === "horizontal" ? "paddingInline" : "paddingBlock"]:
+            scrollPadding,
         },
       },
     },

@@ -8,13 +8,12 @@ import {
   CarouselNavItemOptions,
   CarouselOptions,
   Item,
-  useCarousel,
+  useCarousel as useCarouselHook,
   useCarouselItem,
   useCarouselNavItem,
 } from "..";
-import { grid } from "../../example/styled-system/patterns";
 import { css } from "../../styled-system/css";
-import { flex } from "../../styled-system/patterns";
+import { flex, grid } from "../../styled-system/patterns";
 import { token } from "../../styled-system/tokens";
 
 const CarouselButton = ({
@@ -59,10 +58,10 @@ const CarouselButton = ({
   );
 };
 
-export const Carousel = <T extends object>(
+export const useCarousel = <T extends object>(
   props: CarouselOptions<T> & { aspectRatio?: string },
 ) => {
-  const [assignRef, carousel] = useCarousel(props);
+  const [assignRef, carousel] = useCarouselHook(props);
 
   return (
     <div
@@ -81,6 +80,7 @@ export const Carousel = <T extends object>(
       <div
         {...carousel.scrollerProps}
         className={grid({
+          minHeight: 250,
           scrollbar: "hidden",
           overflow: "auto",
           '&[data-orientation="vertical"]': {

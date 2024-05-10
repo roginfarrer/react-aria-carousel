@@ -1,26 +1,5 @@
-import { ArgTypes, Canvas, Controls, Meta, Story } from "@storybook/blocks";
+import { CSSProperties } from "react";
 
-import * as Stories from "./Carousel.stories.tsx";
-
-<Meta title="Usage" />
-
-# Usage
-
-## Installation
-
-```sh
-npm install the-thing
-```
-
-## API
-
-<ArgTypes of={Stories} exclude={["aspectRatio"]} />
-
-## Example
-
-The example displays a basic carousel of items.
-
-```tsx
 import {
   useCarousel,
   useCarouselItem,
@@ -29,7 +8,7 @@ import {
   type CarouselItemOptions,
   type CarouselNavItemOptions,
   type CarouselOptions,
-} from "use-carousel";
+} from "..";
 
 const styles = {
   root: {
@@ -50,11 +29,15 @@ const styles = {
     justifyContent: "center",
     gap: "8px",
   },
+  button: { all: "revert" },
   nav: {
     display: "flex",
     justifyContent: "center",
     alignItems: "start",
     gap: "16px",
+  },
+  navItem: {
+    all: "revert",
   },
   item: {
     background: "rgb(186, 230, 253)",
@@ -63,14 +46,12 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
   },
-};
+} satisfies Record<string, CSSProperties>;
 
-export const Carousel = <T extends object>(props: CarouselOptions<T>) => {
-  const [assignRef, carousel] = useCarousel({
-    spaceBetweenSlides: "16px",
-    itemsPerPage: 2,
-    ...props,
-  });
+export const BasicExampleCarousel = <T extends object>(
+  props: CarouselOptions<T>,
+) => {
+  const [assignRef, carousel] = useCarousel(props);
 
   const {
     rootProps,
@@ -84,8 +65,12 @@ export const Carousel = <T extends object>(props: CarouselOptions<T>) => {
   return (
     <div {...rootProps} style={styles.root}>
       <div style={styles.buttons}>
-        <button {...prevButtonProps}>Previous</button>
-        <button {...nextButtonProps}>Next</button>
+        <button {...prevButtonProps} style={styles.button}>
+          Previous
+        </button>
+        <button {...nextButtonProps} style={styles.button}>
+          Next
+        </button>
       </div>
       <div
         {...scrollerProps}
@@ -115,7 +100,14 @@ export function CarouselItem<T extends object>(
   const { itemProps } = useCarouselItem(props, state);
 
   return (
-    <div {...itemProps} style={styles.item}>
+    <div
+      {...itemProps}
+      style={{
+        ...styles.item,
+        backgroundColor:
+          item.index! % 2 ? "rgb(186, 230, 253)" : "rgb(221, 214, 254)",
+      }}
+    >
       {item.rendered}
     </div>
   );
@@ -131,6 +123,7 @@ export function CarouselNavItem<T extends object>(
       type="button"
       {...navItemProps}
       style={{
+        ...styles.navItem,
         backgroundColor: isSelected ? "darkgray" : undefined,
       }}
     >
@@ -138,52 +131,3 @@ export function CarouselNavItem<T extends object>(
     </button>
   );
 }
-
-<Carousel>
-  <Item>1</Item>
-  <Item>2</Item>
-  <Item>3</Item>
-  <Item>4</Item>
-  <Item>5</Item>
-  <Item>6</Item>
-</Carousel>;
-```
-
-<Canvas of={Stories.BasicExample} />
-
-## Accessibility & Labeling
-
-## Usage
-
-### Multiple Items per Page
-
-<Canvas of={Stories.MultipleItems} />
-
-### Adding and Removing Items
-
-The carousel will update if items are added or removed.
-
-<Canvas of={Stories.AddingAndRemoving} />
-
-### Autoplay
-
-<Canvas of={Stories.Autoplay} />
-
-### Looping
-
-<Canvas of={Stories.InfiniteLoop} />
-<Canvas of={Stories.NativeLoop} />
-
-### Scroll Hint
-
-<Canvas of={Stories.Hint} />
-
-### Mouse Dragging
-
-<Canvas of={Stories.MouseDragging} />
-
-### Dynamic Items
-
-### Orientation
-
-<Canvas of={Stories.Vertical} />
