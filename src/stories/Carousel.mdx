@@ -1,0 +1,32 @@
+import { ArgTypes, Canvas, Controls, Meta, Story } from "@storybook/blocks";
+
+import * as Stories from "./Carousel.stories.tsx";
+
+<Meta title="Introduction" of={Stories} />
+
+# useCarousel
+
+Provides the behavior and accessibility implementation for a carousel component. A carousel shows a subset of a collection of items, and affords users to scroll through them.
+
+## Usage
+
+```typescript
+import {
+  useCarousel,
+  useCarouselItem,
+  useCarouselNavItem,
+} from "@rogin/carousel";
+```
+
+## API
+
+<ArgTypes of={Stories} />
+
+## Playground
+
+<Canvas of={Stories.Primary} meta={Stories} />
+<Controls story={Stories.Primary} />
+
+## Examples
+
+<Canvas of={Stories.MultipleItems} />

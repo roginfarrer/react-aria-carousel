@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Collection, CollectionStateBase, Node } from "@react-types/shared";
 
-import { clamp } from "./utils";
+import { clamp, usePrefersReducedMotion } from "./utils";
 import { useCollection } from "./utils/useCollection";
 
 export interface CarouselStateProps<T extends object>
@@ -48,9 +48,9 @@ export interface CarouselState<T extends object>
   /** The indexes of all items organized into arrays. */
   readonly pages: number[][];
   /** Scrolls the carousel to the next page. */
-  next: () => { page: number[]; pageIndex: number };
+  next: () => number;
   /** Scrolls the carousel to the previous page. */
-  prev: () => { page: number[]; pageIndex: number };
+  prev: () => number;
   /** Scrolls the carousel to the provided page index. */
   scrollToPage: (index: number) => void;
 }
@@ -70,6 +70,7 @@ export function useCarouselState<T extends object>(
   } = props;
   const [activePageIndex, setActivePageIndex] = useState(0);
   const [pages, setPages] = useState<number[][]>(initialPages);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const scroller = ref;
 
   const collection = useCollection({
@@ -78,10 +79,10 @@ export function useCarouselState<T extends object>(
     items: collectionItems,
   });
 
-  const getSlides = useCallback(
+  const getItems = useCallback(
     (
       { includeClones }: { includeClones?: boolean } = { includeClones: false },
-    ) => {
+    ): HTMLElement[] => {
       if (!scroller) return [];
       let allChildren = Array.from(scroller.children) as HTMLElement[];
       if (includeClones) return allChildren;
@@ -91,7 +92,7 @@ export function useCarouselState<T extends object>(
   );
 
   const scrollToItem = useCallback(
-    (slide: HTMLElement, behavior: ScrollBehavior = "smooth") => {
+    (slide: HTMLElement, behavior: ScrollBehavior = "smooth"): void => {
       if (!scroller) return;
       const scrollContainerRect = scroller.getBoundingClientRect();
       const nextSlideRect = slide.getBoundingClientRect();
@@ -102,27 +103,27 @@ export function useCarouselState<T extends object>(
       scroller.scrollTo({
         left: nextLeft + scroller.scrollLeft,
         top: nextTop + scroller.scrollTop,
-        behavior,
+        behavior: prefersReducedMotion ? "instant" : behavior,
       });
     },
-    [scroller],
+    [prefersReducedMotion, scroller],
   );
 
   const scrollToPage = useCallback(
-    (index: number, behavior?: ScrollBehavior) => {
-      const items = getSlides();
+    (index: number, behavior?: ScrollBehavior): void => {
+      const items = getItems();
       const page = pages[index];
       const itemIndex = page?.[0];
       if (items[itemIndex]) {
         scrollToItem(items[itemIndex], behavior);
       }
     },
-    [getSlides, pages, scrollToItem],
+    [getItems, pages, scrollToItem],
   );
 
-  const updateSnaps = useCallback(() => {
+  const updateSnaps = useCallback((): void => {
     const actualItemsPerPage = Math.floor(itemsPerPage);
-    getSlides({ includeClones: true }).forEach((item, index) => {
+    getItems({ includeClones: true }).forEach((item, index) => {
       const shouldSnap =
         scrollBy === "item" ||
         (index! + actualItemsPerPage) % actualItemsPerPage === 0;
@@ -132,10 +133,10 @@ export function useCarouselState<T extends object>(
         item.style.removeProperty("scroll-snap-align");
       }
     });
-  }, [getSlides, itemsPerPage, scrollBy]);
+  }, [getItems, itemsPerPage, scrollBy]);
 
-  const calculatePages = useCallback(() => {
-    const items = getSlides();
+  const calculatePages = useCallback((): void => {
+    const items = getItems();
     // We want to calculate the sets of pages based on the number
     // only 100% in view on a given page. If a number like 1.1 is provided,
     // the 10% we're peeking shouldn't count as an item on the page.
@@ -161,16 +162,16 @@ export function useCarouselState<T extends object>(
     setActivePageIndex((prev) => {
       return clamp(0, prev, newPages.length - 1);
     });
-  }, [getSlides, itemsPerPage]);
+  }, [getItems, itemsPerPage]);
 
   // @TODO: Rewrite this better
   const scrollToPageIndex = useCallback(
-    (index: number) => {
-      const items = getSlides();
-      const itemsWithClones = getSlides({ includeClones: true });
+    (index: number): number => {
+      const items = getItems();
+      const itemsWithClones = getItems({ includeClones: true });
       const pagesWithClones = [pages.at(-1), ...pages, pages[0]];
 
-      if (!items.length) return;
+      if (!items.length) return -1;
 
       let nextItem: HTMLElement, nextPageIndex: number, nextPage: number[];
 
@@ -207,30 +208,30 @@ export function useCarouselState<T extends object>(
       }
 
       scrollToItem(nextItem);
-      return { page: nextPage, pageIndex: nextPageIndex };
+      return nextPageIndex;
     },
-    [getSlides, itemsPerPage, loop, pages, scrollToItem],
+    [getItems, itemsPerPage, loop, pages, scrollToItem],
   );
 
-  const next = useCallback(() => {
+  const next = useCallback((): number => {
     return scrollToPageIndex(activePageIndex + 1);
   }, [activePageIndex, scrollToPageIndex]);
 
-  const prev = useCallback(() => {
+  const prev = useCallback((): number => {
     return scrollToPageIndex(activePageIndex - 1);
   }, [activePageIndex, scrollToPageIndex]);
 
   useEffect(() => {
     if (!scroller || pages.length === 0) return;
 
-    getSlides({ includeClones: true }).forEach((item) => {
+    getItems({ includeClones: true }).forEach((item) => {
       if (item.hasAttribute("data-clone")) {
         item.remove();
       }
     });
 
     if (loop === "infinite") {
-      const items = getSlides();
+      const items = getItems();
       const firstPage = pages[0];
       // We're gonna modify this in a second, so make sure not to mutate state
       const lastPage = [...pages.at(-1)!];
@@ -262,7 +263,7 @@ export function useCarouselState<T extends object>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     // activePageIndex,
-    getSlides,
+    getItems,
     loop,
     pages,
     scrollToPage,
@@ -295,7 +296,7 @@ export function useCarouselState<T extends object>(
     return () => {
       mutationObserver.disconnect();
     };
-  }, [getSlides, scroller, calculatePages, updateSnaps]);
+  }, [getItems, scroller, calculatePages, updateSnaps]);
 
   useEffect(() => {
     if (!scroller) return;
@@ -314,7 +315,7 @@ export function useCarouselState<T extends object>(
             ) {
               const cloneIndex =
                 firstIntersecting.target.getAttribute("data-carousel-item");
-              const actualItem = getSlides().find(
+              const actualItem = getItems().find(
                 (el) => el.getAttribute("data-carousel-item") === cloneIndex,
               );
               scrollToItem(actualItem!, "instant");
@@ -334,7 +335,7 @@ export function useCarouselState<T extends object>(
               const activePage = pages.findIndex((page) =>
                 page.includes(slideIndex),
               );
-              setActivePageIndex(clamp(0, activePage, getSlides().length));
+              setActivePageIndex(clamp(0, activePage, getItems().length));
             }
           }
         },
@@ -343,7 +344,7 @@ export function useCarouselState<T extends object>(
           threshold: 0.6,
         },
       );
-      for (let child of getSlides({ includeClones: true })) {
+      for (let child of getItems({ includeClones: true })) {
         intersectionObserver.observe(child);
       }
     }
@@ -351,7 +352,7 @@ export function useCarouselState<T extends object>(
     return () => {
       scroller.removeEventListener("scrollend", handle);
     };
-  }, [getSlides, loop, pages, scrollToItem, scroller]);
+  }, [getItems, loop, pages, scrollToItem, scroller]);
 
   return {
     itemsPerPage,

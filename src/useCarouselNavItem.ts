@@ -9,9 +9,9 @@ export interface CarouselNavItemOptions {
 }
 
 export interface CarouselNavItemAria
-  extends Required<Pick<CarouselNavItemOptions, "isSelected">> {
+  extends Readonly<Required<Pick<CarouselNavItemOptions, "isSelected">>> {
   /** Props for the nav item element. */
-  navItemProps: Attributes<"button">;
+  readonly navItemProps: Attributes<"button">;
 }
 
 export function useCarouselNavItem<T extends object>(
@@ -24,6 +24,7 @@ export function useCarouselNavItem<T extends object>(
     setSize = state.pages.length;
   return {
     navItemProps: {
+      "data-carousel-nav-item": props.index,
       role: "tab",
       "aria-label": `Go to item ${current} of ${setSize}`,
       "aria-posinset": current,

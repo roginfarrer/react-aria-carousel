@@ -1,5 +1,4 @@
-import { ComponentPropsWithoutRef, useMemo } from "react";
-import { Item } from "@react-stately/collections";
+import { ComponentPropsWithoutRef, CSSProperties, useMemo } from "react";
 import clsx from "clsx";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
@@ -8,6 +7,7 @@ import {
   CarouselItemOptions,
   CarouselNavItemOptions,
   CarouselOptions,
+  Item,
   useCarousel,
   useCarouselItem,
   useCarouselNavItem,
@@ -38,14 +38,15 @@ const CarouselButton = ({
           // transition: "translate ease .2s, scale ease .2s, box-shadow ease .2s",
           translate: "auto",
           borderRadius: "full",
-          _hover: {
+          _disabled: { color: "gray.400" },
+          "&:not([disabled]):hover": {
             scale: "1.05",
             boxShadow: "0 0 0 4px {colors.gray.200/50}",
             color: "blue.700",
           },
         }),
-        dir === "prev" && css({ _hover: { x: "-5%" } }),
-        dir === "next" && css({ _hover: { x: "5%" } }),
+        dir === "prev" && css({ "&:not([disabled]):hover": { x: "-5%" } }),
+        dir === "next" && css({ "&:not([disabled]):hover": { x: "5%" } }),
         props.className,
       )}
     >
@@ -58,14 +59,16 @@ const CarouselButton = ({
   );
 };
 
-export const Carousel = <T extends object>(props: CarouselOptions<T>) => {
+export const Carousel = <T extends object>(
+  props: CarouselOptions<T> & { aspectRatio?: string },
+) => {
   const [assignRef, carousel] = useCarousel(props);
 
   return (
     <div
       {...carousel.rootProps}
+      aria-label="Featured Collection"
       className={css({
-        maxHeight: 500,
         display: "grid",
         gridTemplateAreas: "'. scroll .' '. nav .'",
         gridAutoColumns: "min-content 1fr min-content",
@@ -74,29 +77,35 @@ export const Carousel = <T extends object>(props: CarouselOptions<T>) => {
         columnGap: "4",
       })}
     >
+      <CarouselButton dir="prev" {...carousel.prevButtonProps} />
       <div
         {...carousel.scrollerProps}
         className={grid({
           scrollbar: "hidden",
           overflow: "auto",
-          overscrollBehavior: "contain",
           '&[data-orientation="vertical"]': {
             scrollSnapType: "y mandatory",
             gridAutoFlow: "row",
+            overscrollBehaviorY: "contain",
           },
           '&[data-orientation="horizontal"]': {
             scrollSnapType: "x mandatory",
             gridAutoFlow: "column",
+            overscrollBehaviorX: "contain",
           },
         })}
         ref={assignRef}
         style={{ ...carousel.scrollerProps?.style, gridArea: "scroll" }}
       >
         {[...carousel.collection].map((item) => (
-          <CarouselItem state={carousel} item={item} key={item.key} />
+          <CarouselItem
+            state={carousel}
+            item={item}
+            key={item.key}
+            aspectRatio={props.aspectRatio}
+          />
         ))}
       </div>
-      <CarouselButton dir="prev" {...carousel.prevButtonProps} />
       <CarouselButton dir="next" {...carousel.nextButtonProps} />
       <div
         {...carousel.navProps}
@@ -118,12 +127,26 @@ export const Carousel = <T extends object>(props: CarouselOptions<T>) => {
 };
 
 export function CarouselItem<T extends object>(
-  props: CarouselItemOptions<T> & { state: CarouselAria<T> },
+  props: CarouselItemOptions<T> & {
+    state: CarouselAria<T>;
+    aspectRatio?: string;
+  },
 ) {
   const { item, state } = props;
   const stuff = useCarouselItem(props, state);
 
-  return <div {...stuff.itemProps}>{item.rendered}</div>;
+  return (
+    <div
+      {...stuff.itemProps}
+      className={flex({
+        overflow: "hidden",
+        aspectRatio: "var(--aspect-ratio)",
+      })}
+      style={{ "--aspect-ratio": props.aspectRatio } as CSSProperties}
+    >
+      {item.rendered}
+    </div>
+  );
 }
 
 const colors = [
@@ -144,22 +167,23 @@ const colors = [
   "rose",
 ];
 
-function Slide({ children, ...props }) {
+export function Slide({ index, ...props }) {
   return (
     <div
       {...props}
       className={css({
         width: "100%",
-        maxHeight: "500px",
-        minHeight: "10em",
+        // maxHeight: "500px",
+        // minHeight: "10em",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         textStyle: "2xl",
         borderRadius: "3xl",
       })}
+      style={{ backgroundColor: token(`colors.${colors[index]}.200` as never) }}
     >
-      {children}
+      {index + 1}
     </div>
   );
 }
@@ -186,29 +210,19 @@ export function CarouselNavItem<T extends object>(
   );
 }
 
-const getItems = (count: number) => [...Array(count)].map((_, i) => ({ i }));
-
 export function ComposedCarousel(
-  props: CarouselOptions<{ i: number }> & { itemCount: number } = {
-    itemCount: 12,
-  },
+  props: CarouselOptions<{ src: string }> & { itemCount: number },
 ) {
-  const items = useMemo(() => getItems(props.itemCount), [props.itemCount]);
+  const items = useMemo(
+    () =>
+      Array.from({ length: props.itemCount }, (_, i) => ({
+        src: `https://picsum.photos/1600/900?random=${i}`,
+      })),
+    [props.itemCount],
+  );
   return (
     <div style={{ minWidth: "100%" }}>
-      <Carousel items={items} {...props}>
-        {(item) => (
-          <Item key={item.i}>
-            <Slide
-              style={{
-                backgroundColor: token(`colors.${colors[item.i]}.200` as never),
-              }}
-            >
-              {item.i + 1}
-            </Slide>
-          </Item>
-        )}
-      </Carousel>
+      <Carousel {...props} />
     </div>
   );
 }

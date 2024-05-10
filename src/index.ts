@@ -12,4 +12,4 @@ export {
   type CarouselItemAria,
   type CarouselItemOptions,
 } from "./useCarouselItem";
-export { Item } from "@react-stately/collections";
+export { Item, Item as CarouselItem } from "@react-stately/collections";

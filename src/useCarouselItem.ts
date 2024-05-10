@@ -10,7 +10,7 @@ export interface CarouselItemOptions<T extends object> {
 
 export interface CarouselItemAria {
   /** Props for the item element */
-  itemProps: Attributes<"div">;
+  readonly itemProps: Attributes<"div">;
 }
 
 export function useCarouselItem<T extends object>(
@@ -23,17 +23,17 @@ export function useCarouselItem<T extends object>(
   const shouldSnap =
     scrollBy === "item" ||
     (item.index! + actualItemsPerPage) % actualItemsPerPage === 0;
+  const label =
+    item["aria-label"] || `${item.index! + 1} of ${state.collection.size}`;
+  const isInert = pages[activePageIndex]?.includes(item.index!);
 
   return {
     itemProps: {
       "data-carousel-item": item.index,
-      inert: pages[activePageIndex]?.includes(item.index!) ? undefined : "true",
-      "aria-hidden": pages[activePageIndex]?.includes(item.index!)
-        ? undefined
-        : true,
-      role: "group",
-      // @TODO: should be configurable
-      "aria-label": `Item ${item.index! + 1} of ${state.collection.size}`,
+      inert: isInert ? undefined : "true",
+      "aria-hidden": isInert ? undefined : true,
+      "aria-roledescription": "carousel item",
+      "aria-label": label,
       style: {
         scrollSnapAlign: shouldSnap ? "start" : undefined,
       },

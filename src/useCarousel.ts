@@ -1,7 +1,6 @@
 import {
-  ComponentPropsWithoutRef,
   Dispatch,
-  ElementType,
+  KeyboardEvent,
   KeyboardEventHandler,
   SetStateAction,
   useCallback,
@@ -15,19 +14,13 @@ import {
   useCarouselState,
 } from "./useCarouselState";
 import {
-  getNavItem,
-  getNavList,
-  getNextButton,
-  getPrevButton,
+  Attributes,
   noop,
   useAriaBusyScroll,
   useMouseDrag,
+  usePrefersReducedMotion,
 } from "./utils";
-
-type Attributes<T extends ElementType> = ComponentPropsWithoutRef<T> &
-  Partial<Record<`data-${string}`, string | number | boolean>> & {
-    inert?: string;
-  };
+import { useAutoplay } from "./utils/useAutoplay";
 
 export interface CarouselOptions<T extends object>
   extends CarouselStateProps<T> {
@@ -46,14 +39,21 @@ export interface CarouselOptions<T extends object>
    * @default false
    */
   mouseDragging?: boolean;
+  autoplay?: boolean;
+  autoplayInterval?: number;
 }
 
 export interface CarouselAria<T extends object> extends CarouselState<T> {
-  navProps: Attributes<"div">;
-  rootProps: Attributes<"div">;
-  prevButtonProps: Attributes<"button">;
-  nextButtonProps: Attributes<"button">;
-  scrollerProps: Attributes<"div">;
+  /** Props for the navlist element */
+  readonly navProps: Attributes<"div">;
+  /** Props for the root element */
+  readonly rootProps: Attributes<"div">;
+  /** Props for the previous button element */
+  readonly prevButtonProps: Attributes<"button">;
+  /** Props for the next button element */
+  readonly nextButtonProps: Attributes<"button">;
+  /** Props for the scroller element */
+  readonly scrollerProps: Attributes<"div">;
 }
 
 export function useCarousel<T extends object>(
@@ -66,71 +66,95 @@ export function useCarousel<T extends object>(
     spaceBetweenSlides = "0px",
     scrollPadding,
     mouseDragging = false,
+    autoplay = false,
+    autoplayInterval = 5000,
   } = props;
   const [host, setHost] = useState<HTMLElement | null>(null);
   const state = useCarouselState(props, host);
-  const { pages, activePageIndex, next, prev } = state;
+  const { pages, activePageIndex, next, prev, scrollToPage } = state;
   const scrollerId = useId();
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const { rootProps: autoplayRootProps, setAutoplay } = useAutoplay({
+    enabled: !prefersReducedMotion && autoplay,
+    interval: autoplayInterval,
+    next,
+  });
 
-  const handleRootKeyDown: KeyboardEventHandler = useCallback(
-    (e) => {
-      function forward() {
-        if (!host) return;
-        e.preventDefault();
-        const nav = getNavList(host);
-        const { pageIndex: nextIndex } = next();
-        if (nav?.contains(e.target as never)) {
-          const nextItem = getNavItem(host, nextIndex);
-          nextItem?.focus();
-        } else if (!loop && nextIndex >= pages.length - 1) {
-          getNextButton(host)?.focus();
-        } else {
-          getPrevButton(host)?.focus();
-        }
-      }
-      function backward() {
-        if (!host) return;
-        e.preventDefault();
-        const nav = getNavList(host);
-        const { pageIndex: nextIndex } = prev();
-        if (nav?.contains(e.target as never)) {
-          const nextItem = getNavItem(host, nextIndex);
-          nextItem?.focus();
-        } else if (!loop && nextIndex <= 0) {
-          getPrevButton(host)?.focus();
-        } else {
-          getNextButton(host)?.focus();
-        }
-      }
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent): number | undefined => {
+      if (
+        ![
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Home",
+          "End",
+        ].includes(e.key)
+      )
+        return;
+
+      e.preventDefault();
+      let nextPageIndex: number | undefined;
 
       switch (e.key) {
         case "ArrowUp": {
           if (orientation === "vertical") {
-            backward();
+            nextPageIndex = prev();
           }
           break;
         }
         case "ArrowRight": {
           if (orientation === "horizontal") {
-            forward();
+            nextPageIndex = next();
           }
           break;
         }
         case "ArrowDown": {
           if (orientation === "vertical") {
-            forward();
+            nextPageIndex = next();
           }
           break;
         }
         case "ArrowLeft": {
           if (orientation === "horizontal") {
-            backward();
+            nextPageIndex = prev();
           }
           break;
         }
+        case "Home": {
+          scrollToPage(0);
+          nextPageIndex = 0;
+          break;
+        }
+        case "End": {
+          scrollToPage(pages.length - 1);
+          nextPageIndex = pages.length - 1;
+          break;
+        }
+      }
+      return nextPageIndex;
+    },
+    [next, orientation, pages.length, prev, scrollToPage],
+  );
+
+  const handleNavKeydown: KeyboardEventHandler = useCallback(
+    (e) => {
+      const nextIndex = handleKeyDown(e);
+      if (!nextIndex) return;
+
+      const target = e.target as HTMLElement;
+      if (
+        document.activeElement === target ||
+        document.activeElement?.contains(target)
+      ) {
+        const navItem = document.querySelector(
+          `[data-carousel-nav-item="${nextIndex}"]`,
+        ) as HTMLElement | null;
+        navItem?.focus();
       }
     },
-    [host, next, loop, pages.length, prev, orientation],
+    [handleKeyDown],
   );
 
   useAriaBusyScroll(host);
@@ -142,36 +166,43 @@ export function useCarousel<T extends object>(
     setHost,
     {
       ...state,
+      rootProps: {
+        ...autoplayRootProps,
+        role: "region",
+        "aria-roledescription": "carousel",
+      },
       navProps: {
         role: "tablist",
         "aria-controls": scrollerId,
-      },
-      rootProps: {
-        onKeyDown: handleRootKeyDown,
-        "aria-roledescription": "carousel",
+        "aria-orientation": orientation,
+        "aria-label": "Carousel navigation",
+        onKeyDown: handleNavKeydown,
       },
       prevButtonProps: {
         "aria-label": "Previous page",
         "aria-controls": scrollerId,
         "data-prev-button": true,
         onClick: () => prev(),
-        disabled: loop ? false : activePageIndex <= 0,
+        "aria-disabled": loop ? false : activePageIndex <= 0,
       },
       nextButtonProps: {
         "aria-label": "Next page",
         "aria-controls": scrollerId,
         "data-next-button": true,
         onClick: () => next(),
-        disabled: loop ? false : activePageIndex >= pages.length - 1,
+        "aria-disabled": loop ? false : activePageIndex >= pages.length - 1,
       },
       scrollerProps: {
+        "aria-label": "Items Scroller",
         "data-orientation": orientation,
-        className: "rogin-Carousel--scroller",
         onMouseDown: mouseDragging ? onMouseDown : noop,
+        onKeyDown: handleKeyDown,
         tabIndex: 0,
         "aria-atomic": true,
+        "aria-live": "polite",
         "aria-busy": false,
         id: scrollerId,
+        role: "group",
         style: {
           [orientation === "horizontal" ? "gridAutoColumns" : "gridAutoRows"]:
             `calc(100% / ${itemsPerPage} - ${spaceBetweenSlides} * ${itemsPerPage - 1} / ${itemsPerPage})`,
