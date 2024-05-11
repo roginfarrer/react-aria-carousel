@@ -221,7 +221,7 @@ export function ComposedCarousel(
     [props.itemCount],
   );
   return (
-    <div style={{ minWidth: "100%" }}>
+    <div style={{ minWidth: "100%", maxHeight: 300 }}>
       <Carousel {...props} />
     </div>
   );

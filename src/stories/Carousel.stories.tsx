@@ -17,7 +17,9 @@ const meta = {
   title: "Stories",
   component: useCarousel,
   subcomponents: {
+    // @ts-expect-error not component
     useCarouselItem: CarouselItem,
+    // @ts-expect-error not component
     useCarouselNavItem: CarouselNavItem,
   },
   parameters: {
