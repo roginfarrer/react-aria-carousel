@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
 import * as Carousel from "use-carousel";
 
-import styles from "./foo.css";
+import styles from "./examples/BasicExample.css";
 import { css } from "@/styled-system/css";
 
 function cleanCode(moduleString: string) {
@@ -41,9 +41,7 @@ export function LiveDemo({ code }: { code: string }) {
         code={code}
         noInline
         enableTypeScript
-        transformCode={(code) =>
-          `${cleanCode(code)} render(<Fragment><Demo /></Fragment>)`
-        }
+        transformCode={(code) => `${cleanCode(code)} render(<Demo />)`}
         disabled
       >
         <LiveEditor
