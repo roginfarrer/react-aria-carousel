@@ -12,6 +12,11 @@
     "resolveJsonModule": true,
     "customConditions": ["source"],
     "allowJs": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "use-carousel": ["../src"],
+      "styled-system/*": ["./styled-system/*"]
+    }
   }
 }

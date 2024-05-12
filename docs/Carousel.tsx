@@ -11,10 +11,10 @@ import {
   useCarousel as useCarouselHook,
   useCarouselItem,
   useCarouselNavItem,
-} from "..";
-import { css } from "../../styled-system/css";
-import { flex, grid } from "../../styled-system/patterns";
-import { token } from "../../styled-system/tokens";
+} from "../src";
+import { css } from "../styled-system/css";
+import { flex, grid } from "../styled-system/patterns";
+import { token } from "../styled-system/tokens";
 
 const CarouselButton = ({
   dir,
@@ -74,18 +74,8 @@ export const useCarousel = <T extends object>(
         gridAutoRows: "1fr min-content",
         alignItems: "center",
         columnGap: "4",
-        position: "relative",
       })}
     >
-      {props.autoplay ? (
-        <button
-          type="button"
-          {...carousel.autoplayControlProps}
-          className={css({ position: "absolute", top: 0, left: 0 })}
-        >
-          Disable autoplay
-        </button>
-      ) : null}
       <CarouselButton dir="prev" {...carousel.prevButtonProps} />
       <div
         {...carousel.scrollerProps}

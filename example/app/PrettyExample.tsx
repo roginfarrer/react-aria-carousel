@@ -1,20 +1,19 @@
 import { ComponentPropsWithoutRef, CSSProperties, useMemo } from "react";
+import { flex, grid } from "@/styled-system/patterns";
+import { token } from "@/styled-system/tokens";
 import clsx from "clsx";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-
 import {
   CarouselAria,
   CarouselItemOptions,
   CarouselNavItemOptions,
   CarouselOptions,
-  Item,
   useCarousel as useCarouselHook,
   useCarouselItem,
   useCarouselNavItem,
-} from "..";
-import { css } from "../../styled-system/css";
-import { flex, grid } from "../../styled-system/patterns";
-import { token } from "../../styled-system/tokens";
+} from "use-carousel";
+
+import { css } from "@/styled-system/css";
 
 const CarouselButton = ({
   dir,
@@ -34,7 +33,6 @@ const CarouselButton = ({
           transitionProperty: "translate, scale, box-shadow, color",
           transitionTimingFunction: "ease",
           transitionDuration: ".2s",
-          // transition: "translate ease .2s, scale ease .2s, box-shadow ease .2s",
           translate: "auto",
           borderRadius: "full",
           _disabled: { color: "gray.400" },
@@ -58,7 +56,7 @@ const CarouselButton = ({
   );
 };
 
-export const useCarousel = <T extends object>(
+export const Carousel = <T extends object>(
   props: CarouselOptions<T> & { aspectRatio?: string },
 ) => {
   const [assignRef, carousel] = useCarouselHook(props);
@@ -193,7 +191,7 @@ export function Slide({ index, ...props }) {
       })}
       style={{ backgroundColor: token(`colors.${colors[index]}.200` as never) }}
     >
-      {index + 1}
+      <img src={`https://picsum.photos/1600/900?random=${index}`} alt="" />
     </div>
   );
 }
@@ -217,22 +215,5 @@ export function CarouselNavItem<T extends object>(
         },
       })}
     />
-  );
-}
-
-export function ComposedCarousel(
-  props: CarouselOptions<{ src: string }> & { itemCount: number },
-) {
-  const items = useMemo(
-    () =>
-      Array.from({ length: props.itemCount }, (_, i) => ({
-        src: `https://picsum.photos/1600/900?random=${i}`,
-      })),
-    [props.itemCount],
-  );
-  return (
-    <div style={{ minWidth: "100%", maxHeight: 300 }}>
-      <Carousel {...props} />
-    </div>
   );
 }

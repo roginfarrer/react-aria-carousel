@@ -1,7 +1,6 @@
 import {
   ComponentPropsWithoutRef,
   Dispatch,
-  PointerEventHandler,
   SetStateAction,
   useCallback,
   useEffect,
@@ -20,6 +19,7 @@ interface AutoplayOptions {
 }
 
 interface Autoplay {
+  autoplaying: boolean;
   setAutoplay: Dispatch<SetStateAction<boolean>>;
   rootProps: ComponentPropsWithoutRef<"div">;
 }
@@ -61,6 +61,7 @@ export function useAutoplay({
   }, [pause, play]);
 
   return {
+    autoplaying: playing,
     setAutoplay: setPlaying,
     rootProps: {
       onMouseEnter: pause,

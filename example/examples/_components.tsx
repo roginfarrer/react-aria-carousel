@@ -1,7 +1,8 @@
+"use client";
+
 import { ComponentPropsWithoutRef, CSSProperties, useMemo } from "react";
 import clsx from "clsx";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-
 import {
   CarouselAria,
   CarouselItemOptions,
@@ -11,7 +12,8 @@ import {
   useCarousel as useCarouselHook,
   useCarouselItem,
   useCarouselNavItem,
-} from "..";
+} from "use-carousel";
+
 import { css } from "../../styled-system/css";
 import { flex, grid } from "../../styled-system/patterns";
 import { token } from "../../styled-system/tokens";

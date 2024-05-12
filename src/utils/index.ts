@@ -4,6 +4,7 @@ export * from "./useAriaBusyScroll";
 export * from "./useCollection";
 export * from "./useMouseDrag";
 export * from "./usePrefersReducedMotion";
+export * from "./mergeProps";
 
 export type Attributes<T extends ElementType> = ComponentPropsWithoutRef<T> &
   Partial<Record<`data-${string}`, string | number | boolean>> & {

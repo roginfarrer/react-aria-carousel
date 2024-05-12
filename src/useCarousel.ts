@@ -62,6 +62,7 @@ export interface CarouselAria<T extends object> extends CarouselState<T> {
   readonly nextButtonProps: Attributes<"button">;
   /** Props for the scroller element */
   readonly scrollerProps: Attributes<"div">;
+  readonly autoplayControlProps: Attributes<"button">;
 }
 
 export function useCarousel<T extends object>(
@@ -74,7 +75,7 @@ export function useCarousel<T extends object>(
     spaceBetweenItems: spaceBetweenSlides = "0px",
     scrollPadding,
     mouseDragging = false,
-    autoplay = false,
+    autoplay: propAutoplay = false,
     autoplayInterval = 5000,
   } = props;
   const [host, setHost] = useState<HTMLElement | null>(null);
@@ -82,8 +83,12 @@ export function useCarousel<T extends object>(
   const { pages, activePageIndex, next, prev, scrollToPage } = state;
   const scrollerId = useId();
   const prefersReducedMotion = usePrefersReducedMotion();
-  const { rootProps: autoplayRootProps, setAutoplay } = useAutoplay({
-    enabled: !prefersReducedMotion && autoplay,
+  const {
+    rootProps: autoplayRootProps,
+    setAutoplay,
+    autoplaying,
+  } = useAutoplay({
+    enabled: !prefersReducedMotion && propAutoplay,
     interval: autoplayInterval,
     next,
   });
@@ -220,6 +225,15 @@ export function useCarousel<T extends object>(
             : "scrollPaddingBlock"]: scrollPadding,
           [orientation === "horizontal" ? "paddingInline" : "paddingBlock"]:
             scrollPadding,
+        },
+      },
+      autoplayControlProps: {
+        inert: !propAutoplay ? "true" : undefined,
+        "aria-pressed": autoplaying,
+        "aria-label": autoplaying ? "Disable autoplay" : "Enable autoplay",
+        "aria-controls": scrollerId,
+        onClick() {
+          setAutoplay((prev) => !prev);
         },
       },
     },
