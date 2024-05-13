@@ -1,4 +1,5 @@
 import createMDX from "@next/mdx";
+import { createMdxtsPlugin } from "mdxts/next";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
 
@@ -29,5 +30,10 @@ const withMDX = createMDX({
   },
 });
 
+const withMDXTS = createMdxtsPlugin({
+  gitSource: "https://github.com/roginfarrer/carousel",
+  theme: "rose-pine",
+});
+
 // Merge MDX config with Next.js config
-export default withMDX(nextConfig);
+export default withMDXTS(nextConfig);

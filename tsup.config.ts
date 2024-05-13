@@ -7,7 +7,7 @@ export default defineConfig([
     external: ["react", "react-dom"],
     outDir: "./dist",
     treeshake: true,
-    // dts: true,
+    dts: true,
     clean: true,
   },
 ]);

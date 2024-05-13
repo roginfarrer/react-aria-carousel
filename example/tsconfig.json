@@ -23,6 +23,12 @@
       "styled-system/*": ["./styled-system/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../data.ts"
+  ],
   "exclude": ["node_modules"]
 }

@@ -1,5 +1,8 @@
 {
+  "exclude": ["docs", "example"],
   "compilerOptions": {
+    "noEmit": true,
+    "outDir": "dist",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
