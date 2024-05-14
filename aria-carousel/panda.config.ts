@@ -1,14 +1,11 @@
 import { defineConfig } from "@pandacss/dev";
-import typographyPreset from "pandacss-preset-typography";
 
 export default defineConfig({
-  presets: [typographyPreset(), "@pandacss/dev/presets"],
-
   // Whether to use css reset
   preflight: true,
 
   // Where to look for your css declarations
-  include: ["./{app,docs,examples,components}/**/*.{js,jsx,ts,tsx,mdx}"],
+  include: ["./src/**/*.{js,jsx,ts,tsx}"],
 
   // Files to exclude
   exclude: [],

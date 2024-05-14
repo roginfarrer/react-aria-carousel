@@ -1,7 +1,5 @@
 "use client";
 
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-
 import {
   CarouselAria,
   CarouselItemOptions,
@@ -10,9 +8,11 @@ import {
   useCarousel,
   useCarouselItem,
   useCarouselNavItem,
-} from "../../src";
-import { css } from "../../styled-system/css";
-import { flex } from "../../styled-system/patterns";
+} from "@rogin/aria-carousel";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+
+import { css } from "@/styled-system/css";
+import { flex } from "@/styled-system/patterns";
 
 export const Carousel = <T extends object>(props: CarouselOptions<T>) => {
   const [assignRef, carousel] = useCarousel(props);

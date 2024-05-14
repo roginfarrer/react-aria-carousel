@@ -19,7 +19,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "use-carousel": ["../src"],
+      "@rogin/aria-carousel": ["../aria-carousel/src/index.ts"],
       "styled-system/*": ["./styled-system/*"]
     }
   },

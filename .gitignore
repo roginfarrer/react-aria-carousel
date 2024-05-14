@@ -13,3 +13,5 @@ styled-system-studio
 .next
 
 .parcel-cache
+
+tsconfig.tsbuildinfo

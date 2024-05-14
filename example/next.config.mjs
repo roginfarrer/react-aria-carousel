@@ -1,12 +1,17 @@
 import createMDX from "@next/mdx";
 import { createMdxtsPlugin } from "mdxts/next";
 import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
-
+  cleanDistDir: true,
+  poweredByHeader: false,
+  env: {
+    NEXT_TELEMETRY_DISABLED: "1",
+  },
   webpack: (config) => {
     config.module.rules.push({
       resourceQuery: /raw/,
@@ -19,6 +24,7 @@ const nextConfig = {
 
 /** @type {import('rehype-pretty-code').Options} */
 const rehypePrettyCodeOptions = {
+  theme: "github-light-default",
   // See Options section below.
 };
 
@@ -32,8 +38,8 @@ const withMDX = createMDX({
 
 const withMDXTS = createMdxtsPlugin({
   gitSource: "https://github.com/roginfarrer/carousel",
-  theme: "rose-pine",
+  theme: "github-light",
 });
 
 // Merge MDX config with Next.js config
-export default withMDXTS(nextConfig);
+export default withMDX(nextConfig);

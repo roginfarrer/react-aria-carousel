@@ -1,6 +1,10 @@
 {
+  "include": ["./src/**/*.ts", "./src/**/*.tsx"],
   "compilerOptions": {
-    "noEmit": true,
+    "declaration": true,
+    "noEmitOnError": true,
+    "outDir": "./dist",
+    "skipLibCheck": true,
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -9,10 +13,8 @@
     "jsx": "react-jsx",
     "strict": true,
     "allowSyntheticDefaultImports": true,
-    "composite": true,
     "resolveJsonModule": true,
     "allowJs": true,
     "esModuleInterop": true
-  },
-  "references": [{ "path": "./aria-carousel" }, { "path": "./example" }]
+  }
 }

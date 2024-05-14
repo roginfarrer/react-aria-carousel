@@ -1,36 +1,25 @@
-import { CarouselItem } from "use-carousel";
+import { Item } from "@rogin/aria-carousel";
 
-import basicExampleRaw from "./examples/BasicExample?raw";
-import { Carousel, Slide } from "./examples/PrettyExample.tsx";
-import { LiveDemo } from "./LiveEditor";
+import { LiveDemo } from "@/components/LiveEditor";
+
+import BasicExample from "../examples/BasicExample";
+import basicExampleRaw from "../examples/BasicExample?raw";
+import { MultipleItems } from "../examples/MultipleItems";
+import multipleItemsRaw from "../examples/MultipleItems?raw";
+import { Carousel, Composed, Slide } from "../examples/PrettyComponentExample";
+import prettyExampleRaw from "../examples/PrettyComponentExample?raw";
+import prettyExampleStylesRaw from "!!raw-loader!../examples/PrettyExample.module.css";
 import { css } from "@/styled-system/css";
 
-# useCarousel
+import { CodeDemo } from "../components/CodeDemo";
 
-<div className={css({ p: "4", mb: "6", bg: "gray.100", borderRadius: "lg" })}>
-  <Carousel aspectRatio="16 / 9" spaceBetweenItems="16px">
-    <CarouselItem key="0">
-      <Slide index={0} />
-    </CarouselItem>
-    <CarouselItem key="1">
-      <Slide index={1} />
-    </CarouselItem>
-    <CarouselItem key="2">
-      <Slide index={2} />
-    </CarouselItem>
-    <CarouselItem key="3">
-      <Slide index={3} />
-    </CarouselItem>
-    <CarouselItem key="4">
-      <Slide index={4} />
-    </CarouselItem>
-    <CarouselItem key="5">
-      <Slide index={5} />
-    </CarouselItem>
-  </Carousel>
-</div>
+import "../examples/BasicExample.css";
 
-`useCarousel` is an unstyled React component that provides the behavior and accessibility implementation for building a carousel. Unlike many other carousels, this implementation uses the latest browser and DOM APIs for scrolling and snapping. And because it's a hook, the styling is up to you!
+# Aria Carousel
+
+<Composed />
+
+**Aria Carousel** comprises of headless React hooks and components that provides the behavior and accessibility implementation for building a carousel. Unlike many other carousels, this implementation uses the latest browser and DOM APIs for scrolling and snapping. And because it's a hook, the styling is up to you!
 
 - Comprehensive behavior and accessibility coverage for all elements of a carousel, including pagination, infinite scrolling, autoplay, and more.
 - Native browser scroll snapping and animations-no external libraries for animation.
@@ -52,6 +41,30 @@ import { css } from "@/styled-system/css";
 ```sh
 npm install the-thing
 ```
+
+## Features
+
+### Multiple Items
+
+<CodeDemo
+  files={[
+    { code: multipleItemsRaw, title: "App.tsx", lang: "tsx" },
+    {
+      code: prettyExampleRaw,
+      title: "./PrettyComponentExample.tsx",
+      lang: "tsx",
+    },
+    {
+      code: prettyExampleStylesRaw,
+      title: "./PrettyComponentExample.module.css",
+      lang: "css",
+    },
+  ]}
+>
+  <MultipleItems />
+</CodeDemo>
+
+## Accessibility & Labeling
 
 ## API
 
@@ -130,5 +143,7 @@ npm install the-thing
 ```
 
 </details>
+
+## Examples
 
 [collection]: https://react-spectrum.adobe.com/react-aria/collections.html

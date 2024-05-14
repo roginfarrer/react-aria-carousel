@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 
 import "./styles.css";
+import "@/styled-system/styles.css";
+
+import { Sidebar } from "@/components/Sidebar";
+import { flex, grid } from "@/styled-system/patterns";
 
 import { css } from "@/styled-system/css";
 
@@ -16,13 +20,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={css({
-          maxWidth: "50em",
-          margin: "{spacing.10} auto",
-        })}
-      >
-        {children}
+      <body>
+        <div
+          className={flex({
+            margin: "{spacing.10} auto",
+            width: "90dvw",
+            justify: "center",
+            pos: "relative",
+            alignItems: "flex-start",
+          })}
+        >
+          <div
+            className={css({
+              position: "sticky",
+              top: "10",
+              width: 200,
+            })}
+          >
+            <Sidebar />
+          </div>
+          <main>{children}</main>
+        </div>
       </body>
     </html>
   );
