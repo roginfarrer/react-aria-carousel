@@ -1,54 +1,122 @@
 import { Item } from "@rogin/aria-carousel";
 
 import { LiveDemo } from "@/components/LiveEditor";
+import { PropTable } from "@/components/PropTable";
 
+import propData from "./prop-data";
+
+import Autoplay from "../examples/autoplay/index.tsx";
 import BasicExample from "../examples/BasicExample";
 import basicExampleRaw from "../examples/BasicExample?raw";
-import { MultipleItems } from "../examples/MultipleItems";
-import multipleItemsRaw from "../examples/MultipleItems?raw";
+import { LoopingExample } from "../examples/LoopingExample";
+import LoopingExampleRaw from "../examples/LoopingExample?raw";
+import { Demo as MouseDragging } from "../examples/MouseDragging";
+import mouseDraggingRaw from "../examples/MouseDragging?raw";
+import MultipleItems from "../examples/multiple-items";
+import { OrientationExample } from "../examples/OrientationDemo";
+import orientationExampleRaw from "../examples/OrientationDemo?raw";
 import { Carousel, Composed, Slide } from "../examples/PrettyComponentExample";
 import prettyExampleRaw from "../examples/PrettyComponentExample?raw";
+import { Demo as ScrollHints } from "../examples/ScrollHints";
+import scrollHintsRaw from "../examples/ScrollHints?raw";
+import basicExampleStylesRaw from "!!raw-loader!../examples/BasicExample.css";
 import prettyExampleStylesRaw from "!!raw-loader!../examples/PrettyExample.module.css";
+import stylesRaw from "!!raw-loader!../examples/styles.module.css";
 import { css } from "@/styled-system/css";
 
 import { CodeDemo } from "../components/CodeDemo";
 
 import "../examples/BasicExample.css";
 
-# Aria Carousel
+<hr />
 
-<Composed />
-
-**Aria Carousel** comprises of headless React hooks and components that provides the behavior and accessibility implementation for building a carousel. Unlike many other carousels, this implementation uses the latest browser and DOM APIs for scrolling and snapping. And because it's a hook, the styling is up to you!
-
-- Comprehensive behavior and accessibility coverage for all elements of a carousel, including pagination, infinite scrolling, autoplay, and more.
-- Native browser scroll snapping and animations-no external libraries for animation.
-- Design modeled after Adobe's React Stately and React Aria libraries, and uses their [Collection][collection] API.
-- Written in TypeScript.
+**React Aria Carousel** is a collection of React hooks and components that provide the behavior and accessibility implementation for building a carousel. Unlike many other carousels, this implementation uses the latest browser and DOM APIs for scrolling and snapping.
 
 ## Features
 
 - Native **browser scroll-snapping and smooth-scrolling** for performant transitions across pointer types.
-- Follows the **carousel ARIA pattern**, providing the building blocks for the root container, scrolling container, carousel items, next and previous buttons, and pagination, and semantically links them all together.
+- **Comprehensive behavior and accessibility coverage** for all elements of a carousel, including pagination, infinite scrolling, autoplay, and more.
+- Design modeled after **Adobe's React Aria** library, and uses their [Collection][collection] API.
 - Support for showing **one or many items per page**, implemented with responsive-design.
 - Support for **vertical and horizontal** scrolling.
 - Support for **infinite scrolling**.
 - Support for **autoplay** with affordances for disabling it.
 - Support for **mouse dragging**.
+- Written in **TypeScript**.
 
 ## Installation
 
 ```sh
-npm install the-thing
+npmx jsr install @rogin/aria-carousel
 ```
 
-## Features
+## Usage
 
-### Multiple Items
+### Anatomy
+
+{/* prettier-ignore */}
+```tsx
+import {
+  Carousel,
+  CarouselButton,
+  CarouselButton,
+  CarouselItem,
+  CarouselScroller,
+  CarouselTab,
+  CarouselTabs,
+} from "@rogin/aria-carousel";
+
+<Carousel>
+  <CarouselAutoplayControl />
+  <CarouselButton dir="prev" />
+  <CarouselButton dir="next" />
+  <CarouselScroller>
+    <CarouselItem />
+  </CarouselScroller>
+  <CarouselTabs>
+    {(page) => (
+      <CarouselTab index={page.index} />
+    )}
+  </CarouselTabs>
+</Carousel>
+```
+
+Carousels have a root element denoting the carousel region, which contains all of the different parts of the carousel, including the scrolling container, next and previous buttons, and optionally, tabs and the autoplay toggle.
+
+Below is a simple example with minimal styles to show all of the different parts working together.
 
 <CodeDemo
   files={[
-    { code: multipleItemsRaw, title: "App.tsx", lang: "tsx" },
+    { code: basicExampleRaw, title: "App.tsx", lang: "tsx" },
+    {
+      code: basicExampleStylesRaw,
+      title: "./styles.css",
+      lang: "css",
+    },
+  ]}
+>
+  <BasicExample />
+</CodeDemo>
+
+### Multiple Items
+
+The number of items present on a page can be changed with the `itemsPerPage` prop. You can change the spacing between items with the `spaceBetweenItems` prop.
+
+If you need to change either value at different breakpoints, use a CSS variable for each prop, and alter the value of that CSS variable.
+
+<MultipleItems />
+
+### Looping
+
+By default, the carousel will not loop if one scrolls to either end. You can force the carousel to "wrap" in two different ways.
+
+If the `loop` prop is set to `"infinite"`, the carousel will give the appearance of seamlessly wrapping to the opposite end.
+
+If the `loop` props is set to `"native"`, the user still won't be able to scroll to the other end. However, the next and previous buttons and keyboard controls will scroll the user to the other end. ("Native" in this case means that the behavior of the scroll container aren't manipulated, it just provides the functionality to scroll the user to the other end.)
+
+<CodeDemo
+  files={[
+    { code: LoopingExampleRaw, title: "App.tsx", lang: "tsx" },
     {
       code: prettyExampleRaw,
       title: "./PrettyComponentExample.tsx",
@@ -61,7 +129,87 @@ npm install the-thing
     },
   ]}
 >
-  <MultipleItems />
+  <LoopingExample />
+</CodeDemo>
+
+### Orientation
+
+By default, the carousel will scroll horizontally. This can be changed to scroll vertically with the `orientation` prop.
+
+<CodeDemo
+  files={[
+    { code: orientationExampleRaw, title: "App.tsx", lang: "tsx" },
+    {
+      code: prettyExampleRaw,
+      title: "./PrettyComponentExample.tsx",
+      lang: "tsx",
+    },
+    {
+      code: prettyExampleStylesRaw,
+      title: "./PrettyComponentExample.module.css",
+      lang: "css",
+    },
+  ]}
+>
+  <OrientationExample />
+</CodeDemo>
+
+### Mouse Dragging
+
+The carousel uses [CSS scroll snap] to position slides at various snap positions. This allows users to scroll through the slides very naturally, especially on touch devices. Unfortunately, desktop users won’t be able to click and drag with a mouse, which can feel unnatural. The carousel provides this functionality with the `mouseDragging` prop.
+
+This example is best demonstrated using a mouse. Try clicking and dragging the slide to move it.
+
+<CodeDemo
+  files={[
+    { code: mouseDraggingRaw, title: "App.tsx", lang: "tsx" },
+    {
+      code: prettyExampleRaw,
+      title: "./PrettyComponentExample.tsx",
+      lang: "tsx",
+    },
+    {
+      code: prettyExampleStylesRaw,
+      title: "./PrettyComponentExample.module.css",
+      lang: "css",
+    },
+  ]}
+>
+  <MouseDragging />
+</CodeDemo>
+
+### Autoplay
+
+Use the `autoplay` prop to automatically progress the carousel, dictated by the `autoplayInterval` prop. This functionality works great with the `loop` prop enabled. For best usability and accessibility, autoplay will pause if the user starts interacting with the carousel, and will resume when the stop interacting with it. Autoplay will also be disabled if the user's operating system or browser settings has the "prefers reduced motion" option enabled.
+
+It's very important to include the `CarouselAutoplayControl` component when using this prop! Users must be able to disable this functionality.
+
+<Autoplay />
+
+### Scroll Hints
+
+The carousel has two different ways to hint to users that there are more items in the carousel.
+
+The `scrollPadding` prop simply applies [CSS scroll-padding](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-padding) to the scroll container. This has the effect of hinting the presence of items on either side of the carousel.
+
+You can also manipulate the `itemsPerPage` prop to hint at more items. If you use a non-integer number, like `2.25`, the carousel will show a quarter of the following item in the list. This option has the benefit of keeping the edges of the carousel nicely aligned to its container (as opposed to `scrollPadding`).
+
+<CodeDemo
+  files={[
+    { code: scrollHintsRaw, title: "App.tsx", lang: "tsx" },
+    {
+      code: prettyExampleRaw,
+      title: "./PrettyComponentExample.tsx",
+      lang: "tsx",
+    },
+    {
+      code: prettyExampleStylesRaw,
+      title: "./PrettyComponentExample.module.css",
+      lang: "css",
+    },
+  ]}
+>
+  <ScrollHints />
 </CodeDemo>
 
 ## Accessibility & Labeling
@@ -70,80 +218,14 @@ npm install the-thing
 
 ### useCarousel
 
-| Prop              | Description                                                                                                                                          | Default Value  |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| autoplay          | If true, the carousel will scroll automatically when the user is not interacting with it.                                                            | `false`        |
-| autoplayInterval  | Specifies the amount of time, in milliseconds, between each automatic scroll.                                                                        | `5000`         |
-| mouseDragging     | Controls whether the user can scroll by clicking and dragging with their mouse.                                                                      | `false`        |
-| scrollPadding     | The amount of padding to apply to the scroll area, allowing adjacent items to become partially visible.                                              |                |
-| spaceBetweenItems | The gap between items.                                                                                                                               | `'0px'`        |
-| itemsPerPage      | Number of items visible in a page. Can be an integer to show each item with equal dimensions, or a floating point number to "peek" subsequent items. | `1`            |
-| loop              | Controls the pagination behavior at the beginning and end.                                                                                           | `false`        |
-| orientation       | The carousel scroll direction                                                                                                                        | `'horizontal'` |
-| scollBy           | Controls whether scrolling snaps and pagination progresses by item or page.                                                                          | `'page'`       |
-| initialPages      | Define the organization of pages on first render. Useful to render navigation during SSR.                                                            | `[]`           |
+<PropTable data={propData.useCarousel} />
 
 ### useCarouselItem
 
-| Prop | Description                                  | Default Value |
-| ---- | -------------------------------------------- | ------------- |
-| item | An item in the collection of carousel items. |               |
+<PropTable data={propData.useCarouselItem} />
 
 ### useCarouselNavItem
 
-| Prop       | Description                                                   | Default Value |
-| ---------- | ------------------------------------------------------------- | ------------- |
-| index      | An index of a page in the carousel.                           |               |
-| isSelected | Whether the page is the active, visible page of the carousel. |               |
-
-## Example
-
-<LiveDemo code={basicExampleRaw} />
-
-<details>
-<summary>Show CSS</summary>
-
-```css
-.root {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-}
-.scroller {
-  display: grid;
-  overflow: auto;
-  scroll-snap-type: x mandatory;
-  grid-auto-flow: column;
-  scrollbar-width: none;
-}
-.item {
-  background-color: rgb(186, 230, 253);
-  aspect-ratio: 16 / 9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.item:nth-child(even) {
-  background-color: rgb(221, 214, 254);
-}
-.buttons {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-.tabs {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-}
-.tab[aria-selected] {
-  background-color: darkgrey;
-}
-```
-
-</details>
-
-## Examples
+<PropTable data={propData.useCarouselNavItem} />
 
 [collection]: https://react-spectrum.adobe.com/react-aria/collections.html

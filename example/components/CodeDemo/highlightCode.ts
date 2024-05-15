@@ -28,7 +28,7 @@ export async function highlightCode({
     .use(remarkParse)
     .use(remarkRehype)
     .use(rehypePrettyCode, {
-      theme: "github-light",
+      theme: { light: "github-light", dark: "github-dark-dimmed" },
       keepBackground: false,
     })
     .use(rehypeStringify)

@@ -4,12 +4,12 @@ import { Item } from "@rogin/aria-carousel";
 
 import { StockItem, StyledCarousel } from "./PrettyComponentExample";
 
-export function MultipleItems() {
+export function OrientationExample() {
   return (
     <StyledCarousel
-      aspectRatio="3 / 2"
+      aspectRatio="16 / 9"
       spaceBetweenItems="16px"
-      itemsPerPage={2}
+      orientation="vertical"
     >
       <Item key="a">
         <StockItem index={0} />

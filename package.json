@@ -16,7 +16,6 @@
   },
   "workspaces": [
     "aria-carousel",
-    "example",
-    "mdxts-site"
+    "example"
   ]
 }

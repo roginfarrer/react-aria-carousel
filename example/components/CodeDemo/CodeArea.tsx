@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Collection,
   Tab,
@@ -15,12 +15,12 @@ import { css } from "@/styled-system/css";
 export function CodeArea({
   files,
   collapsedHeight,
-  filename,
 }: {
   files: { code: string; title: string; lang: string }[];
   collapsedHeight: number;
   filename?: string;
 }) {
+  const ref = useRef<HTMLElement | null>(null);
   const [isExpanded, setExpanded] = useState(false);
   const { getCollapseProps, getToggleProps } = useCollapse({
     isExpanded: isExpanded,
@@ -30,19 +30,21 @@ export function CodeArea({
   return (
     <div className={css({ pos: "relative" })}>
       <div
-        {...getCollapseProps()}
+        {...getCollapseProps({ ref })}
         className={css({
           maxHeight: "90dvh",
           overflowY: "auto",
-          fontSize: "sm",
+          fontSize: "1rem",
           "& figure": { margin: 0 },
           "& h2": { margin: 0 },
           "& pre": {
             bg: "var(--code-bg)",
-            padding: "4",
-            pt: "10",
+            px: "4",
+            py: "10",
             borderRadius: 0,
+            whiteSpace: "pre-wrap",
           },
+          // Adds the shadow gradient
           '&[aria-hidden="true"]::before': {
             content: "''",
             position: "absolute",
@@ -70,8 +72,10 @@ export function CodeArea({
               <Tab
                 key={file.title}
                 className={css({
+                  cursor: "default",
+                  color: "prose.body",
                   flexShrink: 1,
-                  bg: "white",
+                  bg: "bodyBg",
                   py: "1",
                   px: "2",
                   fontFamily: "mono",
@@ -101,7 +105,12 @@ export function CodeArea({
       <button
         {...getToggleProps({
           onClick: () => {
-            setExpanded((prev) => !prev);
+            setExpanded((prev) => {
+              if (prev && ref.current) {
+                ref.current.scrollTo({ top: 0 });
+              }
+              return !prev;
+            });
           },
         })}
         className={css({
@@ -122,28 +131,5 @@ export function CodeArea({
         {isExpanded ? "Collapse code" : "Expand Code"}
       </button>
     </div>
-  );
-}
-
-function FileTab() {
-  return (
-    <h2
-      className={css({
-        bg: "white",
-        py: "1",
-        px: "2",
-        fontWeight: "bold",
-        fontFamily: "mono",
-        fontSize: "sm",
-        position: "absolute",
-        top: 0,
-        left: 0,
-        zIndex: 1,
-        borderRight: "var(--demo-border)",
-        borderBottom: "var(--demo-border)",
-      })}
-    >
-      {children}
-    </h2>
   );
 }

@@ -5,6 +5,11 @@ import "@/styled-system/styles.css";
 
 import { Sidebar } from "@/components/Sidebar";
 import { flex, grid } from "@/styled-system/patterns";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
+
+import "@fontsource/ibm-plex-sans";
+import "@fontsource/ibm-plex-mono";
 
 import { css } from "@/styled-system/css";
 
@@ -19,28 +24,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
-        <div
-          className={flex({
-            margin: "{spacing.10} auto",
-            width: "90dvw",
-            justify: "center",
-            pos: "relative",
-            alignItems: "flex-start",
-          })}
-        >
-          <div
-            className={css({
-              position: "sticky",
-              top: "10",
-              width: 200,
-            })}
-          >
-            <Sidebar />
-          </div>
-          <main>{children}</main>
-        </div>
+        <main>{children}</main>
       </body>
     </html>
   );

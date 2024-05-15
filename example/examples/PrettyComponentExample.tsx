@@ -24,13 +24,16 @@ export interface Props<T extends object>
 export const StyledCarousel = <T extends object>({
   children,
   aspectRatio,
+  orientation = "horizontal",
   ...props
 }: Props<T>) => {
   return (
     <Carousel
       {...props}
       aria-label="Featured Collection"
-      className={styles.root}
+      className={`${styles.root} ${props.className}`}
+      orientation={orientation}
+      data-orientation={orientation}
     >
       <StyledCarouselButton dir="prev" />
       <CarouselScroller
@@ -71,20 +74,16 @@ export function Composed() {
 }
 
 const colors = [
-  "emerald",
-  "violet",
   "sky",
-  "yellow",
+  "red",
+  "green",
+  "blue",
+  "orange",
+  "violet",
   "lime",
-  "stone",
-  "slate",
   "fuchsia",
   "purple",
-  "blue",
   "pink",
-  "green",
-  "red",
-  "orange",
   "rose",
 ];
 
@@ -93,7 +92,7 @@ export function StockItem({ index }: { index: number }) {
     <div
       className={styles.stockItem}
       style={{
-        backgroundColor: `var(--colors-${colors[index]}-200)`,
+        backgroundColor: `var(--colors-${colors[index]}-6)`,
         aspectRatio: "var(--aspect-ratio)",
       }}
     >

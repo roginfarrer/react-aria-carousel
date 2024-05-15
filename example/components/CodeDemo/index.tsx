@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 
-import { HighlightedCodeProps } from "./ClientHighlightedCode";
 import { CodeArea } from "./CodeArea";
 import { highlightCode } from "./highlightCode";
 import { css } from "@/styled-system/css";
@@ -13,7 +12,11 @@ export async function CodeDemo({
   files: { code: string; title: string; lang: string }[];
 }) {
   let transformedFiles = [];
-  for (const file of files) {
+  for (let file of files) {
+    const arr = file.code.split("\n");
+    if (arr[0].includes("use client")) {
+      file.code = arr.slice(2, arr.length).join("\n");
+    }
     const code = await highlightCode(file);
     transformedFiles.push({ ...file, code, id: file.title });
   }
@@ -22,25 +25,30 @@ export async function CodeDemo({
     <div
       className={css({
         borderRadius: "lg",
-        "--demo-border": "1px solid {colors.gray.300}",
-        "--code-bg": "colors.gray.50",
+        "--demo-border": "1px solid {colors.prose.hrBorder}",
+        "--code-bg": "colors.prose.preBg",
         border: "var(--demo-border)",
         overflow: "hidden",
+        maxWidth: "100%",
+        _osDark: { "--demo-border": "1px solid {colors.indigo.3}" },
       })}
     >
       <div
         className={css({
-          borderBottom: "1px solid {colors.gray.300}",
-          p: "8",
+          borderBottom: "var(--demo-border)",
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
+          flexDirection: "column",
+          p: "4",
+          sm: {
+            p: "8",
+          },
         })}
       >
         {children}
       </div>
       <div>
-        <CodeArea collapsedHeight={300} files={transformedFiles} />
+        <CodeArea collapsedHeight={200} files={transformedFiles} />
       </div>
     </div>
   );

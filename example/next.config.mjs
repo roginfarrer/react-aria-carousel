@@ -24,7 +24,8 @@ const nextConfig = {
 
 /** @type {import('rehype-pretty-code').Options} */
 const rehypePrettyCodeOptions = {
-  theme: "github-light-default",
+  theme: { light: "github-light", dark: "github-dark-dimmed" },
+  keepBackground: false,
   // See Options section below.
 };
 
@@ -32,7 +33,7 @@ const withMDX = createMDX({
   // Add markdown plugins here, as desired
   options: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [[rehypePrettyCode, rehypePrettyCodeOptions]],
+    rehypePlugins: [[rehypePrettyCode, rehypePrettyCodeOptions], rehypeSlug],
   },
 });
 

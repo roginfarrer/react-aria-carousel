@@ -23,7 +23,10 @@
     "@codesandbox/sandpack-react": "^2",
     "react-collapsed": "^4",
     "rehype-stringify": "^10",
-    "react-aria-components": "^1.2.0"
+    "react-aria-components": "^1.2.0",
+    "geist": "latest",
+    "@fontsource/ibm-plex-sans": "latest",
+    "@fontsource/ibm-plex-mono": "latest"
   },
   "devDependencies": {
     "@mdx-js/loader": "^3.0.1",
@@ -38,6 +41,9 @@
     "rehype-highlight": "^7.0.0",
     "rehype-pretty-code": "^0.13.1",
     "shiki": "^1.5.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@radix-ui/colors": "^3",
+    "pandacss-preset-radix-colors": "^0.2.0",
+    "typescript-plugin-css-modules": "^4.1.0"
   }
 }
