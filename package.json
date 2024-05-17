@@ -16,6 +16,6 @@
   },
   "workspaces": [
     "react-aria-carousel",
-    "example"
+    "site"
   ]
 }
