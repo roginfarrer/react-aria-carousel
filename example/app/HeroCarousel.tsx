@@ -1,18 +1,15 @@
 "use client";
 
-import { ComponentPropsWithoutRef } from "react";
-import { useMediaQuery } from "@/hooks/useMatchMedia";
+import { StockPhoto } from "@/components/Image";
 import { flex, grid } from "@/styled-system/patterns";
-import { token } from "@/styled-system/tokens";
 import clsx from "clsx";
 import {
   Carousel,
   CarouselButton,
-  CarouselOptions,
+  CarouselItem,
   CarouselScroller,
   CarouselTab,
   CarouselTabs,
-  Item,
 } from "react-aria-carousel";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
@@ -64,14 +61,12 @@ const StyledCarouselButton = ({ dir }: { dir: "next" | "prev" }) => {
 };
 
 export const HeroCarousel = () => {
-  const isLargeScreen = useMediaQuery("(min-width: 800px)");
-
   return (
     <Carousel
       aria-label="Featured Collection"
       spaceBetweenItems="8px"
       initialPages={[[0], [1], [2], [3], [4]]}
-      itemsPerPage={isLargeScreen ? 2 : 1.25}
+      itemsPerPage={1.25}
       className={css({
         display: "grid",
         gridTemplateAreas: "'scroll scroll scroll' 'prev nav next'",
@@ -79,12 +74,7 @@ export const HeroCarousel = () => {
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
-        rowGap: "2",
-        "--perspective": "600",
-        "--rotate-x": "-18",
-        "--rotate-y": "-26",
-        "--rotate-z": "5",
-        "--translate-z": "37",
+        rowGap: "4",
       })}
     >
       <StyledCarouselButton dir="prev" />
@@ -96,49 +86,23 @@ export const HeroCarousel = () => {
           gridArea: "scroll",
           scrollSnapType: "x mandatory",
           gridAutoFlow: "column",
-          "--perspective": "600",
-          "--rotate-x": "-18",
-          "--rotate-y": "-26",
-          "--rotate-z": "5",
-          "--translate-z": "37",
-          transformStyle: "preserve-3d",
-          //           transform: `
-          //     /* Set the point of view */
-          //     perspective( calc( var(--perspective, 850) * 1px ) )
-          //     /* Transform the element in all 3 dimensions */
-          //     rotateX( calc( var(--rotate-x) * 1deg ) )
-          //     rotateY( calc( var(--rotate-y) * 1deg ) )
-          //     rotateZ( calc( var(--rotate-z) * 1deg ) )
-          //     /* Transform the element over the Z axis */
-          //     translateZ( calc( var(--translate-z) * 1px ) )
-          // translateY(-20%)`,
         })}
       >
-        <Item key="a">
-          <Slide index={1} emoji={"🫰"}>
-            Browser-native scroll snapping smooth scrolling
-          </Slide>
-        </Item>
-        <Item key="c">
-          <Slide index={2} emoji={"🌐"}>
-            Top-tier accessibility
-          </Slide>
-        </Item>
-        <Item key="d">
-          <Slide index={3} emoji={"💅"}>
-            Bring your own styles
-          </Slide>
-        </Item>
-        <Item key="f">
-          <Slide index={0} emoji={"😏"}>
-            Built with the latest web tech
-          </Slide>
-        </Item>
-        <Item key="e">
-          <Slide index={4} emoji={"🤩"}>
-            Packed with features!
-          </Slide>
-        </Item>
+        <Slide index={0} emoji={"🫰"}>
+          Browser-native scroll snapping smooth scrolling
+        </Slide>
+        <Slide index={1} emoji={"🌐"}>
+          Top-tier accessibility
+        </Slide>
+        <Slide index={2} emoji={"💅"}>
+          Bring your own styles
+        </Slide>
+        <Slide index={3} emoji={"😏"}>
+          Built with the latest web tech
+        </Slide>
+        <Slide index={4} emoji={"🤩"}>
+          Packed with features!
+        </Slide>
       </CarouselScroller>
       <CarouselTabs
         className={flex({
@@ -170,11 +134,11 @@ export const HeroCarousel = () => {
 };
 
 const colors = [
-  "emerald",
-  "violet",
-  "sky",
-  "yellow",
-  "lime",
+  "linear-gradient(16deg, rgba(2,0,36,1) 0%, rgba(142,78,198,1) 35%, rgba(0,212,255,1) 100%)",
+  "radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%)",
+  "linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%)",
+  "linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12)",
+  "linear-gradient(to right top, #360537, #7d1445, #bc3e40, #e47b2a, #ebc112)",
   "stone",
   "slate",
   "fuchsia",
@@ -189,21 +153,20 @@ const colors = [
 
 export function Slide({ emoji, children, index, ...props }) {
   return (
-    <div
+    <CarouselItem
+      index={index}
       className={css({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        // height: "30dvh",
         p: "20px",
       })}
     >
       <div
         {...props}
         className={css({
-          // height: "20dvh",
           p: "4",
-          aspectRatio: "15 / 16",
+          aspectRatio: "4 / 3",
           width: "100%",
           display: "flex",
           justifyContent: "center",
@@ -213,16 +176,29 @@ export function Slide({ emoji, children, index, ...props }) {
           borderRadius: "3xl",
           boxShadow: "3px 7px 15px 3px {colors.gray.800/30}",
           textAlign: "center",
+          color: "white",
+          pos: "relative",
+          overflow: "hidden",
+          fontWeight: "bold",
         })}
-        style={{
-          backgroundColor: token(`colors.${colors[index]}.200` as never),
-        }}
       >
-        <span aria-hidden="true" className={css({ display: "block" })}>
-          {emoji}
-        </span>
-        {children}
+        <StockPhoto
+          index={index}
+          aria-hidden="true"
+          className={css({
+            aspectRatio: "4 / 3",
+            filter: "brightness(0.7)",
+            pos: "absolute",
+            inset: 0,
+          })}
+        />
+        <p className={css({ zIndex: 1 })}>
+          <span aria-hidden="true" className={css({ display: "block" })}>
+            {emoji}
+          </span>
+          {children}
+        </p>
       </div>
-    </div>
+    </CarouselItem>
   );
 }

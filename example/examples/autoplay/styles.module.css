@@ -93,6 +93,16 @@
   border-radius: var(--radii-3xl);
 }
 
+.autoplay {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  border: 1px solid var(--colors-gray-800);
+  border-radius: var(--radii-xl);
+  background-color: white;
+  padding: var(--spacing-3);
+}
+
 @media screen and (max-width: 600px) {
   .root {
     gap: 8px;

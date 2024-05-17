@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import { chain } from "@react-aria/utils";
-
 interface Props {
   [key: string]: any;
 }
@@ -22,7 +20,7 @@ type PropsArg = Props | null | undefined;
 type TupleTypes<T> = { [P in keyof T]: T[P] } extends { [key: number]: infer V }
   ? NullToObject<V>
   : never;
-type NullToObject<T> = T extends null | undefined ? {} : T;
+type NullToObject<T> = T extends null | undefined ? object : T;
 // eslint-disable-next-line no-undef, @typescript-eslint/no-unused-vars
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   k: infer I,
@@ -76,4 +74,17 @@ export function mergeProps<T extends PropsArg[]>(
   }
 
   return result as UnionToIntersection<TupleTypes<T>>;
+}
+
+/**
+ * Calls all functions in the order they were chained with the same arguments.
+ */
+function chain(...callbacks: any[]): (...args: any[]) => void {
+  return (...args: any[]) => {
+    for (let callback of callbacks) {
+      if (typeof callback === "function") {
+        callback(...args);
+      }
+    }
+  };
 }

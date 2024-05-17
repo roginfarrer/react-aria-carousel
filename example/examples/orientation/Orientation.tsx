@@ -3,10 +3,10 @@
 import {
   Carousel,
   CarouselButton,
+  CarouselItem,
   CarouselScroller,
   CarouselTab,
   CarouselTabs,
-  Item,
 } from "react-aria-carousel";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
@@ -27,24 +27,13 @@ export function Orientation() {
         className={styles.scroller}
         style={{ "--aspect-ratio": "16 / 9" }}
       >
-        <Item key="a">
-          <Image>1</Image>
-        </Item>
-        <Item key="b">
-          <Image>2</Image>
-        </Item>
-        <Item key="c">
-          <Image>3</Image>
-        </Item>
-        <Item key="d">
-          <Image>4</Image>
-        </Item>
-        <Item key="e">
-          <Image>5</Image>
-        </Item>
-        <Item key="f">
-          <Image>6</Image>
-        </Item>
+        <Item index={0} />
+        <Item index={1} />
+        <Item index={2} />
+        <Item index={3} />
+        <Item index={4} />
+        <Item index={5} />
+        <Item index={6} />
       </CarouselScroller>
       <CarouselButton className={styles.button} dir="next" data-dir="next">
         <FaChevronRight />
@@ -70,16 +59,16 @@ const colors = [
   "rose",
 ];
 
-function Image({ children }: { children: string }) {
+function Item({ index }: { index: number }) {
   return (
-    <div
+    <CarouselItem
       className={styles.item}
       style={{
-        backgroundColor: `var(--colors-${colors[parseInt(children, 10) - 1]}-6)`,
+        backgroundColor: `var(--colors-${colors[index]}-6)`,
         aspectRatio: "var(--aspect-ratio)",
       }}
     >
-      {children}
-    </div>
+      {index + 1}
+    </CarouselItem>
   );
 }

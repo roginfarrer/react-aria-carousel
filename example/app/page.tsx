@@ -16,35 +16,26 @@ export default async function Home() {
     <div>
       <div
         className={grid({
+          maxWidth: "900px",
           height: "100dvh",
           width: "90vw",
           margin: "0 auto",
           gridTemplateAreas: '"copy" "demo" "arrow"',
           gridTemplateColumns: "1fr",
-          gridTemplateRows: "1fr 1.2fr min-content",
+          gridTemplateRows: ".8fr auto min-content",
+          md: {
+            gridTemplateRows: ".8fr 1.2fr min-content",
+          },
           gap: "6",
-          // alignContent: "center",
-          // md: {
-          //   alignContent: "center",
-          //   gridTemplateColumns: "1fr",
-          //   gridTemplateRows: "1fr min-content",
-          //   // gridAutoFlow: "dense",
-          // },
         })}
       >
         <header
           className={flex({
             gridArea: "copy",
             direction: "column",
-            // justifyContent: "space-between",
             gap: "10",
             py: "4",
             alignSelf: "flex-end",
-            // md: {
-            //   alignSelf: "center",
-            //   gridColumn: "1 / 3",
-            //   gridRow: "1 / 1",
-            // },
           })}
         >
           <h1
@@ -60,56 +51,24 @@ export default async function Home() {
           <p className={css({ textStyle: "6xl", fontWeight: "bold" })}>
             The carousel for the modern age.
           </p>
-          {/* <ul */}
-          {/*   className={flex({ */}
-          {/*     textStyle: "xl", */}
-          {/*     direction: "column", */}
-          {/*     gap: "4", */}
-          {/*     "& li": { */}
-          {/*       display: "flex", */}
-          {/*     }, */}
-          {/*     "& li::before": { */}
-          {/*       content: "attr(data-emoji)", */}
-          {/*       display: "inline-block", */}
-          {/*       marginRight: "3", */}
-          {/*     }, */}
-          {/*   })} */}
-          {/* > */}
-          {/*   <li data-emoji={GLOBE}>Top-tier accessibilty</li> */}
-          {/*   <li data-emoji={SNAP}> */}
-          {/*     Browser-native scroll snapping and smooth scrolling */}
-          {/*   </li> */}
-          {/*   <li data-emoji={NAIL}>Bring your own styles</li> */}
-          {/* </ul> */}
         </header>
         <div
           className={css({
             gridArea: "demo",
             alignSelf: "center",
-            // md: {
-            //   gridRow: "1 / 1",
-            //   gridColumn: "2 / -1",
-            // },
+            maxWidth: "500px",
+            md: { alignSelf: "start" },
+            justifySelf: "center",
+            overflow: "hidden",
           })}
         >
-          <div
-            className={css({
-              md: { "--items-per-page": "2" },
-            })}
-          >
-            <HeroCarousel />
-          </div>
+          <HeroCarousel />
         </div>
         <div
           className={css({
             gridArea: "arrow",
             pb: "4",
             justifySelf: "center",
-            // md: {
-            //   gridRow: "2 / -1",
-            //   gridColumn: "1 / -1",
-            //   justifySelf: "center",
-            // },
           })}
         >
           <a
@@ -151,7 +110,7 @@ export default async function Home() {
           <Sidebar />
         </div>
         <div
-          id="#main-content"
+          id="main-content"
           className={`${prose({ size: "lg" })} ${css({
             overflow: "auto",
             "& :where(pre,figure)": { overflow: "auto" },

@@ -9,7 +9,6 @@ export {
   type CarouselItemAria,
   type CarouselItemOptions,
 } from "./useCarouselItem";
-export { Item } from "@react-stately/collections";
 
 export { Carousel, type CarouselProps } from "./Carousel";
 export { CarouselTabs, CarouselTab } from "./CarouselTabs";
@@ -24,3 +23,4 @@ export {
   CarouselAutoplayControl,
   type CarouselAutoplayControlProps,
 } from "./CarouselAutoplayControl";
+export { CarouselItem } from "./CarouselItem";

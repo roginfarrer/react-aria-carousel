@@ -117,10 +117,16 @@ export const CarouselButton = [
 
 export const CarouselScroller = [
   {
-    name: "children",
-    type: "CollectionChildren",
+    name: "items",
+    type: "Array<T>",
     defaultValue: "-",
-    description: "Direction that the carousel should scroll when clicked.",
+    description: "The data with which each item should be derived.",
+  },
+  {
+    name: "children",
+    type: "ReactElement | ReactElement[] | ((item: T, index: number) => ReactElement)",
+    defaultValue: "-",
+    description: "The collection of carousel items.",
   },
 ];
 
@@ -136,7 +142,26 @@ export const CarouselTabs = [
   },
 ];
 
+export const CarouselItem = [
+  {
+    name: "index",
+    type: "number",
+    defaultValue: "-",
+    description: "The placement of the item in the carousel.",
+  },
+];
+
+export const CarouselAutoplayControl = [
+  {
+    name: "children",
+    type: "ReactNode | ((props: {autoplayUserPreference: boolean}) => ReactNode)",
+    defaultValue: "-",
+    description: "The content of the button.",
+  },
+];
+
 const props = {
+  CarouselAutoplayControl,
   useCarousel,
   useCarouselItem,
   useCarouselTab,
@@ -144,6 +169,7 @@ const props = {
   CarouselButton,
   CarouselScroller,
   CarouselTabs,
+  CarouselItem,
 };
 
 export default props;

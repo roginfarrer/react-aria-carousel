@@ -1,13 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Collection, CollectionStateBase, Node } from "@react-types/shared";
 
 import { clamp, usePrefersReducedMotion } from "./utils";
-import { useCollection } from "./utils/useCollection";
 
-export interface CarouselStateProps<T extends object>
-  extends CollectionStateBase<T> {
+export interface CarouselStateProps {
   /**
    * Number of items visible on a page. Can be an integer to
    * show each item with equal dimensions, or a floating point
@@ -41,10 +38,10 @@ export interface CarouselStateProps<T extends object>
   initialPages?: number[][];
 }
 
-export interface CarouselState<T extends object>
-  extends Required<Pick<CarouselStateProps<T>, "itemsPerPage" | "scrollBy">> {
+export interface CarouselState
+  extends Required<Pick<CarouselStateProps, "itemsPerPage" | "scrollBy">> {
   /** The collection of items in the carousel. */
-  readonly collection: Collection<Node<T>>;
+  // readonly collection: Collection<Node<T>>;
   /** The index of the page in view. */
   readonly activePageIndex: number;
   /** The indexes of all items organized into arrays. */
@@ -57,29 +54,20 @@ export interface CarouselState<T extends object>
   scrollToPage: (index: number) => void;
 }
 
-export function useCarouselState<T extends object>(
-  props: CarouselStateProps<T>,
+export function useCarouselState(
+  props: CarouselStateProps,
   ref: HTMLElement | null,
-): CarouselState<T> {
+): CarouselState {
   const {
     itemsPerPage = 1,
     scrollBy = "page",
     loop = false,
-    children,
-    collection: propCollection,
-    items: collectionItems,
     initialPages = [],
   } = props;
   const [activePageIndex, setActivePageIndex] = useState(0);
   const [pages, setPages] = useState<number[][]>(initialPages);
   const prefersReducedMotion = usePrefersReducedMotion();
   const scroller = ref;
-
-  const collection = useCollection({
-    collection: propCollection,
-    children,
-    items: collectionItems,
-  });
 
   const getItems = useCallback(
     (
@@ -358,7 +346,6 @@ export function useCarouselState<T extends object>(
 
   return {
     itemsPerPage,
-    collection,
     activePageIndex,
     scrollBy,
     pages,

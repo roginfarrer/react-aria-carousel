@@ -51,10 +51,5 @@
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.4.0"
   },
-  "dependencies": {
-    "@react-aria/utils": "^3.24.0",
-    "@react-stately/collections": "^3.10.6",
-    "@react-stately/list": "^3.10.4",
-    "react-aria-components": "^1"
-  }
+  "dependencies": {}
 }

@@ -4,7 +4,6 @@ import propData from "./prop-data";
 
 import Autoplay from "../examples/autoplay/index.tsx";
 import Basic from "../examples/basic";
-import Dynamic from "../examples/dynamic/index.tsx";
 import Looping from "../examples/loop";
 import MouseDragging from "../examples/mouse-dragging";
 import MultipleItems from "../examples/multiple-items";
@@ -20,7 +19,6 @@ import { css } from "../styled-system/css";
 
 - Native **browser scroll-snapping and smooth-scrolling** for performant transitions across pointer types.
 - **Comprehensive behavior and accessibility coverage** for all elements of a carousel, including pagination, infinite scrolling, autoplay, and more.
-- Design modeled after **Adobe's React Aria** library, and uses their [Collection][collection] API.
 - Support for showing **one or many items per page**, implemented with responsive-design.
 - Support for **vertical and horizontal** scrolling.
 - Support for **infinite scrolling**.
@@ -75,8 +73,6 @@ Below is a simple example with minimal styles to show all of the different parts
 
 The number of items present on a page can be changed with the `itemsPerPage` prop. You can change the spacing between items with the `spaceBetweenItems` prop.
 
-If you need to change either value at different breakpoints, use a CSS variable for each prop, and alter the value of that CSS variable.
-
 <MultipleItems />
 
 ### Looping
@@ -121,10 +117,6 @@ You can also manipulate the `itemsPerPage` prop to hint at more items. If you us
 
 <ScrollHints />
 
-### Dynamic
-
-<Dynamic />
-
 ## Accessibility & Labeling
 
 ## Hooks
@@ -150,7 +142,6 @@ export function Carousel() {
     nextButtonProps,
     scrollerProps,
     navProps,
-    collection,
     pages,
     autoplayControlProps,
   } = carousel;
@@ -163,9 +154,7 @@ export function Carousel() {
         <button {...nextButtonProps}>Next</button>
       </div>
       <div {...scrollerProps} ref={assignScrollerRef}>
-        {[...collection].map((item) => (
-          <CarouselItem state={carousel} item={item} key={item.key} />
-        ))}
+        <CarouselItem />
       </div>
       <div {...navProps}>
         {pages.map((_, i) => (
@@ -181,21 +170,31 @@ export function Carousel() {
 
 ### Carousel
 
+The component accepts any valid HTML attributes, in addition to the following:
+
 <PropTable data={propData.Carousel} />
 
 ### CarouselScroller
 
+The component accepts any valid HTML attributes, in addition to the following:
+
 <PropTable data={propData.CarouselScroller} />
 
-### Item
+### CarouselItem
 
-`Item` is forwarded from `@react-stately/collections`. See their [Collection API][collection] for an in-depth overview covering this component's API.
+The component accepts any valid HTML attributes, in addition to the following:
+
+<PropTable data={propData.CarouselItem} />
 
 ### CarouselButton
+
+The component accepts any valid HTML button attributes, in addition to the following:
 
 <PropTable data={propData.CarouselButton} />
 
 ### CarouselTabs
+
+The component accepts any valid HTML attributes, in addition to the following:
 
 <PropTable data={propData.CarouselTabs} />
 
@@ -205,7 +204,9 @@ export function Carousel() {
 
 ### CarouselAutoplayControl
 
-`CarouselAutoplayControl` does not have any unique props, and accepts any valid `HTMLButtonElement` prop.
+The component accepts any valid HTML attributes, in addition to the following:
+
+<PropTable data={propData.CarouselAutoplayControl} />
 
 ### useCarousel
 
@@ -218,5 +219,3 @@ export function Carousel() {
 ### useCarouselTab
 
 <PropTable data={propData.useCarouselTab} />
-
-[collection]: https://react-spectrum.adobe.com/react-aria/collections.html

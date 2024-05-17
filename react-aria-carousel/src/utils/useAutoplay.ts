@@ -19,8 +19,9 @@ interface AutoplayOptions {
 }
 
 interface Autoplay {
-  autoplaying: boolean;
-  setAutoplay: Dispatch<SetStateAction<boolean>>;
+  shouldAutoplay: boolean;
+  autoplayUserPreference: boolean;
+  setAutoplayUserPreference: Dispatch<SetStateAction<boolean>>;
   rootProps: ComponentPropsWithoutRef<"div">;
 }
 
@@ -29,20 +30,24 @@ export function useAutoplay({
   interval,
   next,
 }: AutoplayOptions): Autoplay {
-  const [playing, setPlaying] = useState(enabled);
+  // Controls whether autoplaying is active, dependent on being enabled by props
+  // and whether the user is interacting with the Carousel.
+  const [shouldAutoplay, setShouldAutoplay] = useState(enabled);
+  // Controls whether the user has directly disabled autoplay
+  const [autoplayUserPreference, setAutoplayUserPreference] = useState(enabled);
 
   useInterval(
     () => requestAnimationFrame(next),
-    enabled && playing ? interval : null,
+    autoplayUserPreference && shouldAutoplay ? interval : null,
   );
 
   const pause = useCallback(() => {
     if (!enabled) return;
-    setPlaying(false);
+    setShouldAutoplay(false);
   }, [enabled]);
   const play = useCallback(() => {
     if (!enabled) return;
-    setPlaying(true);
+    setShouldAutoplay(true);
   }, [enabled]);
 
   useEffect(() => {
@@ -61,8 +66,9 @@ export function useAutoplay({
   }, [pause, play]);
 
   return {
-    autoplaying: playing,
-    setAutoplay: setPlaying,
+    shouldAutoplay,
+    autoplayUserPreference,
+    setAutoplayUserPreference,
     rootProps: {
       onMouseEnter: pause,
       onTouchStart: pause,

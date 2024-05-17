@@ -24,8 +24,7 @@ import {
 } from "./utils";
 import { useAutoplay } from "./utils/useAutoplay";
 
-export interface CarouselOptions<T extends object>
-  extends CarouselStateProps<T> {
+export interface CarouselOptions extends CarouselStateProps {
   /**
    * The gap between items.
    * @defaultValue '0px'
@@ -53,7 +52,8 @@ export interface CarouselOptions<T extends object>
   autoplayInterval?: number;
 }
 
-export interface CarouselAria<T extends object> extends CarouselState<T> {
+export interface CarouselAria extends CarouselState {
+  autoplayUserPreference: boolean;
   /** Props for the navlist element */
   readonly navProps: Attributes<"div">;
   /** Props for the root element */
@@ -67,8 +67,8 @@ export interface CarouselAria<T extends object> extends CarouselState<T> {
   readonly autoplayControlProps: Attributes<"button">;
 }
 
-export function useCarousel<T extends object>(
-  props: CarouselOptions<T> = {
+export function useCarousel(
+  props: CarouselOptions = {
     itemsPerPage: 1,
     loop: false,
     orientation: "horizontal",
@@ -77,7 +77,7 @@ export function useCarousel<T extends object>(
     autoplay: false,
     autoplayInterval: 5000,
   },
-): [Dispatch<SetStateAction<HTMLElement | null>>, CarouselAria<T>] {
+): [Dispatch<SetStateAction<HTMLElement | null>>, CarouselAria] {
   const {
     itemsPerPage = 1,
     loop = false,
@@ -95,8 +95,8 @@ export function useCarousel<T extends object>(
   const prefersReducedMotion = usePrefersReducedMotion();
   const {
     rootProps: autoplayRootProps,
-    setAutoplay,
-    autoplaying,
+    autoplayUserPreference,
+    setAutoplayUserPreference,
   } = useAutoplay({
     enabled: !prefersReducedMotion && propAutoplay,
     interval: autoplayInterval,
@@ -189,6 +189,7 @@ export function useCarousel<T extends object>(
     setHost,
     {
       ...state,
+      autoplayUserPreference,
       rootProps: {
         ...autoplayRootProps,
         role: "region",
@@ -216,6 +217,7 @@ export function useCarousel<T extends object>(
         disabled: loop ? false : activePageIndex >= pages.length - 1,
       },
       scrollerProps: {
+        "data-carousel-scroller": true,
         "aria-label": "Items Scroller",
         "data-orientation": orientation,
         onMouseDown: mouseDragging ? onMouseDown : noop,
@@ -239,11 +241,12 @@ export function useCarousel<T extends object>(
       },
       autoplayControlProps: {
         inert: !propAutoplay ? "true" : undefined,
-        "aria-pressed": autoplaying,
-        "aria-label": autoplaying ? "Disable autoplay" : "Enable autoplay",
+        "aria-label": autoplayUserPreference
+          ? "Disable autoplay"
+          : "Enable autoplay",
         "aria-controls": scrollerId,
         onClick() {
-          setAutoplay((prev) => !prev);
+          setAutoplayUserPreference((prev) => !prev);
         },
       },
     },

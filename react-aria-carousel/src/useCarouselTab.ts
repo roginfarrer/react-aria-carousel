@@ -16,11 +16,10 @@ export interface CarouselTabAria
   readonly navItemProps: Attributes<"button">;
 }
 
-export function useCarouselTab<T extends object>(
+export function useCarouselTab(
   props: CarouselTabOptions,
-  state: CarouselAria<T>,
+  state: CarouselAria,
 ): CarouselTabAria {
-  // const itemId = genItemId(state.id, props.index);
   const isSelected = props.isSelected ?? state.activePageIndex === props.index;
   let current = props.index + 1,
     setSize = state.pages.length;

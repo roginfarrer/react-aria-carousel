@@ -1,5 +1,5 @@
 {
-  "name": "@rogin/aria-carousel",
+  "name": "@rogin/react-aria-carousel",
   "version": "0.0.1",
   "exports": "./src/index.ts",
   "publish": {

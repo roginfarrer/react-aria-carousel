@@ -1,32 +1,29 @@
 "use client";
 
-import { ComponentPropsWithoutRef, useState } from "react";
-import { mergeProps } from "@react-aria/utils";
-import { CollectionChildren } from "@react-types/shared";
+import { ComponentPropsWithoutRef } from "react";
 
 import { Context } from "./context";
 import { CarouselOptions, useCarousel } from "./useCarousel";
+import { mergeProps } from "./utils";
 
-export interface CarouselProps<T extends object>
-  extends Omit<CarouselOptions<T>, "children">,
+export interface CarouselProps
+  extends Omit<CarouselOptions, "children">,
     ComponentPropsWithoutRef<"div"> {}
 
-export function Carousel<T extends object>({
+export function Carousel({
   children,
-  spaceBetweenItems,
+  spaceBetweenItems = "16px",
   scrollPadding,
   mouseDragging,
   autoplay,
   autoplayInterval,
-  itemsPerPage,
+  itemsPerPage = 1,
   loop,
-  orientation,
-  scrollBy,
-  initialPages,
+  orientation = "horizontal",
+  scrollBy = "page",
+  initialPages = [],
   ...props
-}: CarouselProps<T>) {
-  const [carouselChildren, setCarouselChildren] =
-    useState<CollectionChildren<T>>();
+}: CarouselProps) {
   const carouselProps = {
     spaceBetweenItems,
     scrollPadding,
@@ -39,15 +36,11 @@ export function Carousel<T extends object>({
     scrollBy,
     initialPages,
   };
-  const [assignRef, carouselState] = useCarousel({
-    ...carouselProps,
-    children: carouselChildren,
-  });
+  const [assignRef, carouselState] = useCarousel(carouselProps);
 
   return (
     <Context.Provider
       value={{
-        setCarouselChildren,
         assignRef,
         carouselState,
         carouselProps,

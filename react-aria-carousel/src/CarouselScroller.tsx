@@ -1,31 +1,35 @@
 "use client";
 
-import { ComponentPropsWithoutRef, useEffect } from "react";
-import { CollectionChildren } from "@react-types/shared";
+import * as React from "react";
+import { ComponentPropsWithoutRef, ReactElement } from "react";
 
-import { useCarouselContext } from "./context";
-import { CarouselAria } from "./useCarousel";
-import { CarouselItemOptions, useCarouselItem } from "./useCarouselItem";
+import { IndexContext, useCarouselContext } from "./context";
 import { mergeProps } from "./utils";
 
-export interface CarouselScrollerProps<T extends object>
+export interface CarouselScrollerProps<T>
   extends Omit<ComponentPropsWithoutRef<"div">, "children"> {
   /**
-   * The collection of carousel items
-   * @see https://react-spectrum.adobe.com/react-aria/collections.html
+   * The data with which each item should be derived.
    */
-  children: CollectionChildren<T>;
+  items?: Array<T>;
+  /**
+   * The collection of carousel items.
+   */
+  children:
+    | ReactElement
+    | ReactElement[]
+    | ((item: T, index: number) => ReactElement);
 }
 
-export function CarouselScroller<T extends object>(
-  props: CarouselScrollerProps<T>,
-) {
+export function CarouselScroller<T>({
+  children,
+  items,
+  ...props
+}: CarouselScrollerProps<T>) {
   const context = useCarouselContext();
-  const { assignRef, setCarouselChildren, carouselState } = context;
+  const { assignRef, carouselState } = context;
 
-  useEffect(() => {
-    setCarouselChildren(props.children);
-  }, [props.children, setCarouselChildren]);
+  const kids = typeof children === "function" ? items!.map(children) : children;
 
   return (
     <div
@@ -33,20 +37,9 @@ export function CarouselScroller<T extends object>(
       {...mergeProps(carouselState?.scrollerProps, props)}
       style={{ ...carouselState?.scrollerProps.style, ...props?.style }}
     >
-      {[...(carouselState?.collection || [])].map((item) => (
-        <CarouselItem key={item.key} item={item} state={carouselState!} />
+      {React.Children.map(kids, (child, index) => (
+        <IndexContext.Provider value={index}>{child}</IndexContext.Provider>
       ))}
     </div>
   );
-}
-
-function CarouselItem<T extends object>(
-  props: CarouselItemOptions<T> & {
-    state: CarouselAria<T>;
-  },
-) {
-  const { item, state } = props;
-  const { itemProps } = useCarouselItem(props, state);
-
-  return <div {...itemProps}>{item.rendered}</div>;
 }

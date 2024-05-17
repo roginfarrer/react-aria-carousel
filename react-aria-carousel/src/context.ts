@@ -1,16 +1,22 @@
 import { createContext, useContext } from "react";
-import { CollectionChildren } from "@react-types/shared";
 
 import { CarouselAria, CarouselOptions } from "./useCarousel";
 
-interface ContextType<T extends object> {
-  carouselState?: CarouselAria<T>;
-  setCarouselChildren: (state: CollectionChildren<T>) => void;
-  carouselProps: CarouselOptions<T>;
+interface ContextType {
+  carouselState: CarouselAria;
+  carouselProps: CarouselOptions;
   assignRef: (instance: HTMLElement | null) => void;
 }
 
-// @ts-expect-error Intentionally undefined
-export const Context = createContext<ContextType<any>>(undefined);
+// @ts-expect-error purposefully undefined
+export const Context = createContext<ContextType>(undefined);
 
-export const useCarouselContext = () => useContext(Context);
+export const useCarouselContext = () => {
+  const context = useContext(Context);
+  if (!context) {
+    throw new Error("react-aria-carousel: No Carousel found in the React tree");
+  }
+  return context;
+};
+
+export const IndexContext = createContext<number>(-1);

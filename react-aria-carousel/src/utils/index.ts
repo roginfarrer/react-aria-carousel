@@ -1,7 +1,6 @@
 import { ComponentPropsWithoutRef, ElementType } from "react";
 
 export * from "./useAriaBusyScroll";
-export * from "./useCollection";
 export * from "./useMouseDrag";
 export * from "./usePrefersReducedMotion";
 export * from "./mergeProps";
