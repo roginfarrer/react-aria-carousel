@@ -15,7 +15,7 @@
     "prettier": "^3.2.5"
   },
   "workspaces": [
-    "aria-carousel",
+    "react-aria-carousel",
     "example"
   ]
 }

@@ -12,20 +12,20 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 import styles from "./styles.module.css";
 
-export function MultipleItems() {
+export function Orientation() {
   return (
     <Carousel
       aria-label="Featured Collection"
       className={styles.root}
-      itemsPerPage={2}
       spaceBetweenItems="12px"
+      orientation="vertical"
     >
       <CarouselButton className={styles.button} data-dir="prev" dir="prev">
         <FaChevronLeft />
       </CarouselButton>
       <CarouselScroller
         className={styles.scroller}
-        style={{ "--aspect-ratio": "4 / 3" } as CSSProperties}
+        style={{ "--aspect-ratio": "16 / 9" }}
       >
         <Item key="a">
           <Image>1</Image>

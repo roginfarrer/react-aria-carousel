@@ -1,34 +1,18 @@
-import { Item } from "@rogin/aria-carousel";
-
-import { LiveDemo } from "@/components/LiveEditor";
 import { PropTable } from "@/components/PropTable";
 
 import propData from "./prop-data";
 
 import Autoplay from "../examples/autoplay/index.tsx";
-import BasicExample from "../examples/BasicExample";
-import basicExampleRaw from "../examples/BasicExample?raw";
-import { LoopingExample } from "../examples/LoopingExample";
-import LoopingExampleRaw from "../examples/LoopingExample?raw";
-import { Demo as MouseDragging } from "../examples/MouseDragging";
-import mouseDraggingRaw from "../examples/MouseDragging?raw";
+import Basic from "../examples/basic";
+import Dynamic from "../examples/dynamic/index.tsx";
+import Looping from "../examples/loop";
+import MouseDragging from "../examples/mouse-dragging";
 import MultipleItems from "../examples/multiple-items";
-import { OrientationExample } from "../examples/OrientationDemo";
-import orientationExampleRaw from "../examples/OrientationDemo?raw";
-import { Carousel, Composed, Slide } from "../examples/PrettyComponentExample";
-import prettyExampleRaw from "../examples/PrettyComponentExample?raw";
-import { Demo as ScrollHints } from "../examples/ScrollHints";
-import scrollHintsRaw from "../examples/ScrollHints?raw";
-import basicExampleStylesRaw from "!!raw-loader!../examples/BasicExample.css";
-import prettyExampleStylesRaw from "!!raw-loader!../examples/PrettyExample.module.css";
-import stylesRaw from "!!raw-loader!../examples/styles.module.css";
-import { css } from "@/styled-system/css";
+import Orientation from "../examples/orientation";
+import ScrollHints from "../examples/scroll-hints";
+import { css } from "../styled-system/css";
 
-import { CodeDemo } from "../components/CodeDemo";
-
-import "../examples/BasicExample.css";
-
-<hr />
+<hr className={css({ mt: 0 })} />
 
 **React Aria Carousel** is a collection of React hooks and components that provide the behavior and accessibility implementation for building a carousel. Unlike many other carousels, this implementation uses the latest browser and DOM APIs for scrolling and snapping.
 
@@ -47,7 +31,7 @@ import "../examples/BasicExample.css";
 ## Installation
 
 ```sh
-npmx jsr install @rogin/aria-carousel
+npm install react-aria-carousel
 ```
 
 ## Usage
@@ -64,7 +48,7 @@ import {
   CarouselScroller,
   CarouselTab,
   CarouselTabs,
-} from "@rogin/aria-carousel";
+} from "react-aria-carousel";
 
 <Carousel>
   <CarouselAutoplayControl />
@@ -85,18 +69,7 @@ Carousels have a root element denoting the carousel region, which contains all o
 
 Below is a simple example with minimal styles to show all of the different parts working together.
 
-<CodeDemo
-  files={[
-    { code: basicExampleRaw, title: "App.tsx", lang: "tsx" },
-    {
-      code: basicExampleStylesRaw,
-      title: "./styles.css",
-      lang: "css",
-    },
-  ]}
->
-  <BasicExample />
-</CodeDemo>
+<Basic />
 
 ### Multiple Items
 
@@ -114,69 +87,21 @@ If the `loop` prop is set to `"infinite"`, the carousel will give the appearance
 
 If the `loop` props is set to `"native"`, the user still won't be able to scroll to the other end. However, the next and previous buttons and keyboard controls will scroll the user to the other end. ("Native" in this case means that the behavior of the scroll container aren't manipulated, it just provides the functionality to scroll the user to the other end.)
 
-<CodeDemo
-  files={[
-    { code: LoopingExampleRaw, title: "App.tsx", lang: "tsx" },
-    {
-      code: prettyExampleRaw,
-      title: "./PrettyComponentExample.tsx",
-      lang: "tsx",
-    },
-    {
-      code: prettyExampleStylesRaw,
-      title: "./PrettyComponentExample.module.css",
-      lang: "css",
-    },
-  ]}
->
-  <LoopingExample />
-</CodeDemo>
+<Looping />
 
 ### Orientation
 
 By default, the carousel will scroll horizontally. This can be changed to scroll vertically with the `orientation` prop.
 
-<CodeDemo
-  files={[
-    { code: orientationExampleRaw, title: "App.tsx", lang: "tsx" },
-    {
-      code: prettyExampleRaw,
-      title: "./PrettyComponentExample.tsx",
-      lang: "tsx",
-    },
-    {
-      code: prettyExampleStylesRaw,
-      title: "./PrettyComponentExample.module.css",
-      lang: "css",
-    },
-  ]}
->
-  <OrientationExample />
-</CodeDemo>
+<Orientation />
 
 ### Mouse Dragging
 
-The carousel uses [CSS scroll snap] to position slides at various snap positions. This allows users to scroll through the slides very naturally, especially on touch devices. Unfortunately, desktop users won’t be able to click and drag with a mouse, which can feel unnatural. The carousel provides this functionality with the `mouseDragging` prop.
+The carousel uses [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-type) to position slides at various snap positions. This allows users to scroll through the slides very naturally, especially on touch devices. Unfortunately, desktop users won’t be able to click and drag with a mouse, which can feel unnatural. The carousel provides this functionality with the `mouseDragging` prop.
 
 This example is best demonstrated using a mouse. Try clicking and dragging the slide to move it.
 
-<CodeDemo
-  files={[
-    { code: mouseDraggingRaw, title: "App.tsx", lang: "tsx" },
-    {
-      code: prettyExampleRaw,
-      title: "./PrettyComponentExample.tsx",
-      lang: "tsx",
-    },
-    {
-      code: prettyExampleStylesRaw,
-      title: "./PrettyComponentExample.module.css",
-      lang: "css",
-    },
-  ]}
->
-  <MouseDragging />
-</CodeDemo>
+<MouseDragging />
 
 ### Autoplay
 
@@ -194,27 +119,93 @@ The `scrollPadding` prop simply applies [CSS scroll-padding](https://developer.m
 
 You can also manipulate the `itemsPerPage` prop to hint at more items. If you use a non-integer number, like `2.25`, the carousel will show a quarter of the following item in the list. This option has the benefit of keeping the edges of the carousel nicely aligned to its container (as opposed to `scrollPadding`).
 
-<CodeDemo
-  files={[
-    { code: scrollHintsRaw, title: "App.tsx", lang: "tsx" },
-    {
-      code: prettyExampleRaw,
-      title: "./PrettyComponentExample.tsx",
-      lang: "tsx",
-    },
-    {
-      code: prettyExampleStylesRaw,
-      title: "./PrettyComponentExample.module.css",
-      lang: "css",
-    },
-  ]}
->
-  <ScrollHints />
-</CodeDemo>
+<ScrollHints />
+
+### Dynamic
+
+<Dynamic />
 
 ## Accessibility & Labeling
 
+## Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API.
+
+```tsx
+import {
+  useCarousel,
+  useCarouselItem,
+  useCarouselNavItem,
+} from "react-aria-carousel";
+
+export function Carousel() {
+  const [assignScrollerRef, carousel] = useCarousel({
+    spaceBetweenItems: "16px",
+    itemsPerPage: 2,
+  });
+
+  const {
+    rootProps,
+    prevButtonProps,
+    nextButtonProps,
+    scrollerProps,
+    navProps,
+    collection,
+    pages,
+    autoplayControlProps,
+  } = carousel;
+
+  return (
+    <div {...rootProps}>
+      <button {...autoplayControlProps}>Toggle autoplay</button>
+      <div>
+        <button {...prevButtonProps}>Previous</button>
+        <button {...nextButtonProps}>Next</button>
+      </div>
+      <div {...scrollerProps} ref={assignScrollerRef}>
+        {[...collection].map((item) => (
+          <CarouselItem state={carousel} item={item} key={item.key} />
+        ))}
+      </div>
+      <div {...navProps}>
+        {pages.map((_, i) => (
+          <CarouselNavItem key={i} index={i} state={carousel} />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
 ## API
+
+### Carousel
+
+<PropTable data={propData.Carousel} />
+
+### CarouselScroller
+
+<PropTable data={propData.CarouselScroller} />
+
+### Item
+
+`Item` is forwarded from `@react-stately/collections`. See their [Collection API][collection] for an in-depth overview covering this component's API.
+
+### CarouselButton
+
+<PropTable data={propData.CarouselButton} />
+
+### CarouselTabs
+
+<PropTable data={propData.CarouselTabs} />
+
+### CarouselTab
+
+`CarouselTab` does not have any unique props, and accepts any valid `HTMLButtonElement` prop.
+
+### CarouselAutoplayControl
+
+`CarouselAutoplayControl` does not have any unique props, and accepts any valid `HTMLButtonElement` prop.
 
 ### useCarousel
 
@@ -224,8 +215,8 @@ You can also manipulate the `itemsPerPage` prop to hint at more items. If you us
 
 <PropTable data={propData.useCarouselItem} />
 
-### useCarouselNavItem
+### useCarouselTab
 
-<PropTable data={propData.useCarouselNavItem} />
+<PropTable data={propData.useCarouselTab} />
 
 [collection]: https://react-spectrum.adobe.com/react-aria/collections.html

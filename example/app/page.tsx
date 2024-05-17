@@ -1,8 +1,7 @@
 import { Sidebar } from "@/components/Sidebar";
 import { flex, grid } from "@/styled-system/patterns";
+import { FaChevronDown } from "react-icons/fa6";
 
-import { Demo as Autoplay } from "../examples/Autoplay";
-// import { Carousel, Composed, Slide } from "../examples/PrettyComponentExample";
 import { prose } from "../styled-system/recipes/prose";
 import { HeroCarousel } from "./HeroCarousel";
 import Text from "./intro.mdx";
@@ -20,19 +19,17 @@ export default async function Home() {
           height: "100dvh",
           width: "90vw",
           margin: "0 auto",
-          pt: "10",
-          gridTemplateAreas: '"demo" "copy"',
+          gridTemplateAreas: '"copy" "demo" "arrow"',
           gridTemplateColumns: "1fr",
-          gridTemplateRows: "min-content 1fr",
-          gap: "8",
-          overflow: "auto",
+          gridTemplateRows: "1fr 1.2fr min-content",
+          gap: "6",
           // alignContent: "center",
-          md: {
-            alignContent: "center",
-            gridTemplateAreas: '"copy demo"',
-            gridTemplateColumns: "1.33fr 1fr",
-            gridTemplateRows: "min-content",
-          },
+          // md: {
+          //   alignContent: "center",
+          //   gridTemplateColumns: "1fr",
+          //   gridTemplateRows: "1fr min-content",
+          //   // gridAutoFlow: "dense",
+          // },
         })}
       >
         <header
@@ -42,6 +39,12 @@ export default async function Home() {
             // justifyContent: "space-between",
             gap: "10",
             py: "4",
+            alignSelf: "flex-end",
+            // md: {
+            //   alignSelf: "center",
+            //   gridColumn: "1 / 3",
+            //   gridRow: "1 / 1",
+            // },
           })}
         >
           <h1
@@ -57,41 +60,73 @@ export default async function Home() {
           <p className={css({ textStyle: "6xl", fontWeight: "bold" })}>
             The carousel for the modern age.
           </p>
-          <ul
-            className={flex({
-              textStyle: "xl",
-              direction: "column",
-              gap: "4",
-              "& li": {
-                display: "flex",
-              },
-              "& li::before": {
-                content: "attr(data-emoji)",
-                display: "inline-block",
-                marginRight: "3",
-              },
-            })}
-          >
-            <li data-emoji={GLOBE}>Top-tier accessibilty</li>
-            <li data-emoji={SNAP}>
-              Browser-native scroll snapping and smooth scrolling
-            </li>
-            <li data-emoji={NAIL}>Bring your own styles</li>
-          </ul>
+          {/* <ul */}
+          {/*   className={flex({ */}
+          {/*     textStyle: "xl", */}
+          {/*     direction: "column", */}
+          {/*     gap: "4", */}
+          {/*     "& li": { */}
+          {/*       display: "flex", */}
+          {/*     }, */}
+          {/*     "& li::before": { */}
+          {/*       content: "attr(data-emoji)", */}
+          {/*       display: "inline-block", */}
+          {/*       marginRight: "3", */}
+          {/*     }, */}
+          {/*   })} */}
+          {/* > */}
+          {/*   <li data-emoji={GLOBE}>Top-tier accessibilty</li> */}
+          {/*   <li data-emoji={SNAP}> */}
+          {/*     Browser-native scroll snapping and smooth scrolling */}
+          {/*   </li> */}
+          {/*   <li data-emoji={NAIL}>Bring your own styles</li> */}
+          {/* </ul> */}
         </header>
-        <div className={css({ gridArea: "demo" })}>
+        <div
+          className={css({
+            gridArea: "demo",
+            alignSelf: "center",
+            // md: {
+            //   gridRow: "1 / 1",
+            //   gridColumn: "2 / -1",
+            // },
+          })}
+        >
           <div
             className={css({
-              // transform: "rotate3d(-1, 2, 1, 36deg)",
-              md: {
-                width: "70dvw",
-                pos: "absolute",
-                left: 0,
-              },
+              md: { "--items-per-page": "2" },
             })}
           >
             <HeroCarousel />
           </div>
+        </div>
+        <div
+          className={css({
+            gridArea: "arrow",
+            pb: "4",
+            justifySelf: "center",
+            // md: {
+            //   gridRow: "2 / -1",
+            //   gridColumn: "1 / -1",
+            //   justifySelf: "center",
+            // },
+          })}
+        >
+          <a
+            href="#main-content"
+            className={css({
+              display: "block",
+              m: "0 auto",
+              animation: "1s ease 0s infinite normal none running bounce",
+            })}
+          >
+            <FaChevronDown
+              className={css({
+                color: "gray.8",
+                size: "36px",
+              })}
+            />
+          </a>
         </div>
       </div>
       <div
@@ -116,6 +151,7 @@ export default async function Home() {
           <Sidebar />
         </div>
         <div
+          id="#main-content"
           className={`${prose({ size: "lg" })} ${css({
             overflow: "auto",
             "& :where(pre,figure)": { overflow: "auto" },
@@ -128,7 +164,14 @@ export default async function Home() {
               bg: "currentColor",
               borderRadius: "full",
             },
-            "& code": { fontWeight: "normal" },
+            "& :where(code)": {
+              fontWeight: "normal",
+              bg: "mint.3",
+              color: "mint.11",
+              borderRadius: "xs",
+              px: "4px",
+            },
+            "& pre code": { bg: "transparent" },
             "& code::before,& code::after": { content: "initial" },
           })}`}
         >

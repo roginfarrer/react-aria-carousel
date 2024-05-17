@@ -3,11 +3,11 @@
 import {
   Carousel,
   CarouselButton,
-  CarouselItem,
   CarouselScroller,
   CarouselTab,
   CarouselTabs,
-} from "@rogin/aria-carousel";
+  Item,
+} from "react-aria-carousel";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 import styles from "./styles.module.css";
@@ -17,6 +17,7 @@ export function Autoplay() {
     <Carousel
       aria-label="Featured Collection"
       className={styles.root}
+      spaceBetweenItems="12px"
       loop="infinite"
       autoplay
       autoplayInterval={5000}
@@ -26,26 +27,26 @@ export function Autoplay() {
       </CarouselButton>
       <CarouselScroller
         className={styles.scroller}
-        style={{ "--aspect-ratio": "4 / 3" }}
+        style={{ "--aspect-ratio": "16 / 9" }}
       >
-        <CarouselItem key="a">
-          <Item>1</Item>
-        </CarouselItem>
-        <CarouselItem key="b">
-          <Item>2</Item>
-        </CarouselItem>
-        <CarouselItem key="c">
-          <Item>3</Item>
-        </CarouselItem>
-        <CarouselItem key="d">
-          <Item>4</Item>
-        </CarouselItem>
-        <CarouselItem key="e">
-          <Item>5</Item>
-        </CarouselItem>
-        <CarouselItem key="f">
-          <Item>6</Item>
-        </CarouselItem>
+        <Item key="a">
+          <Image>1</Image>
+        </Item>
+        <Item key="b">
+          <Image>2</Image>
+        </Item>
+        <Item key="c">
+          <Image>3</Image>
+        </Item>
+        <Item key="d">
+          <Image>4</Image>
+        </Item>
+        <Item key="e">
+          <Image>5</Image>
+        </Item>
+        <Item key="f">
+          <Image>6</Image>
+        </Item>
       </CarouselScroller>
       <CarouselButton className={styles.button} dir="next" data-dir="next">
         <FaChevronRight />
@@ -71,7 +72,7 @@ const colors = [
   "rose",
 ];
 
-function Item({ children }: { children: string }) {
+function Image({ children }: { children: string }) {
   return (
     <div
       className={styles.item}

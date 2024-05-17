@@ -72,7 +72,7 @@ export default defineConfig({
               value: "0 0 0",
             },
             code: {
-              value: "{colors.amber.11}",
+              value: "{colors.indigo.11}",
             },
             preCode: {
               value: "{colors.slate.12}",

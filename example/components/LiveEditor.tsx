@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import * as Carousel from "@rogin/aria-carousel";
+import * as Carousel from "react-aria-carousel";
 import ReactDOM from "react-dom";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
 

@@ -12,12 +12,33 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 import styles from "./styles.module.css";
 
-export function MultipleItems() {
+export function ScrollHints() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        gap: "16px",
+        flexDirection: "column",
+      }}
+    >
+      <div>
+        <h4 style={{ marginTop: 0 }}>Scroll Padding</h4>
+        <ComposedCarousel scrollPadding="15%" />
+      </div>
+      <div>
+        <h4>Fractional Items per Page</h4>
+        <ComposedCarousel itemsPerPage={2.25} />
+      </div>
+    </div>
+  );
+}
+
+function ComposedCarousel(props) {
   return (
     <Carousel
+      {...props}
       aria-label="Featured Collection"
       className={styles.root}
-      itemsPerPage={2}
       spaceBetweenItems="12px"
     >
       <CarouselButton className={styles.button} data-dir="prev" dir="prev">
@@ -25,7 +46,7 @@ export function MultipleItems() {
       </CarouselButton>
       <CarouselScroller
         className={styles.scroller}
-        style={{ "--aspect-ratio": "4 / 3" } as CSSProperties}
+        style={{ "--aspect-ratio": "16 / 9" }}
       >
         <Item key="a">
           <Image>1</Image>

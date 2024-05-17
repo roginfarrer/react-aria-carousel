@@ -18,7 +18,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@rogin/aria-carousel": ["../aria-carousel/src/index.ts"],
+      "react-aria-carousel": ["../react-aria-carousel/src/index.ts"],
       "styled-system/*": ["./styled-system/*"]
     }
   },

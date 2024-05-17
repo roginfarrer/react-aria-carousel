@@ -32,8 +32,6 @@ export function CodeArea({
       <div
         {...getCollapseProps({ ref })}
         className={css({
-          maxHeight: "90dvh",
-          overflowY: "auto",
           fontSize: "1rem",
           "& figure": { margin: 0 },
           "& h2": { margin: 0 },

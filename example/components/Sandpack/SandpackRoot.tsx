@@ -90,14 +90,14 @@ function SandpackRoot(props: SandpackProps) {
           //   code: rawReact,
           // },
           "./styles.css": stylesRaw,
-          "/node_modules/@rogin/aria-carousel/package.json": {
+          "/node_modules/react-aria-carousel/package.json": {
             hidden: true,
             code: JSON.stringify({
-              name: "@rogin/aria-carousel",
+              name: "react-aria-carousel",
               main: "./dist/index.cjs",
             }),
           },
-          "/node_modules/@rogin/aria-carousel/dist/index.cjs": {
+          "/node_modules/react-aria-carousel/dist/index.cjs": {
             hidden: true,
             code: libRaw,
           },

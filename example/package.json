@@ -13,7 +13,7 @@
     "@pandacss/dev": "^0.39.1",
     "@react-stately/collections": "^3.10.6",
     "@react-stately/list": "^3.10.4",
-    "@rogin/aria-carousel": "workspace:*",
+    "react-aria-carousel": "workspace:*",
     "mdxts": "^0.18.0",
     "next": "14.2.3",
     "react": "^18",

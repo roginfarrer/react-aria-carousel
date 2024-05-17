@@ -1,0 +1,95 @@
+.root {
+  display: grid;
+  grid-template-areas: ". scroller" "tabs scroller" ". scroller";
+  grid-auto-columns: min-content 1fr;
+  grid-auto-rows: min-content 1fr min-content;
+  column-gap: var(--spacing-6);
+  position: relative;
+  align-items: center;
+  flex-grow: 1;
+}
+.button {
+  background-color: transparent;
+  border: 0;
+  height: 36px;
+  width: 36px;
+  font-size: 1.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all ease 0.2s;
+  border-radius: 9999px;
+  transform: translateX(var(--translateX)) scale(var(--scale))
+    rotate(var(--rotate));
+  rotate: 90deg;
+}
+.button:not([disabled]):hover {
+  --scale: 1.05;
+  color: var(--colors-blue-700);
+  box-shadow: 0 0 0 4px var(--colors-gray-200);
+}
+.button[data-dir="prev"]:not([disabled]):hover {
+  --translateX: -5%;
+}
+.button[data-dir="next"]:not([disabled]):hover {
+  --translateX: 5%;
+}
+.button[disabled] {
+  opacity: 0.5;
+}
+.scroller {
+  grid-area: scroller;
+  display: grid;
+  scrollbar-width: none;
+  scroll-snap-type: y mandatory;
+  grid-auto-flow: row;
+  overflow-y: auto;
+  overflow-x: hidden;
+  aspect-ratio: var(--aspect-ratio);
+}
+.item {
+  aspect-ratio: 16 / 9;
+}
+.tabs {
+  grid-area: tabs;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.tab {
+  border-radius: var(--radii-full);
+  height: var(--sizes-4);
+  width: var(--sizes-4);
+  background-color: var(--colors-gray-300);
+  transition: background-color 0.2s ease;
+}
+.tab:hover {
+  background-color: var(--colors-gray-500);
+}
+.tab[aria-selected="true"] {
+  background-color: var(--colors-gray-700);
+}
+.root img {
+  margin: 0;
+}
+.item {
+  aspect-ratio: var(--aspect-ratio);
+  color: var(--colors-prose-body);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-sizes-2xl);
+  border-radius: var(--radii-3xl);
+}
+
+@media screen and (max-width: 800px) {
+  .root {
+    gap: 8px;
+  }
+  .button {
+    width: 24px;
+    height: 24px;
+  }
+}

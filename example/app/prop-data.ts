@@ -80,7 +80,7 @@ export const useCarouselItem = [
   },
 ];
 
-export const useCarouselNavItem = [
+export const useCarouselTab = [
   {
     name: "index",
     type: "number",
@@ -96,6 +96,54 @@ export const useCarouselNavItem = [
   },
 ];
 
-const props = { useCarousel, useCarouselItem, useCarouselNavItem };
+export const Carousel = [
+  ...useCarousel.filter((prop) => prop.name !== "children"),
+  {
+    name: "children",
+    type: "ReactNode",
+    defaultValue: "-",
+    description: "The elements of the carousel.",
+  },
+];
+
+export const CarouselButton = [
+  {
+    name: "dir",
+    type: "'next' | 'prev'",
+    defaultValue: "-",
+    description: "Direction that the carousel should scroll when clicked.",
+  },
+];
+
+export const CarouselScroller = [
+  {
+    name: "children",
+    type: "CollectionChildren",
+    defaultValue: "-",
+    description: "Direction that the carousel should scroll when clicked.",
+  },
+];
+
+export const CarouselTabs = [
+  {
+    name: "children",
+    type: `(props: {
+  isSelected: boolean; 
+  index: number
+}) => ReactNode`,
+    defaultValue: "-",
+    description: "Function that returns a CarouselTab",
+  },
+];
+
+const props = {
+  useCarousel,
+  useCarouselItem,
+  useCarouselTab,
+  Carousel,
+  CarouselButton,
+  CarouselScroller,
+  CarouselTabs,
+};
 
 export default props;
