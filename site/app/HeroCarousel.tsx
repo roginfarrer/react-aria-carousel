@@ -64,8 +64,8 @@ const StyledCarouselButton = ({ dir }: { dir: "next" | "prev" }) => {
 export const HeroCarousel = () => {
   return (
     <Carousel
-      aria-label="Featured Collection"
-      spaceBetweenItems="8px"
+      aria-label="React Aria Carousel features"
+      spaceBetweenItems="0px"
       initialPages={[[0], [1], [2], [3], [4]]}
       itemsPerPage={1.25}
       className={css({

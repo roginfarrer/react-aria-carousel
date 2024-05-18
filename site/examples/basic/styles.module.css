@@ -33,6 +33,14 @@
 .tab[aria-selected="true"] {
   background-color: darkgrey;
 }
-:where(.button, .tab) {
-  all: revert;
+.button,
+.tab {
+  background-color: var(--colors-gray-6);
+  color: var(--colors-gray-12);
+  font-size: var(--font-sizes-sm);
+  border-radius: var(--radii-md);
+  padding: 0 var(--spacing-2);
+}
+.button:disabled {
+  opacity: 0.5;
 }

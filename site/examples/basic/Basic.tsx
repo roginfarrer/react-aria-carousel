@@ -28,7 +28,6 @@ export function Basic() {
         <Item index={1} />
         <Item index={2} />
         <Item index={3} />
-        <Item index={4} />
       </CarouselScroller>
       <CarouselTabs className={styles.tabs}>
         {(item) => (
