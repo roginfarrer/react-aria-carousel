@@ -1,9 +1,7 @@
-declare module "*.module.css" {
-  const classes: { [key: string]: string };
-  export default classes;
-}
+import "react";
 
-declare module "*.?raw" {
-  const str = string
-  export default str
+declare module "react" {
+  interface CSSProperties {
+    [key: `--${string}`]: string | number;
+  }
 }

@@ -133,7 +133,16 @@ export const HeroCarousel = () => {
   );
 };
 
-export function Slide({ emoji, children, index, ...props }) {
+export function Slide({
+  emoji,
+  children,
+  index,
+  ...props
+}: {
+  emoji: string;
+  children: string;
+  index: number;
+}) {
   return (
     <CarouselItem
       index={index}

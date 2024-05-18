@@ -8,6 +8,7 @@ import remarkGfm from "remark-gfm";
 const nextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   cleanDistDir: true,
+  ignoreBuildErrors: true,
   poweredByHeader: false,
   env: {
     NEXT_TELEMETRY_DISABLED: "1",

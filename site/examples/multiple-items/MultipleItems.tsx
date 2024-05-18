@@ -25,7 +25,7 @@ export function MultipleItems() {
       </CarouselButton>
       <CarouselScroller
         className={styles.scroller}
-        style={{ "--aspect-ratio": "4 / 3" } as CSSProperties}
+        style={{ "--aspect-ratio": "4 / 3" }}
       >
         <Item index={0} />
         <Item index={1} />
