@@ -72,6 +72,10 @@ export function Sidebar() {
             </a>
           );
         })}
+        <hr className={css({ borderColor: "prose.hrBorder" })} />
+        <a href="https://github.com/roginfarrer/react-aria-carousel">
+          View on GitHub
+        </a>
       </nav>
     </div>
   );

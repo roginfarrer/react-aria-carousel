@@ -13,7 +13,7 @@ export default async function Home() {
       <div
         className={grid({
           maxWidth: "900px",
-          height: "100dvh",
+          height: "100vh",
           width: "90vw",
           margin: "0 auto",
           gridTemplateAreas: '"copy" "demo" "arrow"',
@@ -61,7 +61,7 @@ export default async function Home() {
         >
           <h1
             className={css({
-              textStyle: "2xl",
+              textStyle: { base: "xl", md: "2xl" },
               fontWeight: "bold",
               fontVariantCaps: "all-small-caps",
               letterSpacing: "0.5px",
@@ -81,6 +81,7 @@ export default async function Home() {
             md: { alignSelf: "start" },
             justifySelf: "center",
             overflow: "hidden",
+            py: "2",
           })}
         >
           <HeroCarousel />

@@ -14,7 +14,7 @@ import {
   CarouselTab,
   CarouselTabs,
 } from "react-aria-carousel";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { FaCaretLeft, FaCaretRight } from "react-icons/fa6";
 
 import { css } from "@/styled-system/css";
 
@@ -24,11 +24,11 @@ const StyledCarouselButton = ({ dir }: { dir: "next" | "prev" }) => {
       dir={dir}
       className={clsx(
         flex({
-          size: "1.5rem",
+          size: "1.25rem",
           fontSize: "1rem",
           justify: "center",
           align: "center",
-          transitionProperty: "translate, scale, box-shadow, color",
+          transitionProperty: "all",
           transitionTimingFunction: "ease",
           transitionDuration: ".2s",
           translate: "auto",
@@ -37,8 +37,6 @@ const StyledCarouselButton = ({ dir }: { dir: "next" | "prev" }) => {
           zIndex: 1,
           "&:not([disabled]):hover": {
             scale: "1.05",
-            boxShadow: "0 0 0 4px {colors.gray.200/50}",
-            color: "blue.700",
           },
         }),
         dir === "prev" &&
@@ -55,9 +53,9 @@ const StyledCarouselButton = ({ dir }: { dir: "next" | "prev" }) => {
       )}
     >
       {dir === "prev" ? (
-        <FaChevronLeft size="1em" />
+        <FaCaretLeft size="1em" />
       ) : (
-        <FaChevronRight size="1em" />
+        <FaCaretRight size="1em" />
       )}
     </CarouselButton>
   );
