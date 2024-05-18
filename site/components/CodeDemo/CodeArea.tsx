@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Collection,
   Tab,
@@ -25,12 +25,20 @@ export function CodeArea({
   const { getCollapseProps, getToggleProps } = useCollapse({
     isExpanded: isExpanded,
     collapsedHeight: collapsedHeight,
+    onTransitionStateChange(state) {
+      if (state === "collapsing" && ref.current) {
+        ref.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    },
   });
 
   return (
     <div className={css({ pos: "relative" })}>
       <div
-        {...getCollapseProps({ ref })}
+        {...getCollapseProps()}
         className={css({
           fontSize: "1rem",
           "& figure": { margin: 0 },
@@ -65,6 +73,7 @@ export function CodeArea({
               overflowX: "auto",
             })}
             items={files}
+            ref={ref}
           >
             {(file) => (
               <Tab
@@ -103,12 +112,7 @@ export function CodeArea({
       <button
         {...getToggleProps({
           onClick: () => {
-            setExpanded((prev) => {
-              if (prev && ref.current) {
-                ref.current.scrollTo({ top: 0 });
-              }
-              return !prev;
-            });
+            setExpanded((prev) => !prev);
           },
         })}
         className={css({

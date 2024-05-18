@@ -11,7 +11,8 @@
     "type-check": "tsc"
   },
   "dependencies": {
-    "smoothscroll-polyfill": "0.4.4",
+    "scrollyfills": "^1",
+    "@af-utils/scrollend-polyfill": "0.0.13",
     "@pandacss/dev": "^0.39.1",
     "react-aria-carousel": "workspace:*",
     "next": "14.2.3",
