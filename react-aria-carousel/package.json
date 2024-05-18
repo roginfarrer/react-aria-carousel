@@ -10,7 +10,6 @@
   },
   "type": "module",
   "scripts": {
-    "prepare": "panda --config react-aria-carousel/panda.config.ts codegen",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "build": "tsc --project tsconfig.json",
