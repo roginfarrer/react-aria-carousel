@@ -16,9 +16,9 @@
       { "name": "next" },
       { "name": "typescript-plugin-css-modules" }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "react-aria-carousel": ["../react-aria-carousel/src/index.ts"],
       "styled-system/*": ["./styled-system/*"]
     }
   },
