@@ -1,7 +1,6 @@
 "use client";
 
 import "smoothscroll-polyfill";
-import "@af-utils/scrollend-polyfill";
 
 import { StockPhoto } from "@/components/Image";
 import { flex, grid } from "@/styled-system/patterns";
