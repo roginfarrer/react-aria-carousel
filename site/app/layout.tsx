@@ -4,6 +4,7 @@ import "./styles.css";
 import "@/styled-system/styles.css";
 import "@fontsource/ibm-plex-sans";
 import "@fontsource/ibm-plex-mono";
+import "smoothscroll-polyfill";
 
 export const metadata: Metadata = {
   title: "React Aria Carousel",
