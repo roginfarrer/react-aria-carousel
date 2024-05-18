@@ -14,5 +14,5 @@
     "allowJs": true,
     "esModuleInterop": true
   },
-  "references": [{ "path": "./aria-carousel" }, { "path": "./site" }]
+  "references": [{ "path": "./react-aria-carousel" }, { "path": "./site" }]
 }
