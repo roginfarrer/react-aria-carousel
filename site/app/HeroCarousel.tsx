@@ -133,24 +133,6 @@ export const HeroCarousel = () => {
   );
 };
 
-const colors = [
-  "linear-gradient(16deg, rgba(2,0,36,1) 0%, rgba(142,78,198,1) 35%, rgba(0,212,255,1) 100%)",
-  "radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%)",
-  "linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%)",
-  "linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12)",
-  "linear-gradient(to right top, #360537, #7d1445, #bc3e40, #e47b2a, #ebc112)",
-  "stone",
-  "slate",
-  "fuchsia",
-  "purple",
-  "blue",
-  "pink",
-  "green",
-  "red",
-  "orange",
-  "rose",
-];
-
 export function Slide({ emoji, children, index, ...props }) {
   return (
     <CarouselItem

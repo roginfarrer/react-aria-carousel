@@ -7,10 +7,6 @@ import { HeroCarousel } from "./HeroCarousel";
 import Text from "./intro.mdx";
 import { css } from "@/styled-system/css";
 
-const SNAP = "🫰";
-const GLOBE = "🌐";
-const NAIL = "💅";
-
 export default async function Home() {
   return (
     <div>
