@@ -308,7 +308,11 @@ export function useCarouselState(
               const actualItem = getItems().find(
                 (el) => el.getAttribute("data-carousel-item") === cloneIndex,
               );
-              scrollToItem(actualItem!, "instant");
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  scrollToItem(actualItem!, "instant");
+                });
+              });
             } else {
               const indexString = (firstIntersecting.target as HTMLElement)
                 .dataset.carouselItem;

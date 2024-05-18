@@ -2,6 +2,7 @@
 
 import "smoothscroll-polyfill";
 
+import { useEffect } from "react";
 import { StockPhoto } from "@/components/Image";
 import { flex, grid } from "@/styled-system/patterns";
 import clsx from "clsx";
@@ -15,6 +16,7 @@ import {
 } from "react-aria-carousel";
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa6";
 
+import { scrollEndPolyfill } from "./scrollend-polyfill";
 import { css } from "@/styled-system/css";
 
 const StyledCarouselButton = ({ dir }: { dir: "next" | "prev" }) => {
@@ -61,6 +63,10 @@ const StyledCarouselButton = ({ dir }: { dir: "next" | "prev" }) => {
 };
 
 export const HeroCarousel = () => {
+  useEffect(() => {
+    scrollEndPolyfill();
+  }, []);
+
   return (
     <Carousel
       aria-label="React Aria Carousel features"

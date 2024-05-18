@@ -1,7 +1,5 @@
 "use client";
 
-import "./utils/scrollend-polyfill";
-
 import {
   Dispatch,
   KeyboardEvent,

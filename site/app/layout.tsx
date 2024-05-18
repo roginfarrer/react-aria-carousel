@@ -19,7 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={css({ mb: "10" })}>
+      <body
+        className={css({
+          mb: "10",
+          "& [data-carousel-scroller]": { scrollbar: "hidden" },
+        })}
+      >
         <main>{children}</main>
       </body>
     </html>
