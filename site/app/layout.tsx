@@ -5,6 +5,8 @@ import "@/styled-system/styles.css";
 import "@fontsource/ibm-plex-sans";
 import "@fontsource/ibm-plex-mono";
 
+import { css } from "@/styled-system/css";
+
 export const metadata: Metadata = {
   title: "React Aria Carousel",
   description: "The carousel for the modern age",
@@ -17,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={css({ mb: "10" })}>
         <main>{children}</main>
       </body>
     </html>

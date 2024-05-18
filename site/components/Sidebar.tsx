@@ -3,7 +3,7 @@ import { flex } from "@/styled-system/patterns";
 import { css } from "@/styled-system/css";
 
 const routes = [
-  { title: "Getting Started", slug: "aria-carousel", level: 1 },
+  { title: "Getting Started", slug: "main-content", level: 1 },
   { title: "Features", level: 2 },
   { title: "Installation", level: 2 },
   { title: "Usage", level: 2 },
@@ -26,6 +26,8 @@ const routes = [
   { title: "useCarousel", level: 3 },
   { title: "useCarouselItem", level: 3 },
   { title: "useCarouselNavItem", level: 3 },
+  { title: "Browser Support", level: 2 },
+  { title: "Acknowledgements", level: 2 },
 ];
 
 export function Sidebar() {
@@ -49,6 +51,7 @@ export function Sidebar() {
           borderLeft: "2px solid {colors.prose.hrBorder}",
           pl: "4",
           color: "slate.11",
+          textStyle: "sm",
         })}
       >
         {routes.map((route) => {

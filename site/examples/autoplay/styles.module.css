@@ -97,10 +97,16 @@
   position: absolute;
   top: 8px;
   left: 8px;
-  border: 1px solid var(--colors-gray-800);
   border-radius: var(--radii-xl);
-  background-color: white;
+  box-shadow: var(--shadows-lg);
+  background-color: var(--colors-mint-8);
+  color: white;
   padding: var(--spacing-3);
+  transition: all 0.2s ease;
+}
+
+.autoplay:active {
+  box-shadow: none;
 }
 
 @media screen and (max-width: 600px) {

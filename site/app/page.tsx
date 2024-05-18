@@ -1,5 +1,5 @@
 import { Sidebar } from "@/components/Sidebar";
-import { flex, grid } from "@/styled-system/patterns";
+import { flex, grid, visuallyHidden } from "@/styled-system/patterns";
 import { FaChevronDown } from "react-icons/fa6";
 
 import { prose } from "../styled-system/recipes/prose";
@@ -25,6 +25,31 @@ export default async function Home() {
           gap: "6",
         })}
       >
+        <div
+          className={css({
+            gridArea: "arrow",
+            py: "4",
+            justifySelf: "center",
+          })}
+        >
+          <a
+            href="#main-content"
+            className={css({
+              display: "block",
+              m: "0 auto",
+              animation: "1s ease 0s infinite normal none running bounce",
+            })}
+          >
+            <FaChevronDown
+              aria-hidden="true"
+              className={css({
+                color: "gray.8",
+                size: "36px",
+              })}
+            />
+            <span className={visuallyHidden()}>Skip to content</span>
+          </a>
+        </div>
         <header
           className={flex({
             gridArea: "copy",
@@ -59,29 +84,6 @@ export default async function Home() {
           })}
         >
           <HeroCarousel />
-        </div>
-        <div
-          className={css({
-            gridArea: "arrow",
-            pb: "4",
-            justifySelf: "center",
-          })}
-        >
-          <a
-            href="#main-content"
-            className={css({
-              display: "block",
-              m: "0 auto",
-              animation: "1s ease 0s infinite normal none running bounce",
-            })}
-          >
-            <FaChevronDown
-              className={css({
-                color: "gray.8",
-                size: "36px",
-              })}
-            />
-          </a>
         </div>
       </div>
       <div
@@ -121,10 +123,13 @@ export default async function Home() {
             },
             "& :where(code)": {
               fontWeight: "normal",
-              bg: "mint.3",
-              color: "mint.11",
+              bg: "amber.3",
+              color: "amber.11",
               borderRadius: "xs",
               px: "4px",
+            },
+            "& :where(a):has(code)": {
+              textDecorationColor: "amber.11",
             },
             "& pre code": { bg: "transparent" },
             "& code::before,& code::after": { content: "initial" },

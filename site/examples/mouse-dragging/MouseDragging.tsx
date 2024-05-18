@@ -23,10 +23,7 @@ export function MouseDragging() {
       <CarouselButton className={styles.button} data-dir="prev" dir="prev">
         <FaChevronLeft />
       </CarouselButton>
-      <CarouselScroller
-        className={styles.scroller}
-        style={{ "--aspect-ratio": "16 / 9" }}
-      >
+      <CarouselScroller className={styles.scroller}>
         <Item index={0} />
         <Item index={1} />
         <Item index={2} />
@@ -65,7 +62,6 @@ function Item({ index }: { index: number }) {
       className={styles.item}
       style={{
         backgroundColor: `var(--colors-${colors[index]}-6)`,
-        aspectRatio: "var(--aspect-ratio)",
       }}
     >
       {index + 1}

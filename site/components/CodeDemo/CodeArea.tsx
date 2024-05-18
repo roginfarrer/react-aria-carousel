@@ -20,7 +20,7 @@ export function CodeArea({
   collapsedHeight: number;
   filename?: string;
 }) {
-  const ref = useRef<HTMLElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const [isExpanded, setExpanded] = useState(false);
   const { getCollapseProps, getToggleProps } = useCollapse({
     isExpanded: isExpanded,
@@ -37,67 +37,67 @@ export function CodeArea({
 
   return (
     <div className={css({ pos: "relative" })}>
-      <div
-        {...getCollapseProps()}
-        className={css({
-          fontSize: "1rem",
-          "& figure": { margin: 0 },
-          "& h2": { margin: 0 },
-          "& pre": {
-            bg: "var(--code-bg)",
-            px: "4",
-            py: "10",
-            borderRadius: 0,
-            whiteSpace: "pre-wrap",
-          },
-          // Adds the shadow gradient
-          '&[aria-hidden="true"]::before': {
-            content: "''",
+      <Tabs>
+        <TabList
+          className={css({
+            display: "flex",
             position: "absolute",
-            inset: 0,
-            borderRadius: "calc({radii.lg} - 1px)",
-            backgroundImage:
-              "linear-gradient(0deg,var(--code-bg) 10%,transparent 100%)",
+            top: 0,
+            left: 0,
             zIndex: 1,
-          },
-        })}
-      >
-        <Tabs>
-          <TabList
-            className={css({
-              display: "flex",
+            overflowX: "auto",
+          })}
+          items={files}
+          ref={ref}
+        >
+          {(file) => (
+            <Tab
+              key={file.title}
+              className={css({
+                cursor: "default",
+                color: "prose.body",
+                flexShrink: 1,
+                bg: "bodyBg",
+                py: "1",
+                px: "2",
+                fontFamily: "mono",
+                fontSize: "xs",
+                borderRight: "var(--demo-border)",
+                borderBottom: "var(--demo-border)",
+                '&[aria-selected="true"]': {
+                  fontWeight: "bold",
+                },
+              })}
+            >
+              {file.title}
+            </Tab>
+          )}
+        </TabList>
+        <div
+          {...getCollapseProps()}
+          className={css({
+            fontSize: "1rem",
+            "& figure": { margin: 0 },
+            "& h2": { margin: 0 },
+            "& pre": {
+              bg: "var(--code-bg)",
+              px: "4",
+              py: "10",
+              borderRadius: 0,
+              whiteSpace: "pre-wrap",
+            },
+            // Adds the shadow gradient
+            '&[aria-hidden="true"]::before': {
+              content: "''",
               position: "absolute",
-              top: 0,
-              left: 0,
+              inset: 0,
+              borderRadius: "calc({radii.lg} - 1px)",
+              backgroundImage:
+                "linear-gradient(0deg,var(--code-bg) 10%,transparent 100%)",
               zIndex: 1,
-              overflowX: "auto",
-            })}
-            items={files}
-            ref={ref}
-          >
-            {(file) => (
-              <Tab
-                key={file.title}
-                className={css({
-                  cursor: "default",
-                  color: "prose.body",
-                  flexShrink: 1,
-                  bg: "bodyBg",
-                  py: "1",
-                  px: "2",
-                  fontFamily: "mono",
-                  fontSize: "xs",
-                  borderRight: "var(--demo-border)",
-                  borderBottom: "var(--demo-border)",
-                  '&[aria-selected="true"]': {
-                    fontWeight: "bold",
-                  },
-                })}
-              >
-                {file.title}
-              </Tab>
-            )}
-          </TabList>
+            },
+          })}
+        >
           <Collection items={files}>
             {(file) => {
               return (
@@ -107,8 +107,8 @@ export function CodeArea({
               );
             }}
           </Collection>
-        </Tabs>
-      </div>
+        </div>
+      </Tabs>
       <button
         {...getToggleProps({
           onClick: () => {
