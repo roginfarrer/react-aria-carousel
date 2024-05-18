@@ -1,6 +1,6 @@
 {
   "name": "react-aria-carousel",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "exports": {
     ".": {
       "require": "./dist/index.cjs",
