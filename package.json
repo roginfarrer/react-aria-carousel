@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build": "bun pm trust --all && cd react-aria-carousel && bun run build && cd ../site && bun panda && bun run build",
+    "build": "cd react-aria-carousel && bun run build && cd ../site && bun panda && bun run build",
     "prepare": "bun --cwd react-aria-carousel panda codegen && bun --cwd site panda codegen "
   },
   "devDependencies": {
@@ -16,6 +16,7 @@
     "site"
   ],
   "trustedDependencies": [
+    "@pandadev/css",
     "example",
     "react-aria-carousel"
   ]

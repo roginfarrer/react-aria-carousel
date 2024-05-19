@@ -18,6 +18,10 @@
 }
 .item {
   aspect-ratio: 3 / 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-sizes-2xl);
 }
 .buttons {
   grid-area: buttons;
@@ -35,8 +39,8 @@
 }
 .button,
 .tab {
-  background-color: var(--colors-gray-6);
-  color: var(--colors-gray-12);
+  background-color: var(--colors-gray-200);
+  color: var(--colors-gray-900);
   font-size: var(--font-sizes-sm);
   border-radius: var(--radii-md);
   padding: 0 var(--spacing-2);

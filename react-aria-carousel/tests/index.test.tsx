@@ -46,7 +46,7 @@ test("useCarousel returns", () => {
       "aria-atomic": true,
       "aria-busy": false,
       "aria-label": "Items Scroller",
-      "aria-live": "polite",
+      "aria-live": "off",
       "data-carousel-scroller": true,
       "data-orientation": "horizontal",
       "id": ":r0:",

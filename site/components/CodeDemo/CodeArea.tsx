@@ -44,7 +44,7 @@ export function CodeArea({
             position: "absolute",
             top: 0,
             left: 0,
-            zIndex: 1,
+            zIndex: 10,
             overflowX: "auto",
           })}
           items={files}

@@ -21,11 +21,11 @@ export function ScrollHints() {
         flexDirection: "column",
       }}
     >
-      <div>
+      <div style={{ "--aspect-ratio": "16 / 9" }}>
         <h4 style={{ marginTop: 0 }}>Scroll Padding</h4>
         <ComposedCarousel scrollPadding="15%" />
       </div>
-      <div>
+      <div style={{ "--aspect-ratio": "4 / 3" }}>
         <h4>Fractional Items per Page</h4>
         <ComposedCarousel itemsPerPage={2.25} />
       </div>
@@ -83,6 +83,7 @@ function Item({ index }: { index: number }) {
       className={styles.item}
       style={{
         backgroundColor: `var(--colors-${colors[index]}-6)`,
+        aspectRatio: "var(--aspect-ratio)",
       }}
     >
       {index + 1}

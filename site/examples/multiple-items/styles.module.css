@@ -33,21 +33,21 @@
     rotate(var(--rotate));
 }
 
-.button:not([disabled]):hover {
+.button:not([aria-disabled]):hover {
   --scale: 1.05;
   color: var(--colors-blue-700);
   box-shadow: 0 0 0 4px var(--colors-gray-200);
 }
 
-.button[data-dir="prev"]:not([disabled]):hover {
+.button[data-dir="prev"]:not([aria-disabled]):hover {
   --translateX: -5%;
 }
 
-.button[data-dir="next"]:not([disabled]):hover {
+.button[data-dir="next"]:not([aria-disabled]):hover {
   --translateX: 5%;
 }
 
-.button[disabled] {
+.button[aria-disabled] {
   opacity: 0.5;
 }
 

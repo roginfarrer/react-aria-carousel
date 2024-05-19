@@ -1,4 +1,5 @@
 import { flex } from "@/styled-system/patterns";
+import { PiArrowUpRight } from "react-icons/pi";
 
 import { css } from "@/styled-system/css";
 
@@ -73,8 +74,15 @@ export function Sidebar() {
           );
         })}
         <hr className={css({ borderColor: "prose.hrBorder" })} />
-        <a href="https://github.com/roginfarrer/react-aria-carousel">
-          View on GitHub
+        <a
+          href="https://github.com/roginfarrer/react-aria-carousel"
+          className={flex({
+            align: "center",
+            gap: "1",
+            _hover: { textDecoration: "underline" },
+          })}
+        >
+          View on GitHub <PiArrowUpRight />
         </a>
       </nav>
     </div>

@@ -8,18 +8,25 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "src",
+    "jsr.jsonc"
+  ],
   "type": "module",
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "tsc --project tsconfig.json",
-    "test": "vitest"
+    "build": "tsc --project tsconfig.build.json",
+    "test": "vitest",
+    "test-storybook": "test-storybook"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.3.4",
     "@mdx-js/react": "^3.0.1",
     "@pandacss/dev": "^0.39.1",
     "@react-types/shared": "^3.23.0",
+    "@storybook/addon-a11y": "^8.1.1",
     "@storybook/addon-docs": "^8.0.10",
     "@storybook/addon-essentials": "^8.0.10",
     "@storybook/addon-interactions": "^8.0.10",
@@ -30,6 +37,7 @@
     "@storybook/react": "^8.0.10",
     "@storybook/react-vite": "^8.0.10",
     "@storybook/test": "^8.0.10",
+    "@storybook/test-runner": "^0.18.1",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15",
     "@types/react": "^18.3.1",
@@ -38,6 +46,7 @@
     "@typescript-eslint/parser": "^7.5.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
+    "axe-playwright": "^2.0.1",
     "clsx": "^2.1.1",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
@@ -52,7 +61,6 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.2.0",
     "storybook": "^8.0.10",
-    "storybook-source-link": "^4.0.1",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vite": "^5.2.7",

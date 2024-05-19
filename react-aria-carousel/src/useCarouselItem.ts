@@ -38,6 +38,7 @@ export function useCarouselItem(
       inert: isInert ? undefined : "true",
       "aria-hidden": isInert ? undefined : true,
       "aria-roledescription": "carousel item",
+      role: "group",
       "aria-label": label,
       style: {
         scrollSnapAlign: shouldSnap ? "start" : undefined,

@@ -207,14 +207,22 @@ export function useCarousel(
         "aria-controls": scrollerId,
         "data-prev-button": true,
         onClick: () => prev(),
-        disabled: loop ? false : activePageIndex <= 0,
+        "aria-disabled": loop
+          ? undefined
+          : activePageIndex <= 0
+            ? true
+            : undefined,
       },
       nextButtonProps: {
         "aria-label": "Next page",
         "aria-controls": scrollerId,
         "data-next-button": true,
         onClick: () => next(),
-        disabled: loop ? false : activePageIndex >= pages.length - 1,
+        "aria-disabled": loop
+          ? undefined
+          : activePageIndex >= pages.length - 1
+            ? true
+            : undefined,
       },
       scrollerProps: {
         "data-carousel-scroller": true,
@@ -224,7 +232,7 @@ export function useCarousel(
         onKeyDown: handleKeyDown,
         tabIndex: 0,
         "aria-atomic": true,
-        "aria-live": "polite",
+        "aria-live": propAutoplay && autoplayUserPreference ? "polite" : "off",
         "aria-busy": false,
         id: scrollerId,
         role: "group",

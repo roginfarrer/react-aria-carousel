@@ -34,9 +34,9 @@ const StyledCarouselButton = ({ dir }: { dir: "next" | "prev" }) => {
           transitionDuration: ".2s",
           translate: "auto",
           borderRadius: "full",
-          _disabled: { color: "gray.400" },
+          "&[aria-disabled]": { color: "gray.400" },
           zIndex: 1,
-          "&:not([disabled]):hover": {
+          "&:not([aria-disabled]):hover": {
             scale: "1.05",
           },
         }),
@@ -44,12 +44,12 @@ const StyledCarouselButton = ({ dir }: { dir: "next" | "prev" }) => {
           css({
             gridArea: "prev",
             justifySelf: "flex-end",
-            "&:not([disabled]):hover": { x: "-5%" },
+            "&:not([aria-disabled]):hover": { x: "-5%" },
           }),
         dir === "next" &&
           css({
             gridArea: "next",
-            "&:not([disabled]):hover": { x: "5%" },
+            "&:not([aria-disabled]):hover": { x: "5%" },
           }),
       )}
     >
