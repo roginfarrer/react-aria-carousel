@@ -12,7 +12,7 @@ export {
 
 export { Carousel, type CarouselProps } from "./Carousel";
 export { CarouselTabs, CarouselTab } from "./CarouselTabs";
-export type { CarouselTabsProps, CarouselTabProps } from "./CarouselTabs";
+export type { CarouselTabListProps, CarouselTabProps } from "./CarouselTabs";
 export { CarouselButton, type CarouselButtonProps } from "./CarouselButton";
 export {
   CarouselScroller,

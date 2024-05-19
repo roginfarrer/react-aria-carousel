@@ -12,8 +12,8 @@ export interface CarouselTabOptions {
 
 export interface CarouselTabAria
   extends Readonly<Required<Pick<CarouselTabOptions, "isSelected">>> {
-  /** Props for the nav item element. */
-  readonly navItemProps: Attributes<"button">;
+  /** Props for the tab element. */
+  readonly tabProps: Attributes<"button">;
 }
 
 export function useCarouselTab(
@@ -24,8 +24,8 @@ export function useCarouselTab(
   let current = props.index + 1,
     setSize = state.pages.length;
   return {
-    navItemProps: {
-      "data-carousel-nav-item": props.index,
+    tabProps: {
+      "data-carousel-tab": props.index,
       role: "tab",
       "aria-label": `Go to item ${current} of ${setSize}`,
       "aria-posinset": current,

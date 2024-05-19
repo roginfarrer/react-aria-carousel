@@ -54,8 +54,8 @@ export interface CarouselOptions extends CarouselStateProps {
 
 export interface CarouselAria extends CarouselState {
   autoplayUserPreference: boolean;
-  /** Props for the navlist element */
-  readonly navProps: Attributes<"div">;
+  /** Props for the tab list element */
+  readonly tablistProps: Attributes<"div">;
   /** Props for the root element */
   readonly rootProps: Attributes<"div">;
   /** Props for the previous button element */
@@ -161,7 +161,7 @@ export function useCarousel(
     [next, orientation, pages.length, prev, scrollToPage],
   );
 
-  const handleNavKeydown: KeyboardEventHandler = useCallback(
+  const handleTablistKeydown: KeyboardEventHandler = useCallback(
     (e) => {
       const nextIndex = handleKeyDown(e);
       if (!nextIndex) return;
@@ -171,10 +171,10 @@ export function useCarousel(
         document.activeElement === target ||
         document.activeElement?.contains(target)
       ) {
-        const navItem = document.querySelector(
-          `[data-carousel-nav-item="${nextIndex}"]`,
+        const tab = document.querySelector(
+          `[data-carousel-tab="${nextIndex}"]`,
         ) as HTMLElement | null;
-        navItem?.focus();
+        tab?.focus();
       }
     },
     [handleKeyDown],
@@ -195,12 +195,12 @@ export function useCarousel(
         role: "region",
         "aria-roledescription": "carousel",
       },
-      navProps: {
+      tablistProps: {
         role: "tablist",
         "aria-controls": scrollerId,
         "aria-orientation": orientation,
         "aria-label": "Carousel navigation",
-        onKeyDown: handleNavKeydown,
+        onKeyDown: handleTablistKeydown,
       },
       prevButtonProps: {
         "aria-label": "Previous page",

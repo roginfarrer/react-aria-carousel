@@ -62,7 +62,7 @@ test("useCarousel returns", () => {
       "tabIndex": 0,
     }
   `);
-  expect(carousel.navProps).toMatchInlineSnapshot(`
+  expect(carousel.tablistProps).toMatchInlineSnapshot(`
     {
       "aria-controls": ":r0:",
       "aria-label": "Carousel navigation",

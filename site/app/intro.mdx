@@ -136,7 +136,7 @@ If you need to customize things even further, such as accessing internal state o
 import {
   useCarousel,
   useCarouselItem,
-  useCarouselNavItem,
+  useCarouselTab,
 } from "react-aria-carousel";
 
 export function Carousel() {
@@ -150,7 +150,7 @@ export function Carousel() {
     prevButtonProps,
     nextButtonProps,
     scrollerProps,
-    navProps,
+    tabProps,
     pages,
     autoplayControlProps,
   } = carousel;
@@ -163,15 +163,25 @@ export function Carousel() {
         <button {...nextButtonProps}>Next</button>
       </div>
       <div {...scrollerProps} ref={assignScrollerRef}>
-        <CarouselItem />
+        <CarouselItem index={0} state={carousel} />
       </div>
-      <div {...navProps}>
+      <div {...tabProps}>
         {pages.map((_, i) => (
-          <CarouselNavItem key={i} index={i} state={carousel} />
+          <CarouselTab key={i} index={i} state={carousel} />
         ))}
       </div>
     </div>
   );
+}
+
+function CarouselItem({ index, state }) {
+  const { itemProps } = useCarouselItem({ index }, state);
+  return <div {...itemProps} />;
+}
+
+function CarouselTab({ index, state }) {
+  const { tabProps } = useCarouselTab({ index }, state);
+  return <div {...tabProps} />;
 }
 ```
 

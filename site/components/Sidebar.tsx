@@ -26,7 +26,7 @@ const routes = [
   { title: "CarouselTab", level: 3 },
   { title: "useCarousel", level: 3 },
   { title: "useCarouselItem", level: 3 },
-  { title: "useCarouselNavItem", level: 3 },
+  { title: "useCarouselTab", level: 3 },
   { title: "Browser Support", level: 2 },
   { title: "Acknowledgements", level: 2 },
 ];
