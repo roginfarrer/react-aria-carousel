@@ -20,13 +20,6 @@
       "persistent": true,
       "dependsOn": ["react-aria-carousel#build"]
     },
-    "ci:test-storybook": {
-      "inputs": [
-        "src/**/*.tsx",
-        "src/**/*.ts",
-        "tests/**/*.ts",
-        "tests/**/*.tsx"
-      ]
-    }
+    "chromatic": {}
   }
 }
