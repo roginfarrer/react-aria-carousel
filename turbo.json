@@ -19,7 +19,6 @@
       "cache": false,
       "persistent": true,
       "dependsOn": ["react-aria-carousel#build"]
-    },
-    "chromatic": {}
+    }
   }
 }

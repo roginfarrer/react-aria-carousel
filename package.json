@@ -6,7 +6,10 @@
   "scripts": {
     "build": "turbo build",
     "oldbuild": "cd react-aria-carousel && bun run build && cd ../site && bun panda && bun run build",
-    "prepare": "bun --cwd react-aria-carousel panda codegen && bun --cwd site panda codegen "
+    "prepare": "bun --cwd react-aria-carousel panda codegen && bun --cwd site panda codegen",
+    "lint": "turbo lint",
+    "dev": "turbo dev",
+    "test": "turbo test"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
