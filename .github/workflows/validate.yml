@@ -1,0 +1,21 @@
+name: Validate
+
+on: # Rebuild any PRs and main branch changes
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+
+      - run: bun install
+      - run: bun run build
+      - run: bun lint

@@ -8,6 +8,7 @@ styled-system-studio
 
 ## Storybook
 *storybook.log
+storybook-static
 
 ## Next
 .next
@@ -16,3 +17,5 @@ styled-system-studio
 .parcel-cache
 
 tsconfig.tsbuildinfo
+.turbo
+

@@ -4,7 +4,7 @@ import "./styles.css";
 
 const preview: Preview = {
   parameters: {
-    sourceLink: "https://github.com/roginfarrer/carousel",
+    chromatic: { delay: 300 },
     docs: {
       toc: {
         headingSelector: "h1,h2,h3",

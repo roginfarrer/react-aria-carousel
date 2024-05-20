@@ -1,5 +1,6 @@
 import {
   Carousel,
+  CarouselAutoplayControl,
   CarouselButton,
   CarouselItem,
   CarouselProps,
@@ -12,6 +13,9 @@ export function ComposedCarousel(props: CarouselProps) {
   return (
     <Carousel className="root" {...props}>
       <div className="buttons">
+        <CarouselAutoplayControl data-testid="autoplay">
+          Disable autoplay
+        </CarouselAutoplayControl>
         <CarouselButton dir="prev" className="button">
           Previous
         </CarouselButton>

@@ -4,12 +4,14 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build": "cd react-aria-carousel && bun run build && cd ../site && bun panda && bun run build",
+    "build": "turbo build",
+    "oldbuild": "cd react-aria-carousel && bun run build && cd ../site && bun panda && bun run build",
     "prepare": "bun --cwd react-aria-carousel panda codegen && bun --cwd site panda codegen "
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "turbo": "^1.13.3"
   },
   "workspaces": [
     "react-aria-carousel",

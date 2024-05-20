@@ -1,0 +1,32 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "outputs": [".next/**", "!.next/cache/**"],
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.tsx",
+        "src/**/*.ts",
+        "tests/**/*.ts",
+        "tests/**/*.tsx"
+      ]
+    },
+    "lint": {},
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["react-aria-carousel#build"]
+    },
+    "ci:test-storybook": {
+      "inputs": [
+        "src/**/*.tsx",
+        "src/**/*.ts",
+        "tests/**/*.ts",
+        "tests/**/*.tsx"
+      ]
+    }
+  }
+}

@@ -3,9 +3,8 @@
   "version": "0.0.5",
   "exports": {
     ".": {
-      "require": "./dist/index.cjs",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
   },
   "files": [
@@ -17,9 +16,12 @@
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "tsc --project tsconfig.build.json",
+    "build": "tsup",
     "test": "vitest",
-    "test-storybook": "test-storybook"
+    "test-storybook": "test-storybook",
+    "lint": "eslint .",
+    "ci:run-storybook": "http-server storybook-static --port 6006 --silent",
+    "ci:test-storybook": "wait-on tcp:6006 && bun test-storybook"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.3.4",
@@ -40,13 +42,16 @@
     "@storybook/test-runner": "^0.18.1",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15",
+    "@types/bun": "^1.1.2",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
+    "@types/testing-library__jest-dom": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
     "axe-playwright": "^2.0.1",
+    "chromatic": "^11.3.5",
     "clsx": "^2.1.1",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
@@ -55,6 +60,7 @@
     "eslint-plugin-storybook": "^0.8.0",
     "global-jsdom": "^24.0.0",
     "happy-dom": "^14.11.0",
+    "http-server": "^14.1.1",
     "jsdom": "^24.0.0",
     "postcss": "^8.4.38",
     "react": "^18.3.1",
@@ -65,7 +71,8 @@
     "typescript": "^5.4.5",
     "vite": "^5.2.7",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^1.6.0"
+    "vitest": "^1.6.0",
+    "wait-on": "^7.2.0"
   },
   "dependencies": {}
 }

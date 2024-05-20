@@ -14,18 +14,18 @@ test("useCarousel returns", () => {
   expect(carousel.prevButtonProps).toMatchInlineSnapshot(`
     {
       "aria-controls": ":r0:",
+      "aria-disabled": true,
       "aria-label": "Previous page",
       "data-prev-button": true,
-      "disabled": true,
       "onClick": [Function],
     }
   `);
   expect(carousel.nextButtonProps).toMatchInlineSnapshot(`
     {
       "aria-controls": ":r0:",
+      "aria-disabled": true,
       "aria-label": "Next page",
       "data-next-button": true,
-      "disabled": true,
       "onClick": [Function],
     }
   `);
