@@ -109,7 +109,11 @@ export const Autoplay: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const btn = canvas.getByLabelText("Disable autoplay");
-    expect(canvas.getByLabelText("1 of 4")).not.toHaveAttribute("aria-hidden");
+    await waitFor(() => {
+      expect(canvas.getByLabelText("1 of 4")).not.toHaveAttribute(
+        "aria-hidden",
+      );
+    });
     await wait(600);
     await waitFor(() => {
       expect(canvas.getByLabelText("1 of 4")).toHaveAttribute("aria-hidden");

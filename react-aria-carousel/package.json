@@ -21,7 +21,8 @@
     "test-storybook": "test-storybook",
     "lint": "eslint .",
     "ci:run-storybook": "http-server storybook-static --port 6006 --silent",
-    "ci:test-storybook": "wait-on tcp:6006 && bun test-storybook"
+    "ci:test-storybook": "wait-on tcp:6006 && bun test-storybook",
+    "chromatic": "bunx chromatic"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.3.4",
