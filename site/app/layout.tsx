@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import "./styles.css";
-import "@/styled-system/styles.css";
 import "@fontsource/ibm-plex-sans";
 import "@fontsource/ibm-plex-mono";
 
