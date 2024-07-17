@@ -1,6 +1,15 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
+import {
+  Carousel,
+  CarouselAutoplayControl,
+  CarouselButton,
+  CarouselItem,
+  CarouselScroller,
+  CarouselTab,
+  CarouselTabs,
+} from "../src";
 import { ComposedCarousel } from "./ComposedCarousel";
 
 describe("a11y", () => {
@@ -96,3 +105,31 @@ describe("a11y", () => {
     expect(btn).toHaveAttribute("aria-disabled");
   });
 });
+
+// test("ref access", () => {
+//   const rootRef = vi.fn();
+//   const scrollerRef = vi.fn();
+//   const prevButtonRef = vi.fn();
+//   const nextButtonRef = vi.fn();
+//   const itemRef = vi.fn();
+//   const tablistRef = vi.fn();
+//   const tabRef = vi.fn();
+//   const autoplayControlRef = vi.fn();
+//   render(
+//     <Carousel ref={rootRef}>
+//       <CarouselAutoplayControl ref={autoplayControlRef}>
+//         Toggle autoplay
+//       </CarouselAutoplayControl>
+//       <CarouselButton dir="prev" ref={prevButtonRef} />
+//       <CarouselButton dir="next" ref={nextButtonRef} />
+//       <CarouselScroller ref={scrollerRef}>
+//         <CarouselItem ref={itemRef} />
+//       </CarouselScroller>
+//       <CarouselTabs ref={tablistRef}>
+//         {({ index }) => <CarouselTab ref={tabRef} index={index} />}
+//       </CarouselTabs>
+//     </Carousel>,
+//   );
+
+//   expect(rootRef.mock.calls.at(-1) instanceof HTMLElement).toBe(true);
+// });

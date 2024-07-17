@@ -45,5 +45,5 @@ function _CarouselScroller<T>(
 }
 
 export const CarouselScroller = React.forwardRef(_CarouselScroller) as <T>(
-  props: CarouselScrollerProps<T> & { ref: React.ForwardedRef<HTMLElement> },
+  props: CarouselScrollerProps<T> & { ref?: React.ForwardedRef<HTMLElement> },
 ) => JSX.Element;

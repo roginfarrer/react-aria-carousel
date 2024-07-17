@@ -1,6 +1,6 @@
 "use client";
 
-import { ComponentPropsWithoutRef } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 import { mergeProps } from "@react-aria/utils";
 
 import { useCarouselContext } from "./context";
@@ -11,7 +11,10 @@ export interface CarouselButtonProps
   dir: "next" | "prev";
 }
 
-export function CarouselButton({ dir, ...props }: CarouselButtonProps) {
+export const CarouselButton = forwardRef<
+  HTMLButtonElement,
+  CarouselButtonProps
+>(function CarouselButton({ dir, ...props }, forwardedRef) {
   const { carouselState } = useCarouselContext();
 
   const buttonProps =
@@ -19,5 +22,11 @@ export function CarouselButton({ dir, ...props }: CarouselButtonProps) {
       ? carouselState?.prevButtonProps
       : carouselState?.nextButtonProps;
 
-  return <button type="button" {...mergeProps(buttonProps, props)} />;
-}
+  return (
+    <button
+      ref={forwardedRef}
+      type="button"
+      {...mergeProps(buttonProps, props)}
+    />
+  );
+});

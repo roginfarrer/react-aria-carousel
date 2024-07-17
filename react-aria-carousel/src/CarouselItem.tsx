@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, useContext } from "react";
+import { ComponentPropsWithoutRef, forwardRef, useContext } from "react";
 
 import { IndexContext, useCarouselContext } from "./context";
 import { useCarouselItem } from "./useCarouselItem";
@@ -9,14 +9,16 @@ export interface CarouselItemProps extends ComponentPropsWithoutRef<"div"> {
   index?: number;
 }
 
-export function CarouselItem({ index, ...props }: CarouselItemProps) {
-  const ctx = useCarouselContext();
-  const itemIndex = useContext(IndexContext);
+export const CarouselItem = forwardRef<HTMLDivElement, CarouselItemProps>(
+  function CarouselItem({ index, ...props }, forwardedRef) {
+    const ctx = useCarouselContext();
+    const itemIndex = useContext(IndexContext);
 
-  const { itemProps } = useCarouselItem(
-    { index: index ?? itemIndex },
-    ctx.carouselState,
-  );
+    const { itemProps } = useCarouselItem(
+      { index: index ?? itemIndex },
+      ctx.carouselState,
+    );
 
-  return <div {...mergeProps(itemProps, props)} />;
-}
+    return <div ref={forwardedRef} {...mergeProps(itemProps, props)} />;
+  },
+);
