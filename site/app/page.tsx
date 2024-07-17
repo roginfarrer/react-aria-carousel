@@ -12,7 +12,7 @@ export default async function Home() {
       <Header />
       <div
         className={flex({
-          px: "5vw",
+          width: "90vw",
           margin: "0 auto",
           justify: "center",
           pos: "relative",
