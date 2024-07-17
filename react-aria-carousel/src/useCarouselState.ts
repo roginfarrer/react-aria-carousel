@@ -296,6 +296,7 @@ export function useCarouselState(
         ),
       );
       if (childrenChanged) {
+        console.log("MUTATION OBSERVER FIRING");
         calculatePages();
         updateSnaps();
       }
@@ -303,6 +304,7 @@ export function useCarouselState(
 
     mutationObserver.observe(host, { childList: true, subtree: true });
     return () => {
+      console.log("MUTATION OBSERVER DISCONNECT");
       mutationObserver.disconnect();
     };
   }, [getItems, host, calculatePages, updateSnaps]);
@@ -310,10 +312,12 @@ export function useCarouselState(
   useEffect(() => {
     if (!host) return;
 
+    console.log("INTERSECTION OBSERVER CREATED");
     const hasIntersected = new Set<Element>();
 
     const intersectionObserver = new IntersectionObserver(
       (entries) => {
+        console.log("INTERSECTION OBSERVER FIRING");
         for (const entry of entries) {
           if (entry.isIntersecting && !hasIntersected.has(entry.target)) {
             hasIntersected.add(entry.target);
@@ -334,6 +338,7 @@ export function useCarouselState(
 
     function handleScrollEnd() {
       if (hasIntersected.size === 0) return;
+      console.log("SCROLL END FIRING");
       const sorted = [...hasIntersected].sort((a, b) => {
         return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING
           ? -1
@@ -398,6 +403,8 @@ export function useCarouselState(
 
     host.addEventListener("scroll", handleScroll);
     return () => {
+      console.log("INTERSECTION OBSERVER DISCONNECT");
+      clearTimeout(timeout);
       intersectionObserver.disconnect();
       host.removeEventListener("scroll", handleScroll);
     };

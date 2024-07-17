@@ -10,20 +10,20 @@ export function Header() {
     <div
       className={grid({
         maxWidth: "900px",
+        px: "5vw",
         height: "100vh",
-        width: "90vw",
+        pt: "8",
         margin: "0 auto",
         gridTemplateAreas: '"copy" "arrow"',
         gridTemplateColumns: "1fr",
-        gridTemplateRows: "auto min-content",
-        md: {
-          gridTemplateRows: ".8fr 1.2fr min-content",
-        },
+        gridTemplateRows: "1fr min-content",
         gap: "6",
       })}
     >
       <div
-        className={css({
+        className={flex({
+          direction: "column-reverse",
+          gap: "4",
           gridArea: "arrow",
           py: "4",
           justifySelf: "center",
@@ -46,13 +46,30 @@ export function Header() {
           />
           <span className={visuallyHidden()}>Skip to content</span>
         </a>
+        <button
+          type="button"
+          className={flex({
+            p: "2",
+            rounded: "lg",
+            bg: "gray.800",
+            color: "white",
+            align: "center",
+            gap: "2",
+            transition: "background-color .2s ease",
+            _hover: {
+              bg: "gray.600",
+            },
+          })}
+        >
+          View on GitHub <PiArrowUpRight />
+        </button>
       </div>
       <div
         className={flex({
           gridArea: "copy",
           direction: "column",
           gap: { base: "8", md: "10" },
-          alignSelf: "center",
+          // alignSelf: "center",
           textAlign: "center",
         })}
       >
@@ -74,7 +91,7 @@ export function Header() {
           </h1>
           <p
             className={css({
-              textStyle: { base: "5xl", md: "6xl" },
+              textStyle: { base: "4xl", sm: "5xl", md: "6xl" },
               fontWeight: "bold",
               textWrap: "balance",
             })}
@@ -85,50 +102,33 @@ export function Header() {
         <div
           className={flex({
             gridArea: "demo",
-            alignSelf: "center",
-            maxWidth: "300px",
+            pos: "relative",
+            flexGrow: 1,
             md: { alignSelf: "start" },
-            justifySelf: "center",
-            overflow: "hidden",
             direction: "column",
-            gap: "12",
+            gap: "24",
             align: "center",
+            transform: `
+                perspective(1300px)
+                rotateX(0deg)
+                rotateY(42deg)
+                rotateZ(-12deg)
+                translateZ(0)`,
+            transformStyle: "preserve-3d",
           })}
         >
           <div
             className={css({
-              transformStyle: "preserve-3d",
-              transform: `
-                perspective(1300px)
-                rotateX(0deg)
-                rotateY(45deg)
-                rotateZ(-15deg)
-                translateZ(0)`,
-              paddingBlock: "10%",
-              width: "200%",
-              marginLeft: "75%",
-              marginRight: "-5vw",
+              pos: "absolute",
+              left: "-50%",
+              right: "-50%",
+              // translate: "5% 0",
+              // width: "300%",
+              isolation: "isolate",
             })}
           >
             <HeroCarousel />
           </div>
-          <button
-            type="button"
-            className={flex({
-              p: "2",
-              rounded: "lg",
-              bg: "gray.800",
-              color: "white",
-              align: "center",
-              gap: "2",
-              transition: "background-color .2s ease",
-              _hover: {
-                bg: "gray.600",
-              },
-            })}
-          >
-            View on GitHub <PiArrowUpRight />
-          </button>
         </div>
       </div>
     </div>

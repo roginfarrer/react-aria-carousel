@@ -4,7 +4,7 @@ import * as React from "react";
 import { ComponentPropsWithoutRef, ReactElement } from "react";
 
 import { IndexContext, useCarouselContext } from "./context";
-import { mergeProps } from "./utils";
+import { mergeProps, useMergedRef } from "./utils";
 
 export interface CarouselScrollerProps<T>
   extends Omit<ComponentPropsWithoutRef<"div">, "children"> {
@@ -21,19 +21,19 @@ export interface CarouselScrollerProps<T>
     | ((item: T, index: number) => ReactElement);
 }
 
-export function CarouselScroller<T>({
-  children,
-  items,
-  ...props
-}: CarouselScrollerProps<T>) {
+function _CarouselScroller<T>(
+  { children, items, ...props }: CarouselScrollerProps<T>,
+  forwardedRef: React.ForwardedRef<HTMLElement>,
+) {
   const context = useCarouselContext();
   const { assignRef, carouselState } = context;
+  const ref = useMergedRef(assignRef, forwardedRef);
 
   const kids = typeof children === "function" ? items!.map(children) : children;
 
   return (
     <div
-      ref={assignRef}
+      ref={ref}
       {...mergeProps(carouselState?.scrollerProps, props)}
       style={{ ...carouselState?.scrollerProps.style, ...props?.style }}
     >
@@ -43,3 +43,7 @@ export function CarouselScroller<T>({
     </div>
   );
 }
+
+export const CarouselScroller = React.forwardRef(_CarouselScroller) as <T>(
+  props: CarouselScrollerProps<T> & { ref: React.ForwardedRef<HTMLElement> },
+) => JSX.Element;
