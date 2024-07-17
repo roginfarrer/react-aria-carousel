@@ -70,9 +70,9 @@ export const HeroCarousel = () => {
   return (
     <Carousel
       aria-label="React Aria Carousel features"
-      spaceBetweenItems="0px"
+      spaceBetweenItems="25px"
       initialPages={[[0], [1], [2], [3], [4]]}
-      itemsPerPage={1.25}
+      scrollPadding="50px"
       className={css({
         display: "grid",
         gridTemplateAreas: "'scroll scroll scroll' 'prev nav next'",
@@ -81,6 +81,28 @@ export const HeroCarousel = () => {
         justifyContent: "center",
         position: "relative",
         rowGap: "4",
+        pos: "relative",
+        "--fade-width": "15px",
+        "&::before": {
+          content: "''",
+          width: "var(--fade-width)",
+          pos: "absolute",
+          top: 0,
+          left: "-1px",
+          background: "linear-gradient(to right, white, transparent)",
+          height: "100%",
+          zIndex: "1",
+        },
+        "&::after": {
+          content: "''",
+          width: "var(--fade-width)",
+          pos: "absolute",
+          top: 0,
+          right: "-1px",
+          background: "linear-gradient(to left, white, transparent)",
+          height: "100%",
+          zIndex: "1",
+        },
       })}
     >
       <StyledCarouselButton dir="prev" />
@@ -156,7 +178,7 @@ export function Slide({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        p: "20px",
+        py: "20px",
       })}
     >
       <div
