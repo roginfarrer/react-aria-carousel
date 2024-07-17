@@ -77,6 +77,7 @@ export function useMouseDrag(host?: HTMLElement | null) {
   const handleDragStart: MouseEventHandler<HTMLElement> = useCallback(
     (event) => {
       if (!host) return;
+      // Primary click (usually left-click)
       let canDrag = event.button === 0;
       if (canDrag) {
         event.preventDefault();
@@ -106,6 +107,7 @@ export function useMouseDrag(host?: HTMLElement | null) {
   }, [handleDragEnd, handleDragging]);
 
   return {
+    isDraggingRef: dragging,
     scrollerProps: {
       onMouseDown: handleDragStart,
     },

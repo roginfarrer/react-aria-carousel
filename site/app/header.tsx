@@ -1,5 +1,6 @@
 import { flex, grid, visuallyHidden } from "@/styled-system/patterns";
 import { FaChevronDown } from "react-icons/fa6";
+import { PiArrowUpRight } from "react-icons/pi";
 
 import { HeroCarousel } from "./HeroCarousel";
 import { css } from "@/styled-system/css";
@@ -12,9 +13,9 @@ export function Header() {
         height: "100vh",
         width: "90vw",
         margin: "0 auto",
-        gridTemplateAreas: '"copy" "demo" "arrow"',
+        gridTemplateAreas: '"copy" "arrow"',
         gridTemplateColumns: "1fr",
-        gridTemplateRows: ".8fr auto min-content",
+        gridTemplateRows: "auto min-content",
         md: {
           gridTemplateRows: ".8fr 1.2fr min-content",
         },
@@ -46,47 +47,89 @@ export function Header() {
           <span className={visuallyHidden()}>Skip to content</span>
         </a>
       </div>
-      <header
+      <div
         className={flex({
           gridArea: "copy",
           direction: "column",
-          gap: { base: "5", md: "10" },
-          alignSelf: "flex-end",
+          gap: { base: "8", md: "10" },
+          alignSelf: "center",
           textAlign: "center",
         })}
       >
-        <h1
-          className={css({
-            textStyle: { md: "2xl" },
-            fontWeight: "bold",
-            fontVariantCaps: "all-small-caps",
-            letterSpacing: "0.5px",
+        <header
+          className={flex({
+            direction: "column",
+            gap: { base: "5", md: "10" },
           })}
         >
-          React Aria Carousel
-        </h1>
-        <p
-          className={css({
-            textStyle: { base: "5xl", md: "6xl" },
-            fontWeight: "bold",
-            textWrap: "balance",
+          <h1
+            className={css({
+              textStyle: { md: "2xl" },
+              fontWeight: "bold",
+              fontVariantCaps: "all-small-caps",
+              letterSpacing: "0.5px",
+            })}
+          >
+            React Aria Carousel
+          </h1>
+          <p
+            className={css({
+              textStyle: { base: "5xl", md: "6xl" },
+              fontWeight: "bold",
+              textWrap: "balance",
+            })}
+          >
+            The carousel for the modern age.
+          </p>
+        </header>
+        <div
+          className={flex({
+            gridArea: "demo",
+            alignSelf: "center",
+            maxWidth: "300px",
+            md: { alignSelf: "start" },
+            justifySelf: "center",
+            overflow: "hidden",
+            direction: "column",
+            gap: "12",
+            align: "center",
           })}
         >
-          The carousel for the modern age.
-        </p>
-      </header>
-      <div
-        className={css({
-          gridArea: "demo",
-          alignSelf: "center",
-          maxWidth: "500px",
-          md: { alignSelf: "start" },
-          justifySelf: "center",
-          overflow: "hidden",
-          py: "2",
-        })}
-      >
-        <HeroCarousel />
+          <div
+            className={css({
+              transformStyle: "preserve-3d",
+              transform: `
+                perspective(1300px)
+                rotateX(0deg)
+                rotateY(45deg)
+                rotateZ(-15deg)
+                translateZ(0)`,
+              paddingBlock: "10%",
+              width: "200%",
+              marginLeft: "75%",
+              marginRight: "-5vw",
+            })}
+          >
+            <HeroCarousel />
+          </div>
+          <button
+            type="button"
+            className={flex({
+              p: "2",
+              rounded: "lg",
+              bg: "gray.800",
+              color: "white",
+              align: "center",
+              gap: "2",
+              transition: "background-color .2s ease",
+              _hover: {
+                bg: "gray.600",
+              },
+            })}
+          >
+            View on GitHub <PiArrowUpRight />
+          </button>
+        </div>
       </div>
     </div>
   );

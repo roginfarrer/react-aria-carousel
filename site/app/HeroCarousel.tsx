@@ -72,7 +72,7 @@ export const HeroCarousel = () => {
       aria-label="React Aria Carousel features"
       spaceBetweenItems="0px"
       initialPages={[[0], [1], [2], [3], [4]]}
-      itemsPerPage={1.25}
+      itemsPerPage={1.75}
       className={css({
         display: "grid",
         gridTemplateAreas: "'scroll scroll scroll' 'prev nav next'",

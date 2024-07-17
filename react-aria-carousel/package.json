@@ -17,6 +17,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "build": "tsup",
+    "watch": "tsup --watch",
     "test": "vitest",
     "test-storybook": "test-storybook",
     "lint": "eslint .",

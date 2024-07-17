@@ -24,6 +24,9 @@ import {
 } from "./utils";
 import { useAutoplay } from "./utils/useAutoplay";
 
+/**
+ * Options for useCarousel
+ */
 export interface CarouselOptions extends CarouselStateProps {
   /**
    * The gap between items.
@@ -52,6 +55,9 @@ export interface CarouselOptions extends CarouselStateProps {
   autoplayInterval?: number;
 }
 
+/**
+ * API returned by useCarousel
+ */
 export interface CarouselAria extends CarouselState {
   autoplayUserPreference: boolean;
   /** Props for the tab list element */
@@ -64,32 +70,39 @@ export interface CarouselAria extends CarouselState {
   readonly nextButtonProps: Attributes<"button">;
   /** Props for the scroller element */
   readonly scrollerProps: Attributes<"div">;
+  /** Props for the autoplay toggle element */
   readonly autoplayControlProps: Attributes<"button">;
 }
 
-export function useCarousel(
-  props: CarouselOptions = {
-    itemsPerPage: 1,
-    loop: false,
-    orientation: "horizontal",
-    spaceBetweenItems: "0px",
-    mouseDragging: false,
-    autoplay: false,
-    autoplayInterval: 5000,
-  },
-): [Dispatch<SetStateAction<HTMLElement | null>>, CarouselAria] {
-  const {
-    itemsPerPage = 1,
-    loop = false,
-    orientation = "horizontal",
-    spaceBetweenItems: spaceBetweenSlides = "0px",
-    scrollPadding,
-    mouseDragging = false,
-    autoplay: propAutoplay = false,
-    autoplayInterval = 5000,
-  } = props;
+export function useCarousel({
+  itemsPerPage = 1,
+  loop = false,
+  orientation = "horizontal",
+  spaceBetweenItems = "0px",
+  mouseDragging = false,
+  autoplay: propAutoplay = false,
+  autoplayInterval = 5000,
+  scrollPadding,
+  onActivePageIndexChange,
+}: CarouselOptions = {}): [
+  Dispatch<SetStateAction<HTMLElement | null>>,
+  CarouselAria,
+] {
   const [host, setHost] = useState<HTMLElement | null>(null);
-  const state = useCarouselState(props, host);
+  const {
+    isDraggingRef,
+    scrollerProps: { onMouseDown },
+  } = useMouseDrag(host);
+  const state = useCarouselState(
+    {
+      itemsPerPage,
+      loop,
+      mouseDragging,
+      isDraggingRef,
+      onActivePageIndexChange,
+    },
+    host,
+  );
   const { pages, activePageIndex, next, prev, scrollToPage } = state;
   const scrollerId = useId();
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -181,9 +194,6 @@ export function useCarousel(
   );
 
   useAriaBusyScroll(host);
-  const {
-    scrollerProps: { onMouseDown },
-  } = useMouseDrag(host);
 
   return [
     setHost,
@@ -237,14 +247,12 @@ export function useCarousel(
         id: scrollerId,
         role: "group",
         style: {
-          [orientation === "horizontal" ? "gridAutoColumns" : "gridAutoRows"]:
-            `calc(100% / ${itemsPerPage} - ${spaceBetweenSlides} * ${itemsPerPage - 1} / ${itemsPerPage})`,
-          gap: spaceBetweenSlides,
-          [orientation === "horizontal"
-            ? "scrollPaddingInline"
-            : "scrollPaddingBlock"]: scrollPadding,
-          [orientation === "horizontal" ? "paddingInline" : "paddingBlock"]:
+          [`gridAuto${orientation === "horizontal" ? "Columns" : "Rows"}`]: `calc(100% / ${itemsPerPage} - ${spaceBetweenItems} * ${itemsPerPage - 1} / ${itemsPerPage})`,
+          [`scrollPadding${orientation === "horizontal" ? "Inline" : "Block"}`]:
             scrollPadding,
+          [`padding${orientation === "horizontal" ? "Inline" : "Block"}`]:
+            scrollPadding,
+          gap: spaceBetweenItems,
         },
       },
       autoplayControlProps: {

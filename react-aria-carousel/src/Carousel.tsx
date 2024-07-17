@@ -22,6 +22,7 @@ export function Carousel({
   orientation = "horizontal",
   scrollBy = "page",
   initialPages = [],
+  onActivePageIndexChange,
   ...props
 }: CarouselProps) {
   const carouselProps = {
@@ -35,6 +36,7 @@ export function Carousel({
     orientation,
     scrollBy,
     initialPages,
+    onActivePageIndexChange,
   };
   const [assignRef, carouselState] = useCarousel(carouselProps);
 

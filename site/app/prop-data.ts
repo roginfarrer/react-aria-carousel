@@ -50,24 +50,29 @@ export const useCarousel = [
   },
   {
     name: `orientation`,
-    description:
-      "The carousel scroll direction                                                                                                                        ",
+    description: "The carousel scroll direction",
     defaultValue: `'horizontal'`,
     type: "'horizontal' | 'vertical'",
   },
   {
     name: `scollBy`,
     description:
-      "Controls whether scrolling snaps and pagination progresses by item or page.                                                                          ",
+      "Controls whether scrolling snaps and pagination progresses by item or page.",
     defaultValue: `'page'`,
     type: "'page' | 'item'",
   },
   {
     name: `initialPages`,
     description:
-      "Define the organization of pages on first render. Useful to render navigation during SSR.                                                            ",
+      "Define the organization of pages on first render. Useful to render navigation during SSR.",
     defaultValue: `[]`,
     type: "number[][]",
+  },
+  {
+    name: "onActivePageIndexChange",
+    description: "Handler called when the activePageIndex changes.",
+    defaultValue: "-",
+    type: "(args: {index: number}) => void",
   },
 ];
 
@@ -97,7 +102,7 @@ export const useCarouselTab = [
 ];
 
 export const Carousel = [
-  ...useCarousel.filter((prop) => prop.name !== "children"),
+  ...useCarousel,
   {
     name: "children",
     type: "ReactNode",

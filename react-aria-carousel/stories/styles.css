@@ -3,6 +3,7 @@
   grid-template-areas: "tabs buttons" "scroller scroller";
   grid-template-rows: min-content 1fr;
   gap: 16px;
+  max-width: 600px;
 }
 .root img {
   margin: 0;

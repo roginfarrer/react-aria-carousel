@@ -69,28 +69,30 @@ export function PropTable({
           </tr>
         </thead>
         <tbody>
-          {data.map((prop) => (
-            <tr key={prop.name}>
-              <td data-column="Name">
-                <code>{prop.name}</code>
-              </td>
-              <td data-column="Type">
-                <code>{prop.type}</code>
-              </td>
-              <td data-column="Default">
-                <code>{prop.defaultValue}</code>
-              </td>
-              <td
-                data-column="Description"
-                className={css({
-                  fontSize: "sm",
-                  "&::before": { display: "none!" },
-                })}
-              >
-                {prop.description}
-              </td>
-            </tr>
-          ))}
+          {data
+            .sort((a, b) => (a.name < b.name ? -1 : 1))
+            .map((prop) => (
+              <tr key={prop.name}>
+                <td data-column="Name">
+                  <code>{prop.name}</code>
+                </td>
+                <td data-column="Type">
+                  <code>{prop.type}</code>
+                </td>
+                <td data-column="Default">
+                  <code>{prop.defaultValue}</code>
+                </td>
+                <td
+                  data-column="Description"
+                  className={css({
+                    fontSize: "sm",
+                    "&::before": { display: "none!" },
+                  })}
+                >
+                  {prop.description.trim()}
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </>
