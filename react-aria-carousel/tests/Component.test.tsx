@@ -106,30 +106,39 @@ describe("a11y", () => {
   });
 });
 
-// test("ref access", () => {
-//   const rootRef = vi.fn();
-//   const scrollerRef = vi.fn();
-//   const prevButtonRef = vi.fn();
-//   const nextButtonRef = vi.fn();
-//   const itemRef = vi.fn();
-//   const tablistRef = vi.fn();
-//   const tabRef = vi.fn();
-//   const autoplayControlRef = vi.fn();
-//   render(
-//     <Carousel ref={rootRef}>
-//       <CarouselAutoplayControl ref={autoplayControlRef}>
-//         Toggle autoplay
-//       </CarouselAutoplayControl>
-//       <CarouselButton dir="prev" ref={prevButtonRef} />
-//       <CarouselButton dir="next" ref={nextButtonRef} />
-//       <CarouselScroller ref={scrollerRef}>
-//         <CarouselItem ref={itemRef} />
-//       </CarouselScroller>
-//       <CarouselTabs ref={tablistRef}>
-//         {({ index }) => <CarouselTab ref={tabRef} index={index} />}
-//       </CarouselTabs>
-//     </Carousel>,
-//   );
+test("ref access", () => {
+  const rootRef = vi.fn();
+  const scrollerRef = vi.fn();
+  const prevButtonRef = vi.fn();
+  const nextButtonRef = vi.fn();
+  const itemRef = vi.fn();
+  const tablistRef = vi.fn();
+  const tabRef = vi.fn();
+  const autoplayControlRef = vi.fn();
+  render(
+    <Carousel ref={rootRef}>
+      <CarouselAutoplayControl ref={autoplayControlRef}>
+        Toggle autoplay
+      </CarouselAutoplayControl>
+      <CarouselButton dir="prev" ref={prevButtonRef} />
+      <CarouselButton dir="next" ref={nextButtonRef} />
+      <CarouselScroller ref={scrollerRef}>
+        <CarouselItem ref={itemRef} />
+      </CarouselScroller>
+      <CarouselTabs ref={tablistRef}>
+        {({ index }) => <CarouselTab ref={tabRef} index={index} />}
+      </CarouselTabs>
+    </Carousel>,
+  );
 
-//   expect(rootRef.mock.calls.at(-1) instanceof HTMLElement).toBe(true);
-// });
+  expect(rootRef.mock.calls.at(-1)[0] instanceof HTMLElement).toBe(true);
+  expect(scrollerRef.mock.calls.at(-1)[0] instanceof HTMLElement).toBe(true);
+  expect(prevButtonRef.mock.calls.at(-1)[0] instanceof HTMLElement).toBe(true);
+  expect(nextButtonRef.mock.calls.at(-1)[0] instanceof HTMLElement).toBe(true);
+  expect(itemRef.mock.calls.at(-1)[0] instanceof HTMLElement).toBe(true);
+  expect(tablistRef.mock.calls.at(-1)[0] instanceof HTMLElement).toBe(true);
+  expect(tabRef.mock.calls.at(-1)[0] instanceof HTMLElement).toBe(true);
+  expect(autoplayControlRef.mock.calls.at(-1)[0] instanceof HTMLElement).toBe(
+    true,
+  );
+});
