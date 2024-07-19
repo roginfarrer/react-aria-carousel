@@ -5,13 +5,17 @@ import {
   CarouselItem,
   CarouselProps,
   CarouselScroller,
+  CarouselScrollerProps,
   CarouselTab,
   CarouselTabs,
 } from "../src";
 
 import "./styles.css";
 
-export function ComposedCarousel(props: CarouselProps) {
+export function ComposedCarousel(
+  props: Omit<CarouselProps, "children"> &
+    Pick<CarouselScrollerProps<any>, "children">,
+) {
   return (
     <Carousel className="root" {...props}>
       <div className="buttons">
@@ -29,11 +33,8 @@ export function ComposedCarousel(props: CarouselProps) {
           Next
         </CarouselButton>
       </div>
-      <CarouselScroller className="scroller">
-        <Item index={0} />
-        <Item index={1} />
-        <Item index={2} />
-        <Item index={3} />
+      <CarouselScroller className="scroller" data-testid="scroller">
+        {props.children}
       </CarouselScroller>
       <CarouselTabs className="tabs">
         {(item) => (
@@ -60,7 +61,7 @@ const colors = [
   "rose",
 ];
 
-function Item({ index }: { index: number }) {
+export function Item({ index }: { index: number }) {
   return (
     <CarouselItem
       className="item"

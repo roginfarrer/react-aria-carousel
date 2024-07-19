@@ -31,15 +31,29 @@ function _CarouselScroller<T>(
 
   const kids = typeof children === "function" ? items!.map(children) : children;
 
+  function getChildren() {
+    let kidsArr = React.Children.toArray(kids);
+    // @ts-ignore
+    if (kidsArr.length === 1 && kidsArr[0].type === React.Fragment) {
+      // @ts-ignore
+      kidsArr = React.Children.toArray(kidsArr[0].props.children);
+    }
+    return kidsArr;
+  }
+
   return (
     <div
       ref={ref}
       {...mergeProps(carouselState?.scrollerProps, props)}
       style={{ ...carouselState?.scrollerProps.style, ...props?.style }}
     >
-      {React.Children.map(kids, (child, index) => (
-        <IndexContext.Provider value={index}>{child}</IndexContext.Provider>
-      ))}
+      {getChildren().map((child, index) => {
+        return (
+          <IndexContext.Provider key={index} value={index}>
+            {child}
+          </IndexContext.Provider>
+        );
+      })}
     </div>
   );
 }

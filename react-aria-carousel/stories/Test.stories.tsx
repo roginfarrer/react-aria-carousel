@@ -1,11 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
 
-import { ComposedCarousel } from "./ComposedCarousel";
+import { ComposedCarousel, Item } from "./ComposedCarousel";
 
 const meta: Meta<typeof ComposedCarousel> = {
   component: ComposedCarousel,
   tags: [],
+  args: {
+    children: (
+      <>
+        <Item index={0} />
+        <Item index={1} />
+        <Item index={2} />
+        <Item index={3} />
+      </>
+    ),
+  },
 };
 
 export default meta;
@@ -166,6 +176,43 @@ export const Autoplay: Story = {
     });
 
     expect(args.onActivePageIndexChange).toHaveBeenCalledTimes(1);
+  },
+};
+
+// For testing bug raised in https://github.com/roginfarrer/react-aria-carousel/issues/2
+export const UnevenItems: Story = {
+  args: {
+    itemsPerPage: 3,
+    children: (
+      <>
+        <Item index={0} />
+        <Item index={1} />
+        <Item index={2} />
+        <Item index={3} />
+        <Item index={4} />
+        <Item index={5} />
+        <Item index={6} />
+        <Item index={7} />
+      </>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(async () => {
+      canvas.getByLabelText("8 of 8").scrollIntoView({ block: "nearest" });
+      expect(canvas.getByLabelText("8 of 8")).not.toHaveAttribute(
+        "aria-hidden",
+      );
+      expect(canvas.getByLabelText("Go to page 2 of 3")).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+      expect(canvas.getByLabelText("Go to page 3 of 3")).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
   },
 };
 
