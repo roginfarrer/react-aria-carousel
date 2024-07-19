@@ -27,7 +27,7 @@ export function useCarouselTab(
     tabProps: {
       "data-carousel-tab": props.index,
       role: "tab",
-      "aria-label": `Go to item ${current} of ${setSize}`,
+      "aria-label": `Go to page ${current} of ${setSize}`,
       "aria-posinset": current,
       "aria-setsize": setSize,
       "aria-selected": isSelected,

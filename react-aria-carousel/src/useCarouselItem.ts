@@ -28,7 +28,7 @@ export function useCarouselItem(
   const shouldSnap =
     scrollBy === "item" ||
     (index! + actualItemsPerPage) % actualItemsPerPage === 0;
-  const itemCount = pages?.flat().length;
+  const itemCount = new Set(pages?.flat()).size;
   const label = itemCount ? `${index! + 1} of ${itemCount}` : undefined;
   const isInert = pages?.[activePageIndex]?.includes(index!);
 

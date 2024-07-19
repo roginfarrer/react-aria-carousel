@@ -2,7 +2,9 @@ import { ComponentPropsWithoutRef, ElementType } from "react";
 
 export * from "./useAriaBusyScroll";
 export * from "./useMouseDrag";
+export * from "./useCallbackRef";
 export * from "./usePrefersReducedMotion";
+export * from "./useMergedRef";
 export * from "./mergeProps";
 
 export type Attributes<T extends ElementType> = ComponentPropsWithoutRef<T> &

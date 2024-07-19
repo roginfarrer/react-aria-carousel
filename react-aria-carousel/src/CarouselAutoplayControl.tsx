@@ -1,6 +1,6 @@
 "use client";
 
-import { ComponentPropsWithoutRef, ReactNode } from "react";
+import { ComponentPropsWithoutRef, forwardRef, ReactNode } from "react";
 import { mergeProps } from "@react-aria/utils";
 
 import { useCarouselContext } from "./context";
@@ -12,15 +12,16 @@ export interface CarouselAutoplayControlProps
     | ((props: { autoplayUserPreference: boolean }) => ReactNode);
 }
 
-export function CarouselAutoplayControl({
-  children,
-  ...props
-}: CarouselAutoplayControlProps) {
+export const CarouselAutoplayControl = forwardRef<
+  HTMLButtonElement,
+  CarouselAutoplayControlProps
+>(function CarouselAutoplayControl({ children, ...props }, forwardedRef) {
   const { carouselState } = useCarouselContext();
 
   return (
     <button
       type="button"
+      ref={forwardedRef}
       {...mergeProps(carouselState?.autoplayControlProps, props)}
     >
       {typeof children === "function"
@@ -30,4 +31,4 @@ export function CarouselAutoplayControl({
         : children}
     </button>
   );
-}
+});

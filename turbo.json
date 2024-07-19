@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"]
@@ -17,8 +17,7 @@
     "lint": {},
     "dev": {
       "cache": false,
-      "persistent": true,
-      "dependsOn": ["react-aria-carousel#build"]
+      "persistent": true
     }
   }
 }

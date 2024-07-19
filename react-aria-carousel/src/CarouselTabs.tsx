@@ -1,6 +1,11 @@
 "use client";
 
-import { ComponentPropsWithoutRef, Fragment, ReactNode } from "react";
+import {
+  ComponentPropsWithoutRef,
+  forwardRef,
+  Fragment,
+  ReactNode,
+} from "react";
 import { mergeProps } from "@react-aria/utils";
 
 import { useCarouselContext } from "./context";
@@ -12,30 +17,43 @@ export interface CarouselTabListProps
   children: (props: { isSelected: boolean; index: number }) => ReactNode;
 }
 
-export function CarouselTabs({ children, ...props }: CarouselTabListProps) {
-  const { carouselState } = useCarouselContext();
+export const CarouselTabs = forwardRef<HTMLDivElement, CarouselTabListProps>(
+  function CarouselTabs({ children, ...props }, forwardedRef) {
+    const { carouselState } = useCarouselContext();
 
-  return (
-    <div {...mergeProps(carouselState?.tablistProps, props)}>
-      {carouselState?.pages.map((_, index) => (
-        <Fragment key={index}>
-          {children({
-            isSelected: index === carouselState?.activePageIndex,
-            index,
-          })}
-        </Fragment>
-      ))}
-    </div>
-  );
-}
+    return (
+      <div
+        ref={forwardedRef}
+        {...mergeProps(carouselState?.tablistProps, props)}
+      >
+        {carouselState?.pages.map((_, index) => (
+          <Fragment key={index}>
+            {children({
+              isSelected: index === carouselState?.activePageIndex,
+              index,
+            })}
+          </Fragment>
+        ))}
+      </div>
+    );
+  },
+);
 
 export interface CarouselTabProps
   extends CarouselTabOptions,
     ComponentPropsWithoutRef<"button"> {}
 
-export function CarouselTab(props: CarouselTabProps) {
-  const { carouselState } = useCarouselContext();
-  const { index } = props;
-  const { tabProps } = useCarouselTab({ index }, carouselState!);
-  return <button type="button" {...mergeProps(tabProps, props)} />;
-}
+export const CarouselTab = forwardRef<HTMLButtonElement, CarouselTabProps>(
+  function CarouselTab(props, forwardedRef) {
+    const { carouselState } = useCarouselContext();
+    const { index } = props;
+    const { tabProps } = useCarouselTab({ index }, carouselState!);
+    return (
+      <button
+        type="button"
+        {...mergeProps(tabProps, props)}
+        ref={forwardedRef}
+      />
+    );
+  },
+);

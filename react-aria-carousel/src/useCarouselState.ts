@@ -1,9 +1,10 @@
-"use client";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useCallback, useEffect, useState } from "react";
+import { clamp, useCallbackRef, usePrefersReducedMotion } from "./utils";
 
-import { clamp, usePrefersReducedMotion } from "./utils";
-
+/**
+ * Options for useCarouselState
+ */
 export interface CarouselStateProps {
   /**
    * Number of items visible on a page. Can be an integer to
@@ -36,12 +37,24 @@ export interface CarouselStateProps {
    * @default []
    */
   initialPages?: number[][];
+  /** Whether the carousel should scroll when the user drags with their mouse */
+  mouseDragging?: boolean;
+  /**
+   * Ref object that reflects whether the user is actively dragging
+   * the carousel with their mouse
+   */
+  isDraggingRef?: { current: boolean };
+  /**
+   * Handler called when the activePageIndex changes
+   */
+  onActivePageIndexChange?: ({ index }: { index: number }) => void;
 }
 
+/**
+ * API returned by useCarouselState
+ */
 export interface CarouselState
   extends Required<Pick<CarouselStateProps, "itemsPerPage" | "scrollBy">> {
-  /** The collection of items in the carousel. */
-  // readonly collection: Collection<Node<T>>;
   /** The index of the page in view. */
   readonly activePageIndex: number;
   /** The indexes of all items organized into arrays. */
@@ -55,48 +68,50 @@ export interface CarouselState
 }
 
 export function useCarouselState(
-  props: CarouselStateProps,
-  ref: HTMLElement | null,
-): CarouselState {
-  const {
+  {
     itemsPerPage = 1,
     scrollBy = "page",
     loop = false,
     initialPages = [],
-  } = props;
+    isDraggingRef,
+    mouseDragging,
+    onActivePageIndexChange: propChangeHandler,
+  }: CarouselStateProps,
+  host: HTMLElement | null,
+): CarouselState {
+  const onActivePageIndexChange = useCallbackRef(propChangeHandler);
   const [activePageIndex, setActivePageIndex] = useState(0);
   const [pages, setPages] = useState<number[][]>(initialPages);
   const prefersReducedMotion = usePrefersReducedMotion();
-  const scroller = ref;
 
   const getItems = useCallback(
     (
       { includeClones }: { includeClones?: boolean } = { includeClones: false },
     ): HTMLElement[] => {
-      if (!scroller) return [];
-      let allChildren = Array.from(scroller.children) as HTMLElement[];
+      if (!host) return [];
+      let allChildren = Array.from(host.children) as HTMLElement[];
       if (includeClones) return allChildren;
       return allChildren.filter((child) => !child.hasAttribute("data-clone"));
     },
-    [scroller],
+    [host],
   );
 
   const scrollToItem = useCallback(
     (slide: HTMLElement, behavior: ScrollBehavior = "smooth"): void => {
-      if (!scroller) return;
-      const scrollContainerRect = scroller.getBoundingClientRect();
+      if (!host) return;
+      const scrollContainerRect = host.getBoundingClientRect();
       const nextSlideRect = slide.getBoundingClientRect();
 
       const nextLeft = nextSlideRect.left - scrollContainerRect.left;
       const nextTop = nextSlideRect.top - scrollContainerRect.top;
 
-      scroller.scrollTo({
-        left: nextLeft + scroller.scrollLeft,
-        top: nextTop + scroller.scrollTop,
+      host.scrollTo({
+        left: nextLeft + host.scrollLeft,
+        top: nextTop + host.scrollTop,
         behavior: prefersReducedMotion ? "instant" : behavior,
       });
     },
-    [prefersReducedMotion, scroller],
+    [prefersReducedMotion, host],
   );
 
   const scrollToPage = useCallback(
@@ -150,11 +165,14 @@ export function useCarouselState(
     }
     setPages(newPages);
     setActivePageIndex((prev) => {
-      return clamp(0, prev, newPages.length - 1);
+      const index = clamp(0, prev, newPages.length - 1);
+      if (index !== prev) {
+        onActivePageIndexChange?.({ index });
+      }
+      return index;
     });
-  }, [getItems, itemsPerPage]);
+  }, [getItems, itemsPerPage, onActivePageIndexChange]);
 
-  // @TODO: Rewrite this better
   const scrollToPageIndex = useCallback(
     (index: number): number => {
       const items = getItems();
@@ -165,6 +183,7 @@ export function useCarouselState(
 
       let nextItem: HTMLElement, nextPageIndex: number, nextPage: number[];
 
+      // @TODO: This should be rewritten for clarity and brevity
       if (loop === "infinite") {
         // The index allowing to be inclusive of cloned pages
         let nextIndex = clamp(-1, index, pagesWithClones.length);
@@ -212,7 +231,7 @@ export function useCarouselState(
   }, [activePageIndex, scrollToPageIndex]);
 
   useEffect(() => {
-    if (!scroller || pages.length === 0) return;
+    if (!host || pages.length === 0) return;
 
     getItems({ includeClones: true }).forEach((item) => {
       if (item.hasAttribute("data-clone")) {
@@ -223,7 +242,7 @@ export function useCarouselState(
     if (loop === "infinite") {
       const items = getItems();
       const firstPage = pages[0];
-      // We're gonna modify this in a second, so make sure not to mutate state
+      // We're gonna modify this in a second with .reverse, so make sure not to mutate state
       const lastPage = [...pages.at(-1)!];
 
       if (firstPage === lastPage) return;
@@ -233,7 +252,7 @@ export function useCarouselState(
         clone.setAttribute("data-clone", "true");
         clone.setAttribute("inert", "true");
         clone.setAttribute("aria-hidden", "true");
-        scroller.prepend(clone);
+        host.prepend(clone);
       });
 
       firstPage.forEach((slide) => {
@@ -241,7 +260,7 @@ export function useCarouselState(
         clone.setAttribute("data-clone", "true");
         clone.setAttribute("inert", "true");
         clone.setAttribute("aria-hidden", "true");
-        scroller.append(clone);
+        host.append(clone);
       });
     }
 
@@ -257,12 +276,12 @@ export function useCarouselState(
     loop,
     pages,
     scrollToPage,
-    scroller,
+    host,
     updateSnaps,
   ]);
 
   useEffect(() => {
-    if (!scroller) return;
+    if (!host) return;
 
     calculatePages();
     updateSnaps();
@@ -282,79 +301,132 @@ export function useCarouselState(
       }
     });
 
-    mutationObserver.observe(scroller, { childList: true, subtree: true });
+    mutationObserver.observe(host, { childList: true, subtree: true });
     return () => {
       mutationObserver.disconnect();
     };
-  }, [getItems, scroller, calculatePages, updateSnaps]);
+  }, [getItems, host, calculatePages, updateSnaps]);
 
   useEffect(() => {
-    if (!scroller) return;
-    function handle() {
-      const intersectionObserver = new IntersectionObserver(
-        (entries) => {
-          intersectionObserver.disconnect();
-          const firstIntersecting = entries.find(
-            (entry) => entry.isIntersecting,
-          );
+    if (!host) return;
 
-          if (firstIntersecting) {
-            if (
-              loop === "infinite" &&
-              firstIntersecting.target.hasAttribute("data-clone")
-            ) {
-              const cloneIndex =
-                firstIntersecting.target.getAttribute("data-carousel-item");
-              const actualItem = getItems().find(
-                (el) => el.getAttribute("data-carousel-item") === cloneIndex,
-              );
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  scrollToItem(actualItem!, "instant");
-                });
-              });
-            } else {
-              const indexString = (firstIntersecting.target as HTMLElement)
-                .dataset.carouselItem;
+    const hasIntersected = new Set<Element>();
 
-              if (process.env.NODE_ENV !== "production") {
-                if (!indexString) {
-                  throw new Error(
-                    "Failed to find data-carousel-item HTML attribute on an item.",
-                  );
-                }
-              }
-
-              const slideIndex = parseInt(indexString!, 10);
-              const activePage = pages.findIndex((page) =>
-                page.includes(slideIndex),
-              );
-              setActivePageIndex(clamp(0, activePage, getItems().length));
-            }
+    const intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && !hasIntersected.has(entry.target)) {
+            hasIntersected.add(entry.target);
           }
-        },
-        {
-          root: scroller,
-          threshold: 0.6,
-        },
-      );
-      for (let child of getItems({ includeClones: true })) {
-        intersectionObserver.observe(child);
+          if (!entry.isIntersecting) {
+            hasIntersected.delete(entry.target);
+          }
+        }
+      },
+      {
+        root: host,
+        threshold: 0.6,
+      },
+    );
+    const children = getItems({ includeClones: true });
+    for (let child of children) {
+      intersectionObserver.observe(child);
+    }
+
+    function handleScrollEnd() {
+      if (hasIntersected.size === 0) return;
+      const sorted = [...hasIntersected].sort((a, b) => {
+        return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING
+          ? -1
+          : 1;
+      });
+      const firstIntersecting = sorted[0];
+
+      if (
+        loop === "infinite" &&
+        firstIntersecting.hasAttribute("data-clone") &&
+        !(mouseDragging && isDraggingRef?.current)
+      ) {
+        const cloneIndex = firstIntersecting.getAttribute("data-carousel-item");
+        const actualItem = getItems().find(
+          (el) => el.getAttribute("data-carousel-item") === cloneIndex,
+        );
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            scrollToItem(actualItem!, "instant");
+          });
+        });
+      } else {
+        const indexString = (firstIntersecting as HTMLElement).dataset
+          .carouselItem;
+
+        if (process.env.NODE_ENV !== "production") {
+          if (!indexString) {
+            throw new Error(
+              "Failed to find data-carousel-item HTML attribute on an item.",
+            );
+          }
+        }
+
+        setActivePageIndex((prev) => {
+          const slideIndex = parseInt(indexString!, 10);
+          const activePage = pages.findIndex((page) => page[0] === slideIndex);
+          const newIndex = clamp(0, activePage, getItems().length);
+          if (prev !== newIndex) {
+            onActivePageIndexChange?.({ index: newIndex });
+          }
+          return newIndex;
+        });
       }
     }
-    scroller.addEventListener("scrollend", handle);
-    return () => {
-      scroller.removeEventListener("scrollend", handle);
-    };
-  }, [getItems, loop, pages, scrollToItem, scroller]);
 
-  return {
-    itemsPerPage,
-    activePageIndex,
-    scrollBy,
+    // Ideally we'd use the 'scrollend' event here.
+    // However, some browsers will call the 'scrollend' handler *before*
+    // snapping has settled. So in effect, the user will release the scroll,
+    // then 'scrollend' event is called, and the element continues to scroll
+    // to the closest snap position
+    //
+    // This will let us check whether scrolling has actually stopped and
+    // whether the user is still dragging
+    let timeout: any;
+    function handleScroll() {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        if (mouseDragging && isDraggingRef?.current) return;
+        handleScrollEnd();
+      }, 150);
+    }
+
+    host.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      clearTimeout(timeout);
+      for (let child of children) {
+        intersectionObserver.unobserve(child);
+      }
+      intersectionObserver.disconnect();
+      host.removeEventListener("scroll", handleScroll);
+    };
+  }, [
+    getItems,
+    isDraggingRef,
+    loop,
+    mouseDragging,
+    onActivePageIndexChange,
     pages,
-    next,
-    prev,
-    scrollToPage,
-  };
+    scrollToItem,
+    host,
+  ]);
+
+  return useMemo(
+    () => ({
+      itemsPerPage,
+      activePageIndex,
+      scrollBy,
+      pages,
+      next,
+      prev,
+      scrollToPage,
+    }),
+    [activePageIndex, itemsPerPage, next, pages, prev, scrollBy, scrollToPage],
+  );
 }

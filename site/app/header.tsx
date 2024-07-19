@@ -1,5 +1,6 @@
 import { flex, grid, visuallyHidden } from "@/styled-system/patterns";
 import { FaChevronDown } from "react-icons/fa6";
+import { PiArrowUpRight } from "react-icons/pi";
 
 import { HeroCarousel } from "./HeroCarousel";
 import { css } from "@/styled-system/css";
@@ -8,9 +9,8 @@ export function Header() {
   return (
     <div
       className={grid({
-        maxWidth: "900px",
+        py: { base: "4", sm: "8" },
         height: "100vh",
-        width: "90vw",
         margin: "0 auto",
         gridTemplateAreas: '"copy" "demo" "arrow"',
         gridTemplateColumns: "1fr",
@@ -22,32 +22,41 @@ export function Header() {
       })}
     >
       <div
-        className={css({
+        className={flex({
+          direction: "column-reverse",
           gridArea: "arrow",
-          py: "4",
-          justifySelf: "center",
+          align: "center",
         })}
       >
-        <a
-          href="#main-content"
+        <div
           className={css({
-            display: "block",
-            m: "0 auto",
-            animation: "1s ease 0s infinite normal none running bounce",
+            py: "4",
+            justifySelf: "center",
           })}
         >
-          <FaChevronDown
-            aria-hidden="true"
+          <a
+            href="#main-content"
             className={css({
-              color: "gray.8",
-              size: "36px",
+              display: "block",
+              m: "0 auto",
+              animation: "1s ease 0s infinite normal none running bounce",
             })}
-          />
-          <span className={visuallyHidden()}>Skip to content</span>
-        </a>
+          >
+            <FaChevronDown
+              aria-hidden="true"
+              className={css({
+                color: "gray.8",
+                size: "36px",
+              })}
+            />
+            <span className={visuallyHidden()}>Skip to content</span>
+          </a>
+        </div>
       </div>
       <header
         className={flex({
+          width: "90vw",
+          margin: "0 auto",
           gridArea: "copy",
           direction: "column",
           gap: { base: "5", md: "10" },
@@ -76,17 +85,37 @@ export function Header() {
         </p>
       </header>
       <div
-        className={css({
+        className={flex({
           gridArea: "demo",
+          gap: "8",
+          direction: "column",
           alignSelf: "center",
           maxWidth: "500px",
           md: { alignSelf: "start" },
           justifySelf: "center",
           overflow: "hidden",
           py: "2",
+          align: "center",
         })}
       >
         <HeroCarousel />
+        <button
+          type="button"
+          className={flex({
+            textStyle: { base: "sm", sm: "md" },
+            rounded: "lg",
+            align: "center",
+            p: { base: "2", md: "4" },
+            bg: { base: "slate.700", _osDark: "slate.600" },
+            color: "white",
+            transition: "all 0.2s ease",
+            _hover: {
+              bg: "slate.500",
+            },
+          })}
+        >
+          View on GitHub <PiArrowUpRight />
+        </button>
       </div>
     </div>
   );
