@@ -31,7 +31,7 @@ export default async function Home() {
         >
           <Sidebar />
         </div>
-        <div
+        <main
           id="main-content"
           className={`${prose({ size: "lg" })} ${css({
             overflow: "auto",
@@ -60,7 +60,7 @@ export default async function Home() {
           })}`}
         >
           <Text />
-        </div>
+        </main>
       </div>
     </div>
   );

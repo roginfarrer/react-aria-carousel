@@ -24,7 +24,7 @@ export default function RootLayout({
           "& [data-carousel-scroller]": { scrollbar: "hidden" },
         })}
       >
-        <main>{children}</main>
+        {children}
       </body>
     </html>
   );

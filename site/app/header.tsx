@@ -10,7 +10,6 @@ export function Header() {
     <div
       className={grid({
         py: { base: "4", sm: "8" },
-        maxWidth: "900px",
         height: "100vh",
         margin: "0 auto",
         gridTemplateAreas: '"copy" "demo" "arrow"',
@@ -53,23 +52,6 @@ export function Header() {
             <span className={visuallyHidden()}>Skip to content</span>
           </a>
         </div>
-        <button
-          type="button"
-          className={flex({
-            textStyle: { base: "sm", sm: "md" },
-            rounded: "lg",
-            align: "center",
-            p: { base: "2", md: "4" },
-            bg: { base: "slate.700", _osDark: "slate.600" },
-            color: "white",
-            transition: "all 0.2s ease",
-            _hover: {
-              bg: "slate.500",
-            },
-          })}
-        >
-          View on GitHub <PiArrowUpRight />
-        </button>
       </div>
       <header
         className={flex({
@@ -103,17 +85,37 @@ export function Header() {
         </p>
       </header>
       <div
-        className={css({
+        className={flex({
           gridArea: "demo",
+          gap: "8",
+          direction: "column",
           alignSelf: "center",
           maxWidth: "500px",
           md: { alignSelf: "start" },
           justifySelf: "center",
           overflow: "hidden",
           py: "2",
+          align: "center",
         })}
       >
         <HeroCarousel />
+        <button
+          type="button"
+          className={flex({
+            textStyle: { base: "sm", sm: "md" },
+            rounded: "lg",
+            align: "center",
+            p: { base: "2", md: "4" },
+            bg: { base: "slate.700", _osDark: "slate.600" },
+            color: "white",
+            transition: "all 0.2s ease",
+            _hover: {
+              bg: "slate.500",
+            },
+          })}
+        >
+          View on GitHub <PiArrowUpRight />
+        </button>
       </div>
     </div>
   );
