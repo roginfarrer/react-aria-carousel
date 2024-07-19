@@ -1,4 +1,4 @@
-## Unreleased
+## 0.2.0
 
 - `Carousel`, `CarouselButton`, `CarouselScroller`, `CarouselItem`, `CarouselTabs`, `CarouselTab`, `CarouselAutoplayControl` now forward the refs of their outer elements.
 - `useCarousel` and `Carousel` now support a new prop `onActivePageIndexChange`. This prop accepts a function that's called with the new `activePageIndex` when it's changed. Fixes #1.
